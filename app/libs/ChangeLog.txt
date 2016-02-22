@@ -1,0 +1,35 @@
+- 2.0.5 (Feb, 20, 2016)
+Updated internal WebSocket library to latest version.
+
+- 2.0.4 (Feb, 19, 2016)
+Updated internal libraries to latest version.
+
+- 2.0.3 (Feb, 14, 2016)
+Introduce new LoginOption class. All old login methods have been deprecated.
+
+- 2.0.2 (Jan, 28, 2016)
+Added OnlineMemberCountQuery which returns a number of online users for given channel.
+
+- 2.0.1 (Jan, 10, 2016)
+Added UserListQuery which returns all users of application.
+
+- 2.0.0 (Jan, 1, 2016)
+Changed JIVER to SendBird.
+
+- 1.1.31 (Dec 10, 2015)
+Minor Unity SDK related feature updated.
+
+- 1.1.30 (Nov 25, 2015)
+Updated to support concurrent requests.
+
+- 1.1.29
+Added isBlocked() method to check blocked message on Message or FileLink.
+
+- 1.1.28
+Minor Unity SDK bug fixed.
+
+- 1.1.27
+Added pagination for MessagingChannelListQuery.
+
+- 1.1.26
+Added getCreatedAt() on Channel and MessagingChannel models which returns creation date/time.

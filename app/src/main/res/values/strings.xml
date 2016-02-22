@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SendBird Sample</string>
+    <string name="title_activity_sendbird">SendBird</string>
+
+</resources>

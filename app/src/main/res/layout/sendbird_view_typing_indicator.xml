@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="12dp"
+    android:paddingBottom="8dp"
+    android:paddingTop="16dp"
+    >
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ProgressBar.Small"
+        />
+    <TextView
+        android:id="@+id/txt_message"
+        android:paddingLeft="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Typing Indicator"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        android:textColor="#9d9ba5"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        />
+</LinearLayout>
