@@ -8,6 +8,12 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
+import com.sendbird.android.MemberListQuery;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.model.Member;
+
+import java.util.Collection;
+
 /**
  * SendBird Prebuilt UI
  */
