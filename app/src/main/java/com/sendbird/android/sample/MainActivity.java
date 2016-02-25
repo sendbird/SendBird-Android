@@ -8,12 +8,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
-import com.sendbird.android.MemberListQuery;
-import com.sendbird.android.SendBird;
-import com.sendbird.android.model.Member;
-
-import java.util.Collection;
-
 /**
  * SendBird Prebuilt UI
  */
@@ -152,6 +146,10 @@ public class MainActivity extends FragmentActivity {
         }
 
         if(resultCode == RESULT_OK && requestCode == REQUEST_SENDBIRD_USER_LIST_ACTIVITY && data != null) {
+            startMessaging(data.getStringArrayExtra("userIds"));
+        }
+
+        if(resultCode == RESULT_OK && requestCode == REQUEST_SENDBIRD_CHAT_ACTIVITY && data != null) {
             startMessaging(data.getStringArrayExtra("userIds"));
         }
 
