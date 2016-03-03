@@ -59,8 +59,10 @@ import android.widget.Toast;
 import com.sendbird.android.MessageListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdEventHandler;
+import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdFileUploadEventHandler;
 import com.sendbird.android.SendBirdNotificationHandler;
+import com.sendbird.android.handler.DeleteMessageHandler;
 import com.sendbird.android.model.BroadcastMessage;
 import com.sendbird.android.model.Channel;
 import com.sendbird.android.model.FileInfo;
@@ -796,6 +798,10 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             return mItemList.get(position);
         }
 
+        public void delete(Object object) {
+            mItemList.remove(object);
+        }
+
         public void clear() {
             mMaxMessageTimestamp = Long.MIN_VALUE;
             mMinMessageTimestamp = Long.MAX_VALUE;
@@ -1049,6 +1055,42 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                         } else {
                             viewHolder.getView("right_status", TextView.class).setText("");
                         }
+
+                        viewHolder.getView("right_container").setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(mContext)
+                                        .setTitle("SendBird")
+                                        .setMessage("Do you want to delete a message?")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                SendBird.deleteMessage(((Message)item).getMessageId(), new DeleteMessageHandler() {
+                                                    @Override
+                                                    public void onError(SendBirdException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    @Override
+                                                    public void onSuccess(long messageId) {
+                                                        mSendBirdMessagingAdapter.delete(item);
+                                                        mSendBirdMessagingAdapter.notifyDataSetChanged();
+                                                        Toast.makeText(mContext, "Message has been deleted.", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+
+                                return true;
+                            }
+                        });
                     } else {
                         viewHolder.getView("left_container", View.class).setVisibility(View.VISIBLE);
                         viewHolder.getView("right_container", View.class).setVisibility(View.GONE);

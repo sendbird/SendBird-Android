@@ -1,3 +1,6 @@
+- 2.0.6 (Mar, 2, 2016)
+Added deleting message feature.
+
 - 2.0.5 (Feb, 20, 2016)
 Updated internal WebSocket library to latest version.
 

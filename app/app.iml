@@ -82,6 +82,6 @@
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="android-support-v4" level="project" />
-    <orderEntry type="library" exported="" name="sendbird-android-2.0.5" level="project" />
+    <orderEntry type="library" exported="" name="sendbird-android-2.0.6-debug" level="project" />
   </component>
 </module>
