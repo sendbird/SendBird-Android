@@ -94,6 +94,7 @@ public class SendBirdChatActivity extends FragmentActivity {
     private Button mBtnLeave;
     private String mChannelUrl;
     private boolean mDoNotDisconnect;
+    private Button mBtnMembers;
 
 
     public static Bundle makeSendBirdArgs(String appKey, String uuid, String nickname, String channelUrl) {
@@ -329,8 +330,19 @@ public class SendBirdChatActivity extends FragmentActivity {
         mSettingsContainer = findViewById(R.id.settings_container);
         mSettingsContainer.setVisibility(View.GONE);
 
-        mBtnLeave = (Button)findViewById(R.id.btn_leave);
+        mBtnMembers = (Button)findViewById(R.id.btn_members);
+        mBtnMembers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSettingsContainer.setVisibility(View.GONE);
+                Intent intent = new Intent(SendBirdChatActivity.this, SendBirdMemberListActivity.class);
+                Bundle args = SendBirdMemberListActivity.makeSendBirdArgs(SendBird.getAppId(), SendBird.getUserId(), SendBird.getUserName(), mChannelUrl);
+                intent.putExtras(args);
+                startActivity(intent);
+            }
+        });
 
+        mBtnLeave = (Button)findViewById(R.id.btn_leave);
         mBtnLeave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

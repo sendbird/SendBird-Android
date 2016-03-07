@@ -1,11 +1,9 @@
 package com.sendbird.android.sample;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,22 +12,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sendbird.android.SendBirdException;
-import com.sendbird.android.UserListQuery;
+import com.sendbird.android.MemberCountQuery;
+import com.sendbird.android.MemberListQuery;
 import com.sendbird.android.SendBird;
-import com.sendbird.android.model.User;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.model.Member;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,30 +37,25 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class SendBirdUserListActivity extends FragmentActivity {
-    private SendBirdUserListFragment mSendBirdUserListFragment;
+public class SendBirdMemberListActivity extends FragmentActivity {
+    private SendBirdMemberListFragment mSendBirdMemberListFragment;
 
     private ImageButton mBtnClose;
-    private Button mBtnOK;
-    private TextView mTxtChannelUrl;
+    private TextView mTxtTitle;
     private View mTopBarContainer;
 
-    private List<User> mSelectedUsers;
-
-    public static Bundle makeSendBirdArgs(String appKey, String uuid, String nickname) {
+    public static Bundle makeSendBirdArgs(String appKey, String uuid, String nickname, String channelUrl) {
         Bundle args = new Bundle();
         args.putString("appKey", appKey);
         args.putString("uuid", uuid);
         args.putString("nickname", nickname);
+        args.putString("channelUrl", channelUrl);
         return args;
     }
 
@@ -73,23 +63,11 @@ public class SendBirdUserListActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.sendbird_slide_in_from_bottom, R.anim.sendbird_slide_out_to_top);
-        setContentView(R.layout.activity_sendbird_user_list);
+        setContentView(R.layout.activity_sendbird_member_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        initSendBird(getIntent().getExtras());
-        initFragment();
         initUIComponents();
-    }
-
-    private void initSendBird(Bundle extras) {
-        if(extras != null) {
-            String appKey = extras.getString("appKey");
-            String uuid = extras.getString("uuid");
-            String nickname = extras.getString("nickname");
-
-            SendBird.init(this, appKey);
-            SendBird.login(SendBird.LoginOption.build(uuid).setUserName(nickname));
-        }
+        initFragment();
     }
 
     @Override
@@ -133,32 +111,25 @@ public class SendBirdUserListActivity extends FragmentActivity {
 
 
     private void initFragment() {
-        mSelectedUsers = new ArrayList<User>();
-        mSendBirdUserListFragment = new SendBirdUserListFragment();
-
-        mSendBirdUserListFragment.setSendBirdUserListHandler(new SendBirdUserListFragment.SendBirdUserListHandler() {
+        mSendBirdMemberListFragment = new SendBirdMemberListFragment();
+        mSendBirdMemberListFragment.setArguments(getIntent().getExtras());
+        mSendBirdMemberListFragment.setHandler(new SendBirdMemberListFragment.SendBirdMemberListFragmentHandler() {
             @Override
-            public void onUserSelected(HashSet<User> users) {
-                mSelectedUsers = Arrays.asList(users.toArray(new User[0]));
-                if (mSelectedUsers.size() <= 0) {
-                    mBtnOK.setTextColor(Color.parseColor("#6f5ca7"));
-                } else {
-                    mBtnOK.setTextColor(Color.parseColor("#35f8ca"));
-                }
+            public void onTitleChanged(String title) {
+                mTxtTitle.setText(title);
             }
         });
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, mSendBirdUserListFragment)
+                .replace(R.id.fragment_container, mSendBirdMemberListFragment)
                 .commit();
     }
 
     private void initUIComponents() {
         mTopBarContainer = findViewById(R.id.top_bar_container);
-        mTxtChannelUrl = (TextView)findViewById(R.id.txt_channel_url);
+        mTxtTitle = (TextView)findViewById(R.id.txt_title);
 
         mBtnClose = (ImageButton)findViewById(R.id.btn_close);
-        mBtnOK = (Button)findViewById(R.id.btn_ok);
 
         mBtnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,60 +138,53 @@ public class SendBirdUserListActivity extends FragmentActivity {
             }
         });
 
-        mBtnOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mSelectedUsers.size() > 0) {
-                    String [] userIds = new String[mSelectedUsers.size()];
-                    for(int i = 0; i < userIds.length; i++) {
-                        userIds[i] = mSelectedUsers.get(i).getId();
-                    }
-                    Intent data = new Intent();
-                    data.putExtra("userIds", userIds);
-                    setResult(RESULT_OK, data);
-                } else {
-                    setResult(RESULT_CANCELED);
-                }
-                finish();
-            }
-        });
-
         resizeMenubar();
     }
 
 
-    public static class SendBirdUserListFragment extends Fragment {
-        private SendBirdUserListHandler mHandler;
+    public static class SendBirdMemberListFragment extends Fragment {
         private ListView mListView;
-        private UserListQuery mUserListQuery;
         private SendBirdUserAdapter mAdapter;
-        private HashSet<User> mSelectedUsers;
+        private String mChannelUrl;
+        private SendBirdMemberListFragmentHandler mHandler;
 
-        public static interface SendBirdUserListHandler {
-            public void onUserSelected(HashSet<User> users);
+        public interface SendBirdMemberListFragmentHandler {
+            public void onTitleChanged(String title);
         }
 
-        public void setSendBirdUserListHandler(SendBirdUserListHandler handler) {
+        public void setHandler(SendBirdMemberListFragmentHandler handler) {
             mHandler = handler;
         }
 
-        public SendBirdUserListFragment() {
+        public SendBirdMemberListFragment() {
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.sendbird_fragment_user_list, container, false);
-            initUIComponents(rootView);
+            View rootView = inflater.inflate(R.layout.sendbird_fragment_member_list, container, false);
 
-            mUserListQuery = SendBird.queryUserList();
-            mUserListQuery.setLimit(30);
+            initSendBird(getArguments());
+            initUIComponents(rootView);
 
             return rootView;
 
         }
+
+        private void initSendBird(Bundle extras) {
+            if(extras != null) {
+                String appKey = extras.getString("appKey");
+                String uuid = extras.getString("uuid");
+                String nickname = extras.getString("nickname");
+                mChannelUrl = extras.getString("channelUrl");
+
+                SendBird.init(getActivity(), appKey);
+                SendBird.login(SendBird.LoginOption.build(uuid).setUserName(nickname));
+            }
+        }
+
+
         private void initUIComponents(View rootView) {
-            mSelectedUsers = new HashSet<User>();
             mListView = (ListView)rootView.findViewById(R.id.list);
             mAdapter = new SendBirdUserAdapter(getActivity());
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -228,48 +192,55 @@ public class SendBirdUserListActivity extends FragmentActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 }
             });
-            mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-                }
-
-                @Override
-                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    if (firstVisibleItem + visibleItemCount >= (int) (totalItemCount * 0.8f)) {
-                        loadMoreUsers();
-                    }
-                }
-            });
             mListView.setAdapter(mAdapter);
+            loadTitle();
+            loadMembers();
         }
 
-        private void loadMoreUsers() {
-            if(mUserListQuery != null && mUserListQuery.hasNext() && !mUserListQuery.isLoading()) {
-                mUserListQuery.next(new UserListQuery.UserListQueryResult() {
-                    @Override
-                    public void onResult(List<User> users) {
-                        mAdapter.addAll(users);
-                        mAdapter.notifyDataSetChanged();
+        private void loadTitle() {
+            SendBird.queryMemberCount(mChannelUrl).get(new MemberCountQuery.MemberCountQueryResult() {
+                @Override
+                public void onResult(int total, int online) {
+                    if(mHandler != null) {
+                        mHandler.onTitleChanged("Total " + total + " / " + "Online " + online);
                     }
+                }
 
-                    @Override
-                    public void onError(SendBirdException e) {
-                    }
-                });
-            }
+                @Override
+                public void onError(SendBirdException e) {
+                    Toast.makeText(getActivity(), "Error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        private void loadMembers() {
+            mAdapter.clear();
+            mAdapter.notifyDataSetChanged();
+
+            SendBird.queryMemberList(mChannelUrl, false).get(new MemberListQuery.MemberListQueryResult() {
+                @Override
+                public void onResult(Collection<Member> collection) {
+                    mAdapter.addAll(collection);
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onError(SendBirdException e) {
+                    Toast.makeText(getActivity(), "Error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
         }
 
 
         public class SendBirdUserAdapter extends BaseAdapter {
             private final Context mContext;
             private final LayoutInflater mInflater;
-            private final ArrayList<User> mItemList;
+            private final ArrayList<Member> mItemList;
 
             public SendBirdUserAdapter(Context context) {
                 mContext = context;
                 mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                mItemList = new ArrayList<User>();
+                mItemList = new ArrayList<Member>();
             }
 
             @Override
@@ -278,7 +249,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
             }
 
             @Override
-            public User getItem(int position) {
+            public Member getItem(int position) {
                 return mItemList.get(position);
             }
 
@@ -286,7 +257,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
                 mItemList.clear();
             }
 
-            public User remove(int index) {
+            public Member remove(int index) {
                 return mItemList.remove(index);
             }
 
@@ -295,8 +266,8 @@ public class SendBirdUserListActivity extends FragmentActivity {
                 return position;
             }
 
-            public void addAll(Collection<User> users) {
-                mItemList.addAll(users);
+            public void addAll(Collection<Member> members) {
+                mItemList.addAll(members);
                 notifyDataSetChanged();
             }
 
@@ -307,37 +278,18 @@ public class SendBirdUserListActivity extends FragmentActivity {
                 if(convertView == null) {
                     viewHolder = new ViewHolder();
 
-                    convertView = mInflater.inflate(R.layout.sendbird_view_user, parent, false);
+                    convertView = mInflater.inflate(R.layout.sendbird_view_member, parent, false);
                     viewHolder.setView("root_view", convertView);
                     viewHolder.setView("img_thumbnail", convertView.findViewById(R.id.img_thumbnail));
                     viewHolder.setView("txt_name", convertView.findViewById(R.id.txt_name));
-                    viewHolder.setView("chk_select", convertView.findViewById(R.id.chk_select));
                     viewHolder.setView("txt_status", convertView.findViewById(R.id.txt_status));
-
-
                     convertView.setTag(viewHolder);
                 }
 
-                final User item = getItem(position);
+                final Member item = getItem(position);
                 viewHolder = (ViewHolder) convertView.getTag();
                 displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), item.getImageUrl());
                 viewHolder.getView("txt_name", TextView.class).setText(item.getName());
-                viewHolder.getView("chk_select", CheckBox.class).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                        if(isChecked) {
-                            mSelectedUsers.add(item);
-                        } else {
-                            mSelectedUsers.remove(item);
-                        }
-
-                        if (mHandler != null)  {
-                            mHandler.onUserSelected(mSelectedUsers);
-                        }
-                    }
-                });
-                viewHolder.getView("chk_select", CheckBox.class).setChecked(mSelectedUsers.contains(item));
                 if(item.isOnline()) {
                     viewHolder.getView("txt_status", TextView.class).setText("Online");
                 } else {

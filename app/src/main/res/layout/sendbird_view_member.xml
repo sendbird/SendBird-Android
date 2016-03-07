@@ -40,34 +40,17 @@
             android:text="Topic"
             android:gravity="center_vertical"
             />
-
-        <FrameLayout
+        <TextView
+            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="50dp"
-            android:layout_gravity="center_vertical"
-            >
-            <CheckBox
-                android:id="@+id/chk_select"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@drawable/sendbird_chk_member"
-                android:checked="false"
-                android:layout_marginTop="18dp"
-                android:layout_gravity="right"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/txt_status"
-                android:textSize="10sp"
-                android:textColor="#8e8e8e"
-                android:text="Online"
-                android:layout_gravity="top"
-                />
-
-        </FrameLayout>
-
+            android:id="@+id/txt_status"
+            android:textSize="10sp"
+            android:textColor="#8e8e8e"
+            android:text="Online"
+            android:gravity="center"
+            />
     </LinearLayout>
     <View
         android:layout_alignParentBottom="true"

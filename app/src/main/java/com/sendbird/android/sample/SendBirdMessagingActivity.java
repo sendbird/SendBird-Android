@@ -108,18 +108,18 @@ public class SendBirdMessagingActivity extends FragmentActivity {
     private View mTopBarContainer;
     private CountDownTimer mTimer;
     private Button mBtnInvite;
+    private Button mBtnMembers;
     private View mSettingsContainer;
     private MessagingChannel mMessagingChannel;
     private Bundle mSendBirdInfo;
 
     private boolean isForeground;
 
-
     public static Bundle makeMessagingStartArgs(String appKey, String uuid, String nickname, String targetUserId) {
         return makeMessagingStartArgs(appKey, uuid, nickname, new String[]{targetUserId});
     }
 
-    public static Bundle makeMessagingStartArgs(String appKey, String uuid, String nickname, String [] targetUserIds) {
+    public static Bundle makeMessagingStartArgs(String appKey, String uuid, String nickname, String[] targetUserIds) {
         Bundle args = new Bundle();
         args.putBoolean("start", true);
         args.putString("appKey", appKey);
@@ -151,10 +151,10 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         initUIComponents();
         initSendBird(getIntent().getExtras());
 
-        if(mSendBirdInfo.getBoolean("start")) {
-            String [] targetUserIds = mSendBirdInfo.getStringArray("targetUserIds");
+        if (mSendBirdInfo.getBoolean("start")) {
+            String[] targetUserIds = mSendBirdInfo.getStringArray("targetUserIds");
             SendBird.startMessaging(Arrays.asList(targetUserIds));
-        } else if(mSendBirdInfo.getBoolean("join")) {
+        } else if (mSendBirdInfo.getBoolean("join")) {
             String channelUrl = mSendBirdInfo.getString("channelUrl");
             SendBird.joinMessaging(channelUrl);
         }
@@ -169,7 +169,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
     private void resizeMenubar() {
         ViewGroup.LayoutParams lp = mTopBarContainer.getLayoutParams();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             lp.height = (int) (28 * getResources().getDisplayMetrics().density);
         } else {
             lp.height = (int) (48 * getResources().getDisplayMetrics().density);
@@ -184,14 +184,14 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         isForeground = true;
         SendBird.markAsRead();
 
-        if(mTimer != null) {
+        if (mTimer != null) {
             mTimer.cancel();
         }
         mTimer = new CountDownTimer(60 * 60 * 24 * 7 * 1000L, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                if(mSendBirdMessagingAdapter != null) {
-                    if(mSendBirdMessagingAdapter.checkTypeStatus()) {
+                if (mSendBirdMessagingAdapter != null) {
+                    if (mSendBirdMessagingAdapter.checkTypeStatus()) {
                         mSendBirdMessagingAdapter.notifyDataSetChanged();
                     }
                 }
@@ -229,7 +229,6 @@ public class SendBirdMessagingActivity extends FragmentActivity {
     }
 
 
-
     private void initFragment() {
         mSendBirdMessagingFragment = new SendBirdChatFragment();
 
@@ -253,12 +252,12 @@ public class SendBirdMessagingActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == REQUEST_MESSAGING_CHANNEL_LIST) {
-            if(resultCode == RESULT_OK && data != null) {
+        if (requestCode == REQUEST_MESSAGING_CHANNEL_LIST) {
+            if (resultCode == RESULT_OK && data != null) {
                 SendBird.joinMessaging(data.getStringExtra("channelUrl"));
             }
-        } else if(requestCode == REQUEST_MEMBER_LIST) {
-            if(resultCode == RESULT_OK && data != null) {
+        } else if (requestCode == REQUEST_MEMBER_LIST) {
+            if (resultCode == RESULT_OK && data != null) {
                 try {
                     SendBird.inviteMessaging(SendBird.getCurrentChannel().getUrl(), Arrays.asList(data.getStringArrayExtra("userIds")));
                 } catch (IOException e) {
@@ -270,9 +269,9 @@ public class SendBirdMessagingActivity extends FragmentActivity {
     }
 
     private static String getDisplayMemberNames(List<MessagingChannel.Member> members) {
-        if(members.size() < 2) {
+        if (members.size() < 2) {
             return "No Members";
-        } else if(members.size() == 2) {
+        } else if (members.size() == 2) {
             StringBuffer names = new StringBuffer();
             for (MessagingChannel.Member member : members) {
                 if (member.getId().equals(SendBird.getUserId())) {
@@ -326,7 +325,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
             @Override
             public void onMessageReceived(Message message) {
-                if(isForeground){
+                if (isForeground) {
                     SendBird.markAsRead();
                 }
                 mSendBirdMessagingAdapter.addMessageModel(message);
@@ -435,7 +434,6 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             }
 
         });
-
     }
 
     private void updateMessagingChannel(MessagingChannel messagingChannel) {
@@ -445,7 +443,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         Hashtable<String, Long> readStatus = new Hashtable<String, Long>();
         for (MessagingChannel.Member member : messagingChannel.getMembers()) {
             Long currentStatus = mSendBirdMessagingAdapter.mReadStatus.get(member.getId());
-            if(currentStatus == null) {
+            if (currentStatus == null) {
                 currentStatus = 0L;
             }
             readStatus.put(member.getId(), Math.max(currentStatus, messagingChannel.getLastReadMillis(member.getId())));
@@ -459,16 +457,27 @@ public class SendBirdMessagingActivity extends FragmentActivity {
     private void initUIComponents() {
 
         mTopBarContainer = findViewById(R.id.top_bar_container);
-        mTxtChannelUrl = (TextView)findViewById(R.id.txt_channel_url);
+        mTxtChannelUrl = (TextView) findViewById(R.id.txt_channel_url);
 
         mSettingsContainer = findViewById(R.id.settings_container);
         mSettingsContainer.setVisibility(View.GONE);
 
-        mBtnClose = (ImageButton)findViewById(R.id.btn_close);
-        mBtnSettings = (ImageButton)findViewById(R.id.btn_settings);
+        mBtnClose = (ImageButton) findViewById(R.id.btn_close);
+        mBtnSettings = (ImageButton) findViewById(R.id.btn_settings);
 
-        mBtnInvite = (Button)findViewById(R.id.btn_invite);
+        mBtnMembers = (Button)findViewById(R.id.btn_members);
+        mBtnMembers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SendBirdMessagingActivity.this, SendBirdMemberListActivity.class);
+                Bundle args = SendBirdMemberListActivity.makeSendBirdArgs(SendBird.getAppId(), SendBird.getUserId(), SendBird.getUserName(), SendBird.getChannelUrl());
+                intent.putExtras(args);
+                startActivity(intent);
+                mSettingsContainer.setVisibility(View.GONE);
+            }
+        });
 
+        mBtnInvite = (Button) findViewById(R.id.btn_invite);
         mBtnInvite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -491,7 +500,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         mBtnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mSettingsContainer.getVisibility() != View.VISIBLE) {
+                if (mSettingsContainer.getVisibility() != View.VISIBLE) {
                     mSettingsContainer.setVisibility(View.VISIBLE);
                 } else {
                     mSettingsContainer.setVisibility(View.GONE);
@@ -502,6 +511,16 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         resizeMenubar();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
     public static class SendBirdChatFragment extends Fragment {
         private static final int REQUEST_PICK_IMAGE = 100;
 
@@ -510,7 +529,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         private EditText mEtxtMessage;
         private Button mBtnSend;
         private ImageButton mBtnChannel;
-//        private ImageButton mBtnInvite;
+        //        private ImageButton mBtnInvite;
         private ImageButton mBtnUpload;
         private ProgressBar mProgressBtnUpload;
         private SendBirdChatHandler mHandler;
@@ -536,15 +555,15 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
 
         private void initUIComponents(View rootView) {
-            mListView = (ListView)rootView.findViewById(R.id.list);
+            mListView = (ListView) rootView.findViewById(R.id.list);
             turnOffListViewDecoration(mListView);
             mListView.setAdapter(mAdapter);
 
-            mBtnChannel = (ImageButton)rootView.findViewById(R.id.btn_channel);
-            mBtnSend = (Button)rootView.findViewById(R.id.btn_send);
-            mBtnUpload = (ImageButton)rootView.findViewById(R.id.btn_upload);
-            mProgressBtnUpload = (ProgressBar)rootView.findViewById(R.id.progress_btn_upload);
-            mEtxtMessage = (EditText)rootView.findViewById(R.id.etxt_message);
+            mBtnChannel = (ImageButton) rootView.findViewById(R.id.btn_channel);
+            mBtnSend = (Button) rootView.findViewById(R.id.btn_send);
+            mBtnUpload = (ImageButton) rootView.findViewById(R.id.btn_upload);
+            mProgressBtnUpload = (ProgressBar) rootView.findViewById(R.id.progress_btn_upload);
+            mEtxtMessage = (EditText) rootView.findViewById(R.id.etxt_message);
 
             mBtnSend.setEnabled(false);
             mBtnSend.setOnClickListener(new View.OnClickListener() {
@@ -577,8 +596,8 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             mEtxtMessage.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(keyCode == KeyEvent.KEYCODE_ENTER) {
-                        if(event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                        if (event.getAction() == KeyEvent.ACTION_DOWN) {
                             send();
                         }
                         return true; // Do not hide keyboard.
@@ -603,7 +622,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                 public void afterTextChanged(Editable s) {
                     mBtnSend.setEnabled(s.length() > 0);
 
-                    if(s.length() > 0) {
+                    if (s.length() > 0) {
                         SendBird.typeStart();
                     } else {
                         SendBird.typeEnd();
@@ -620,36 +639,36 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
-                    if(scrollState == SCROLL_STATE_IDLE) {
-                        if(view.getFirstVisiblePosition() == 0 && view.getChildCount() > 0 && view.getChildAt(0).getTop() == 0) {
-                           SendBird.queryMessageList(SendBird.getChannelUrl()).prev(mAdapter.getMinMessageTimestamp(), 30, new MessageListQuery.MessageListQueryResult() {
-                               @Override
-                               public void onResult(List<MessageModel> messageModels) {
-                                   if(messageModels.size() <= 0) {
-                                       return;
-                                   }
-
-                                   for(MessageModel model : messageModels) {
-                                       mAdapter.addMessageModel(model);
-                                   }
-                                   mAdapter.notifyDataSetChanged();
-                                   mListView.setSelection(messageModels.size());
-                               }
-
-                               @Override
-                               public void onError(Exception e) {
-
-                               }
-                           });
-                        } else if(view.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1 && view.getChildCount() > 0) {
-                            SendBird.queryMessageList(SendBird.getChannelUrl()).next(mAdapter.getMaxMessageTimestamp(), 30, new MessageListQuery.MessageListQueryResult() {
+                    if (scrollState == SCROLL_STATE_IDLE) {
+                        if (view.getFirstVisiblePosition() == 0 && view.getChildCount() > 0 && view.getChildAt(0).getTop() == 0) {
+                            SendBird.queryMessageList(SendBird.getChannelUrl()).prev(mAdapter.getMinMessageTimestamp(), 30, new MessageListQuery.MessageListQueryResult() {
                                 @Override
                                 public void onResult(List<MessageModel> messageModels) {
-                                    if(messageModels.size() <= 0) {
+                                    if (messageModels.size() <= 0) {
                                         return;
                                     }
 
-                                    for(MessageModel model : messageModels) {
+                                    for (MessageModel model : messageModels) {
+                                        mAdapter.addMessageModel(model);
+                                    }
+                                    mAdapter.notifyDataSetChanged();
+                                    mListView.setSelection(messageModels.size());
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                }
+                            });
+                        } else if (view.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1 && view.getChildCount() > 0) {
+                            SendBird.queryMessageList(SendBird.getChannelUrl()).next(mAdapter.getMaxMessageTimestamp(), 30, new MessageListQuery.MessageListQueryResult() {
+                                @Override
+                                public void onResult(List<MessageModel> messageModels) {
+                                    if (messageModels.size() <= 0) {
+                                        return;
+                                    }
+
+                                    for (MessageModel model : messageModels) {
                                         mAdapter.addMessageModel(model);
                                     }
                                     mAdapter.notifyDataSetChanged();
@@ -671,7 +690,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         }
 
         private void showUploadProgress(boolean tf) {
-            if(tf) {
+            if (tf) {
                 mBtnUpload.setEnabled(false);
                 mBtnUpload.setVisibility(View.INVISIBLE);
                 mProgressBtnUpload.setVisibility(View.VISIBLE);
@@ -695,8 +714,8 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            if(resultCode == Activity.RESULT_OK) {
-                if(requestCode == REQUEST_PICK_IMAGE && data != null && data.getData() != null) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == REQUEST_PICK_IMAGE && data != null && data.getData() != null) {
                     upload(data.getData());
                 }
             }
@@ -706,7 +725,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             SendBird.send(mEtxtMessage.getText().toString());
             mEtxtMessage.setText("");
 
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 Helper.hideKeyboard(getActivity());
             }
         }
@@ -714,11 +733,11 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         private void upload(Uri uri) {
             try {
                 Hashtable<String, Object> info = Helper.getFileInfo(getActivity(), uri);
-                final String path = (String)info.get("path");
-                final String mime = (String)info.get("mime");
-                final int size = (Integer)info.get("size");
+                final String path = (String) info.get("path");
+                final String mime = (String) info.get("mime");
+                final int size = (Integer) info.get("size");
 
-                if(path == null) {
+                if (path == null) {
                     Toast.makeText(getActivity(), "Uploading file must be located in local storage.", Toast.LENGTH_LONG).show();
                 } else {
                     showUploadProgress(true);
@@ -746,7 +765,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
         public void setSendBirdMessagingAdapter(SendBirdMessagingAdapter adapter) {
             mAdapter = adapter;
-            if(mListView != null) {
+            if (mListView != null) {
                 mListView.setAdapter(adapter);
             }
         }
@@ -772,7 +791,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
         public SendBirdMessagingAdapter(Context context) {
             mContext = context;
-            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mItemList = new ArrayList<Object>();
             mReadStatus = new Hashtable<String, Long>();
             mTypeStatus = new Hashtable<String, Long>();
@@ -785,10 +804,10 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
         @Override
         public Object getItem(int position) {
-            if(position >= mItemList.size()) {
+            if (position >= mItemList.size()) {
                 ArrayList<String> names = new ArrayList<String>();
-                for(MessagingChannel.Member member : mMembers) {
-                    if(mTypeStatus.containsKey(member.getId())) {
+                for (MessagingChannel.Member member : mMembers) {
+                    if (mTypeStatus.containsKey(member.getId())) {
                         names.add(member.getName());
                     }
                 }
@@ -816,17 +835,17 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         }
 
         public void setReadStatus(String userId, long timestamp) {
-            if(mReadStatus.get(userId) == null || mReadStatus.get(userId) < timestamp) {
+            if (mReadStatus.get(userId) == null || mReadStatus.get(userId) < timestamp) {
                 mReadStatus.put(userId, timestamp);
             }
         }
 
         public void setTypeStatus(String userId, long timestamp) {
-            if(userId.equals(SendBird.getUserId())) {
+            if (userId.equals(SendBird.getUserId())) {
                 return;
             }
 
-            if(timestamp <= 0) {
+            if (timestamp <= 0) {
                 mTypeStatus.remove(userId);
             } else {
                 mTypeStatus.put(userId, timestamp);
@@ -839,7 +858,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         }
 
         public void addMessageModel(MessageModel messageModel) {
-            if(messageModel.isPast()) {
+            if (messageModel.isPast()) {
                 mItemList.add(0, messageModel);
             } else {
                 mItemList.add(messageModel);
@@ -867,18 +886,18 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
         @Override
         public int getItemViewType(int position) {
-            if(position >= mItemList.size()) {
+            if (position >= mItemList.size()) {
                 return TYPE_TYPING_INDICATOR;
             }
 
             Object item = mItemList.get(position);
-            if(item instanceof Message) {
+            if (item instanceof Message) {
                 return TYPE_MESSAGE;
-            } else if(item instanceof FileLink) {
+            } else if (item instanceof FileLink) {
                 return TYPE_FILELINK;
-            } else if(item instanceof SystemMessage) {
+            } else if (item instanceof SystemMessage) {
                 return TYPE_SYSTEM_MESSAGE;
-            } else if(item instanceof BroadcastMessage) {
+            } else if (item instanceof BroadcastMessage) {
                 return TYPE_BROADCAST_MESSAGE;
             }
 
@@ -895,11 +914,11 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             ViewHolder viewHolder;
             final Object item = getItem(position);
 
-            if(convertView == null || ((ViewHolder)convertView.getTag()).getViewType() != getItemViewType(position)) {
+            if (convertView == null || ((ViewHolder) convertView.getTag()).getViewType() != getItemViewType(position)) {
                 viewHolder = new ViewHolder();
                 viewHolder.setViewType(getItemViewType(position));
 
-                switch(getItemViewType(position)) {
+                switch (getItemViewType(position)) {
                     case TYPE_UNSUPPORTED:
                         convertView = new View(mInflater.getContext());
                         convertView.setTag(viewHolder);
@@ -993,7 +1012,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 try {
-                                                    downloadUrl((FileLink)item, mContext);
+                                                    downloadUrl((FileLink) item, mContext);
                                                 } catch (IOException e) {
                                                     e.printStackTrace();
                                                 }
@@ -1021,12 +1040,12 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
 
             viewHolder = (ViewHolder) convertView.getTag();
-            switch(getItemViewType(position)) {
+            switch (getItemViewType(position)) {
                 case TYPE_UNSUPPORTED:
                     break;
                 case TYPE_MESSAGE:
-                    Message message = (Message)item;
-                    if(message.getSenderId().equals(SendBird.getUserId())) {
+                    Message message = (Message) item;
+                    if (message.getSenderId().equals(SendBird.getUserId())) {
                         viewHolder.getView("left_container", View.class).setVisibility(View.GONE);
                         viewHolder.getView("right_container", View.class).setVisibility(View.VISIBLE);
 
@@ -1036,18 +1055,18 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                         viewHolder.getView("right_time", TextView.class).setText(getDisplayDateTime(mContext, message.getTimestamp()));
 
                         int readCount = 0;
-                        for(String key : mReadStatus.keySet()) {
-                            if(key.equals(message.getSenderId())) {
+                        for (String key : mReadStatus.keySet()) {
+                            if (key.equals(message.getSenderId())) {
                                 readCount += 1;
                                 continue;
                             }
 
-                            if(mReadStatus.get(key) >= message.getTimestamp()) {
+                            if (mReadStatus.get(key) >= message.getTimestamp()) {
                                 readCount += 1;
                             }
                         }
-                        if(readCount < mReadStatus.size()) {
-                            if(mReadStatus.size() - readCount > 1) {
+                        if (readCount < mReadStatus.size()) {
+                            if (mReadStatus.size() - readCount > 1) {
                                 viewHolder.getView("right_status", TextView.class).setText("Unread " + (mReadStatus.size() - readCount));
                             } else {
                                 viewHolder.getView("right_status", TextView.class).setText("Unread");
@@ -1065,7 +1084,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                SendBird.deleteMessage(((Message)item).getMessageId(), new DeleteMessageHandler() {
+                                                SendBird.deleteMessage(((Message) item).getMessageId(), new DeleteMessageHandler() {
                                                     @Override
                                                     public void onError(SendBirdException e) {
                                                         e.printStackTrace();
@@ -1102,39 +1121,39 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                     }
                     break;
                 case TYPE_SYSTEM_MESSAGE:
-                    SystemMessage systemMessage = (SystemMessage)item;
+                    SystemMessage systemMessage = (SystemMessage) item;
                     viewHolder.getView("message", TextView.class).setText(Html.fromHtml(systemMessage.getMessage()));
                     break;
                 case TYPE_BROADCAST_MESSAGE:
-                    BroadcastMessage broadcastMessage = (BroadcastMessage)item;
+                    BroadcastMessage broadcastMessage = (BroadcastMessage) item;
                     viewHolder.getView("message", TextView.class).setText(Html.fromHtml(broadcastMessage.getMessage()));
                     break;
                 case TYPE_FILELINK:
-                    FileLink fileLink = (FileLink)item;
+                    FileLink fileLink = (FileLink) item;
 
-                    if(fileLink.getSenderId().equals(SendBird.getUserId())) {
+                    if (fileLink.getSenderId().equals(SendBird.getUserId())) {
                         viewHolder.getView("left_container", View.class).setVisibility(View.GONE);
                         viewHolder.getView("right_container", View.class).setVisibility(View.VISIBLE);
 
                         displayUrlImage(viewHolder.getView("right_thumbnail", ImageView.class), fileLink.getSenderImageUrl(), true);
                         viewHolder.getView("right_name", TextView.class).setText(fileLink.getSenderName());
-                        if(fileLink.getFileInfo().getType().toLowerCase().startsWith("image")) {
+                        if (fileLink.getFileInfo().getType().toLowerCase().startsWith("image")) {
                             displayUrlImage(viewHolder.getView("right_image", ImageView.class), fileLink.getFileInfo().getUrl());
                         } else {
                             viewHolder.getView("right_image", ImageView.class).setImageResource(R.drawable.sendbird_icon_file);
                         }
                         viewHolder.getView("right_time", TextView.class).setText(getDisplayDateTime(mContext, fileLink.getTimestamp()));
                         int readCount = 0;
-                        for(String key : mReadStatus.keySet()) {
-                            if(key.equals(fileLink.getSenderId())) {
+                        for (String key : mReadStatus.keySet()) {
+                            if (key.equals(fileLink.getSenderId())) {
                                 continue;
                             }
 
-                            if(mReadStatus.get(key) < fileLink.getTimestamp()) {
+                            if (mReadStatus.get(key) < fileLink.getTimestamp()) {
                                 readCount += 1;
                             }
                         }
-                        if(readCount < mReadStatus.size() - 1) {
+                        if (readCount < mReadStatus.size() - 1) {
                             viewHolder.getView("right_status", TextView.class).setText("Unread");
                         } else {
                             viewHolder.getView("right_status", TextView.class).setText("");
@@ -1145,7 +1164,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
                         displayUrlImage(viewHolder.getView("left_thumbnail", ImageView.class), fileLink.getSenderImageUrl(), true);
                         viewHolder.getView("left_name", TextView.class).setText(fileLink.getSenderName());
-                        if(fileLink.getFileInfo().getType().toLowerCase().startsWith("image")) {
+                        if (fileLink.getFileInfo().getType().toLowerCase().startsWith("image")) {
                             displayUrlImage(viewHolder.getView("left_image", ImageView.class), fileLink.getFileInfo().getUrl());
                         } else {
                             viewHolder.getView("left_image", ImageView.class).setImageResource(R.drawable.sendbird_icon_file);
@@ -1155,8 +1174,8 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                     break;
 
                 case TYPE_TYPING_INDICATOR: {
-                    int itemCount = ((List)item).size();
-                    String typeMsg = ((List)item).get(0)
+                    int itemCount = ((List) item).size();
+                    String typeMsg = ((List) item).get(0)
                             + ((itemCount > 1) ? " +" + (itemCount - 1) : "")
                             + ((itemCount > 1) ? " are " : " is ")
                             + "typing...";
@@ -1172,9 +1191,9 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             /**
              * Clear an old type status.
              */
-            for(String key : mTypeStatus.keySet()) {
+            for (String key : mTypeStatus.keySet()) {
                 Long ts = mTypeStatus.get(key);
-                if(System.currentTimeMillis() - ts > 10 * 1000L) {
+                if (System.currentTimeMillis() - ts > 10 * 1000L) {
                     mTypeStatus.remove(key);
                     return true;
                 }
@@ -1195,6 +1214,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             public void setViewType(int type) {
                 this.type = type;
             }
+
             public void setView(String k, View v) {
                 holder.put(k, v);
             }
@@ -1212,15 +1232,17 @@ public class SendBirdMessagingActivity extends FragmentActivity {
     private static String getDisplayDateTime(Context context, long milli) {
         Date date = new Date(milli);
 
-        if(System.currentTimeMillis() - milli < 60 * 60 * 24 * 1000l) {
+        if (System.currentTimeMillis() - milli < 60 * 60 * 24 * 1000l) {
             return DateFormat.getTimeFormat(context).format(date);
         }
 
         return DateFormat.getDateFormat(context).format(date) + " " + DateFormat.getTimeFormat(context).format(date);
     }
+
     private static void displayUrlImage(ImageView imageView, String url) {
         UrlDownloadAsyncTask.display(url, imageView, false);
     }
+
     private static void displayUrlImage(ImageView imageView, String url, boolean circle) {
         UrlDownloadAsyncTask.display(url, imageView, true);
     }
@@ -1248,7 +1270,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
                 @Override
                 public Object doInBackground(File file) {
-                    if(file == null) {
+                    if (file == null) {
                         return null;
                     }
 
@@ -1275,7 +1297,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                         out.close();
 
                         return downloadFile;
-                    } catch(IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
 
@@ -1284,14 +1306,14 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
                 @Override
                 public void onPostExecute(Object object, UrlDownloadAsyncTask task) {
-                    if(object != null && object instanceof File) {
-                        Toast.makeText(context, "Finish downloading: " + ((File)object).getAbsolutePath(), Toast.LENGTH_LONG).show();
+                    if (object != null && object instanceof File) {
+                        Toast.makeText(context, "Finish downloading: " + ((File) object).getAbsolutePath(), Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(context, "Error downloading", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
                 task.execute();
@@ -1301,11 +1323,12 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         public static void display(String url, final ImageView imageView, final boolean circle) {
             UrlDownloadAsyncTask task = null;
 
-            if(imageView.getTag() != null && imageView.getTag() instanceof UrlDownloadAsyncTask) {
+            if (imageView.getTag() != null && imageView.getTag() instanceof UrlDownloadAsyncTask) {
                 try {
                     task = (UrlDownloadAsyncTask) imageView.getTag();
                     task.cancel(true);
-                } catch(Exception e) {}
+                } catch (Exception e) {
+                }
 
                 imageView.setTag(null);
             }
@@ -1317,7 +1340,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
                 @Override
                 public Object doInBackground(File file) {
-                    if(file == null) {
+                    if (file == null) {
                         return null;
                     }
 
@@ -1335,16 +1358,16 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
                         Boolean scaleByHeight = Math.abs(options.outHeight - targetHeight) >= Math.abs(options.outWidth - targetWidth);
 
-                        if(options.outHeight * options.outWidth >= targetHeight * targetWidth) {
+                        if (options.outHeight * options.outWidth >= targetHeight * targetWidth) {
                             double sampleSize = scaleByHeight
                                     ? options.outHeight / targetHeight
                                     : options.outWidth / targetWidth;
-                            options.inSampleSize = (int)Math.pow(2d, Math.floor(Math.log(sampleSize)/Math.log(2d)));
+                            options.inSampleSize = (int) Math.pow(2d, Math.floor(Math.log(sampleSize) / Math.log(2d)));
                         }
 
                         try {
                             bin.reset();
-                        } catch(IOException e) {
+                        } catch (IOException e) {
                             bin = new BufferedInputStream(new FileInputStream(file));
                         }
 
@@ -1360,8 +1383,8 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
                 @Override
                 public void onPostExecute(Object object, UrlDownloadAsyncTask task) {
-                    if(object != null && object instanceof Bitmap && imageView.getTag() == task) {
-                        if(circle) {
+                    if (object != null && object instanceof Bitmap && imageView.getTag() == task) {
+                        if (circle) {
                             imageView.setImageDrawable(new RoundedDrawable((Bitmap) object));
                         } else {
                             imageView.setImageBitmap((Bitmap) object);
@@ -1372,7 +1395,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                 }
             });
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
                 task.execute();
@@ -1388,13 +1411,15 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
         public interface UrlDownloadAsyncTaskHandler {
             public void onPreExecute();
+
             public Object doInBackground(File file);
+
             public void onPostExecute(Object object, UrlDownloadAsyncTask task);
         }
 
         @Override
         protected void onPreExecute() {
-            if(handler != null) {
+            if (handler != null) {
                 handler.onPreExecute();
             }
         }
@@ -1402,7 +1427,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         protected Object doInBackground(Void... args) {
             File outFile = null;
             try {
-                if(cache.get(url) != null && new File(cache.get(url)).exists()) { // Cache Hit
+                if (cache.get(url) != null && new File(cache.get(url)).exists()) { // Cache Hit
                     outFile = new File(cache.get(url));
                 } else { // Cache Miss, Downloading a file from the url.
                     outFile = File.createTempFile("sendbird-download", ".tmp");
@@ -1421,11 +1446,10 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                 }
 
 
-
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
 
-                if(outFile != null) {
+                if (outFile != null) {
                     outFile.delete();
                 }
 
@@ -1433,7 +1457,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             }
 
 
-            if(handler != null) {
+            if (handler != null) {
                 return handler.doInBackground(outFile);
             }
 
@@ -1441,7 +1465,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         }
 
         protected void onPostExecute(Object result) {
-            if(handler != null) {
+            if (handler != null) {
                 handler.onPostExecute(result, this);
             }
         }
@@ -1454,8 +1478,8 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
             public LRUCache(final int maxSize) {
                 this.maxSize = maxSize;
-                this.queue	= new ConcurrentLinkedQueue<String>();
-                this.map	= new ConcurrentHashMap<String, String>();
+                this.queue = new ConcurrentLinkedQueue<String>();
+                this.map = new ConcurrentHashMap<String, String>();
             }
 
             public String get(final String key) {
@@ -1468,7 +1492,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             }
 
             public synchronized void put(final String key, final String value) {
-                if(key == null || value == null) {
+                if (key == null || value == null) {
                     throw new NullPointerException();
                 }
 
@@ -1497,7 +1521,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
 
     public static class Helper {
         public static String generateDeviceUUID(Context context) {
-            String serial = android.os.Build.SERIAL;
+            String serial = Build.SERIAL;
             String androidID = Settings.Secure.ANDROID_ID;
             String deviceUUID = serial + androidID;
 
@@ -1556,7 +1580,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                     if ("primary".equalsIgnoreCase(type)) {
                         Hashtable<String, Object> value = new Hashtable<String, Object>();
                         value.put("path", Environment.getExternalStorageDirectory() + "/" + split[1]);
-                        value.put("size", (int)new File((String)value.get("path")).length());
+                        value.put("size", (int) new File((String) value.get("path")).length());
                         value.put("mime", "application/octet-stream");
 
                         return value;
@@ -1587,7 +1611,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                     }
 
                     final String selection = "_id=?";
-                    final String[] selectionArgs = new String[] {
+                    final String[] selectionArgs = new String[]{
                             split[1]
                     };
 
@@ -1605,7 +1629,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                         File file = File.createTempFile("sendbird", ".jpg");
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, new BufferedOutputStream(new FileOutputStream(file)));
                         value.put("path", file.getAbsolutePath());
-                        value.put("size", (int)file.length());
+                        value.put("size", (int) file.length());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -1618,7 +1642,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             else if ("file".equalsIgnoreCase(uri.getScheme())) {
                 Hashtable<String, Object> value = new Hashtable<String, Object>();
                 value.put("path", uri.getPath());
-                value.put("size", (int)new File((String)value.get("path")).length());
+                value.put("size", (int) new File((String) value.get("path")).length());
                 value.put("mime", "application/octet-stream");
 
                 return value;
@@ -1628,7 +1652,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         }
 
         private static Hashtable<String, Object> getDataColumn(Context context, Uri uri, String selection,
-                                           String[] selectionArgs) {
+                                                               String[] selectionArgs) {
 
             Cursor cursor = null;
             final String[] projection = {
@@ -1651,8 +1675,8 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                     int size = cursor.getInt(column_index);
 
                     Hashtable<String, Object> value = new Hashtable<String, Object>();
-                    if(path == null) path = "";
-                    if(mime == null) mime = "application/octet-stream";
+                    if (path == null) path = "";
+                    if (mime == null) mime = "application/octet-stream";
 
                     value.put("path", path);
                     value.put("mime", mime);
@@ -1670,12 +1694,15 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         private static boolean isExternalStorageDocument(Uri uri) {
             return "com.android.externalstorage.documents".equals(uri.getAuthority());
         }
+
         private static boolean isDownloadsDocument(Uri uri) {
             return "com.android.providers.downloads.documents".equals(uri.getAuthority());
         }
+
         private static boolean isMediaDocument(Uri uri) {
             return "com.android.providers.media.documents".equals(uri.getAuthority());
         }
+
         public static boolean isNewGooglePhotosUri(Uri uri) {
             return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
         }
