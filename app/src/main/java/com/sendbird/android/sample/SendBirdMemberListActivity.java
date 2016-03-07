@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -176,10 +177,12 @@ public class SendBirdMemberListActivity extends FragmentActivity {
                 String appKey = extras.getString("appKey");
                 String uuid = extras.getString("uuid");
                 String nickname = extras.getString("nickname");
+                String gcmRegToken = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("SendBirdGCMToken", "");
+
                 mChannelUrl = extras.getString("channelUrl");
 
                 SendBird.init(getActivity(), appKey);
-                SendBird.login(SendBird.LoginOption.build(uuid).setUserName(nickname));
+                SendBird.login(SendBird.LoginOption.build(uuid).setUserName(nickname).setGCMRegToken(gcmRegToken));
             }
         }
 

@@ -27,6 +27,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -292,9 +293,10 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         String appKey = extras.getString("appKey");
         String uuid = extras.getString("uuid");
         String nickname = extras.getString("nickname");
+        String gcmRegToken = PreferenceManager.getDefaultSharedPreferences(SendBirdMessagingActivity.this).getString("SendBirdGCMToken", "");
 
         SendBird.init(this, appKey);
-        SendBird.login(SendBird.LoginOption.build(uuid).setUserName(nickname));
+        SendBird.login(SendBird.LoginOption.build(uuid).setUserName(nickname).setGCMRegToken(gcmRegToken));
         SendBird.registerNotificationHandler(new SendBirdNotificationHandler() {
             @Override
             public void onMessagingChannelUpdated(MessagingChannel messagingChannel) {

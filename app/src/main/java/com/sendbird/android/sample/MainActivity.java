@@ -8,6 +8,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
+import com.sendbird.android.sample.gcm.RegistrationIntentService;
+
 /**
  * SendBird Prebuilt UI
  */
@@ -28,6 +30,13 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /**
+         * Start GCM Service.
+         */
+        Intent intent = new Intent(this, RegistrationIntentService.class);
+        startService(intent);
+
 
         ((EditText)findViewById(R.id.etxt_nickname)).setText(userName);
 
