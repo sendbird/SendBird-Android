@@ -22,6 +22,11 @@ public class MainActivity extends FragmentActivity {
 
     public static String VERSION = "2.0.8.0";
 
+    /**
+        To test push notifications with your own appId, you should replace google-services.json with yours.
+        Also you need to set Server API Token and Sender ID in SendBird dashboard.
+        Please carefully read "Push notifications" section in SendBird Android documentation
+    */ 
     final String appId = "A7A2672C-AD11-11E4-8DAA-0A18B21C2D82"; /* Sample SendBird Application */
     String userId = SendBirdChatActivity.Helper.generateDeviceUUID(MainActivity.this); /* Generate Device UUID */
     String userName = "User-" + userId.substring(0, 5); /* Generate User Nickname */
