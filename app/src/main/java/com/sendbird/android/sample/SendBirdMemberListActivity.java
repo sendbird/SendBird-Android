@@ -203,7 +203,7 @@ public class SendBirdMemberListActivity extends FragmentActivity {
         private void loadTitle() {
             SendBird.queryMemberCount(mChannelUrl).get(new MemberCountQuery.MemberCountQueryResult() {
                 @Override
-                public void onResult(int total, int online) {
+                public void onResult(int total, int online, int accumulative) {
                     if(mHandler != null) {
                         mHandler.onTitleChanged("Total " + total + " / " + "Online " + online);
                     }

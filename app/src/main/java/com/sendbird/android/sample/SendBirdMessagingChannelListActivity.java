@@ -135,6 +135,11 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
                 }
 
                 @Override
+                public void onMutedMessageReceived(Message message) {
+
+                }
+
+                @Override
                 public void onSystemMessageReceived(SystemMessage systemMessage) {
 
                 }
@@ -146,6 +151,11 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
 
                 @Override
                 public void onFileReceived(FileLink fileLink) {
+
+                }
+
+                @Override
+                public void onMutedFileReceived(FileLink fileLink) {
 
                 }
 

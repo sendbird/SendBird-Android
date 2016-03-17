@@ -334,6 +334,11 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             }
 
             @Override
+            public void onMutedMessageReceived(Message message) {
+
+            }
+
+            @Override
             public void onSystemMessageReceived(SystemMessage systemMessage) {
                 switch (systemMessage.getCategory()) {
                     case SystemMessage.CATEGORY_TOO_MANY_MESSAGES:
@@ -358,6 +363,11 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             @Override
             public void onFileReceived(FileLink fileLink) {
                 mSendBirdMessagingAdapter.addMessageModel(fileLink);
+            }
+
+            @Override
+            public void onMutedFileReceived(FileLink fileLink) {
+
             }
 
             @Override
