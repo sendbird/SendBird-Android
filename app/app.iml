@@ -129,7 +129,6 @@
     <orderEntry type="library" exported="" name="play-services-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-analytics-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-drive-8.4.0" level="project" />
-    <orderEntry type="library" exported="" name="sendbird-android-2.0.7" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-ads-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-appinvite-8.4.0" level="project" />
@@ -138,6 +137,7 @@
     <orderEntry type="library" exported="" name="play-services-games-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="mediarouter-v7-23.0.0" level="project" />
+    <orderEntry type="library" exported="" name="sendbird-android-2.0.8-debug" level="project" />
     <orderEntry type="library" exported="" name="play-services-nearby-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-fitness-8.4.0" level="project" />

@@ -51,6 +51,7 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdEventHandler;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdFileUploadEventHandler;
+import com.sendbird.android.SendBirdSystemEventHandler;
 import com.sendbird.android.handler.DeleteMessageHandler;
 import com.sendbird.android.model.BroadcastMessage;
 import com.sendbird.android.model.Channel;
@@ -60,6 +61,7 @@ import com.sendbird.android.model.Message;
 import com.sendbird.android.model.MessageModel;
 import com.sendbird.android.model.MessagingChannel;
 import com.sendbird.android.model.ReadStatus;
+import com.sendbird.android.model.SystemEvent;
 import com.sendbird.android.model.SystemMessage;
 import com.sendbird.android.model.TypeStatus;
 
@@ -260,6 +262,11 @@ public class SendBirdChatActivity extends FragmentActivity {
             }
 
             @Override
+            public void onMutedMessageReceived(Message message) {
+
+            }
+
+            @Override
             public void onSystemMessageReceived(SystemMessage systemMessage) {
                 mSendBirdChatAdapter.addMessageModel(systemMessage);
             }
@@ -272,6 +279,11 @@ public class SendBirdChatActivity extends FragmentActivity {
             @Override
             public void onFileReceived(FileLink fileLink) {
                 mSendBirdChatAdapter.addMessageModel(fileLink);
+            }
+
+            @Override
+            public void onMutedFileReceived(FileLink fileLink) {
+
             }
 
             @Override
