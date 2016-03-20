@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,17 +28,10 @@ import android.widget.Toast;
 
 import com.sendbird.android.MessagingChannelListQuery;
 import com.sendbird.android.SendBird;
-import com.sendbird.android.SendBirdEventHandler;
 import com.sendbird.android.SendBirdNotificationHandler;
-import com.sendbird.android.model.BroadcastMessage;
-import com.sendbird.android.model.Channel;
-import com.sendbird.android.model.FileLink;
 import com.sendbird.android.model.Mention;
 import com.sendbird.android.model.Message;
 import com.sendbird.android.model.MessagingChannel;
-import com.sendbird.android.model.ReadStatus;
-import com.sendbird.android.model.SystemMessage;
-import com.sendbird.android.model.TypeStatus;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -62,12 +54,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SendBirdMessagingChannelListActivity extends FragmentActivity {
     private SendBirdMessagingChannelListFragment mSendBirdMessagingChannelListFragment;
-    private SendBirdMessagingChannelAdapter mSendBirdMessagingChannelAdapter;
 
     private ImageButton mBtnClose;
     private ImageButton mBtnSettings;
     private TextView mTxtChannelUrl;
     private View mTopBarContainer;
+    private String mAppId;
+    private String mUserId;
+    private String mNickname;
+    private String mGcmRegToken;
 
     public static Bundle makeSendBirdArgs(String appKey, String uuid, String nickname) {
         Bundle args = new Bundle();
@@ -84,135 +79,21 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
         setContentView(R.layout.activity_sendbird_messaging_channel_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        mAppId = getIntent().getExtras().getString("appKey");
+        mUserId = getIntent().getExtras().getString("uuid");
+        mNickname = getIntent().getExtras().getString("nickname");
+        mGcmRegToken = PreferenceManager.getDefaultSharedPreferences(SendBirdMessagingChannelListActivity.this).getString("SendBirdGCMToken", "");
+
         initFragment();
         initUIComponents();
+        initSendBird();
 
-        initSendBird(getIntent().getExtras());
         Toast.makeText(this, "Long press the channel to leave.", Toast.LENGTH_LONG).show();
     }
 
-    private void initSendBird(Bundle extras) {
-        if(extras != null) {
-            String appKey = extras.getString("appKey");
-            String uuid = extras.getString("uuid");
-            String nickname = extras.getString("nickname");
-            String gcmRegToken = PreferenceManager.getDefaultSharedPreferences(SendBirdMessagingChannelListActivity.this).getString("SendBirdGCMToken", "");
-
-            SendBird.init(this, appKey);
-            SendBird.login(SendBird.LoginOption.build(uuid).setUserName(nickname).setGCMRegToken(gcmRegToken));
-
-            SendBird.registerNotificationHandler(new SendBirdNotificationHandler() {
-                @Override
-                public void onMessagingChannelUpdated(MessagingChannel messagingChannel) {
-                    mSendBirdMessagingChannelAdapter.replace(messagingChannel);
-                }
-
-                @Override
-                public void onMentionUpdated(Mention mention) {
-
-                }
-            });
-
-            SendBird.setEventHandler(new SendBirdEventHandler() {
-                @Override
-                public void onConnect(Channel channel) {
-
-                }
-
-                @Override
-                public void onError(int code) {
-                    Log.e("SendBird", "Error code: " + code);
-                }
-
-                @Override
-                public void onChannelLeft(Channel channel) {
-
-                }
-
-                @Override
-                public void onMessageReceived(Message message) {
-
-                }
-
-                @Override
-                public void onMutedMessageReceived(Message message) {
-
-                }
-
-                @Override
-                public void onSystemMessageReceived(SystemMessage systemMessage) {
-
-                }
-
-                @Override
-                public void onBroadcastMessageReceived(BroadcastMessage broadcastMessage) {
-
-                }
-
-                @Override
-                public void onFileReceived(FileLink fileLink) {
-
-                }
-
-                @Override
-                public void onMutedFileReceived(FileLink fileLink) {
-
-                }
-
-                @Override
-                public void onReadReceived(ReadStatus readStatus) {
-
-                }
-
-                @Override
-                public void onTypeStartReceived(TypeStatus typeStatus) {
-
-                }
-
-                @Override
-                public void onTypeEndReceived(TypeStatus typeStatus) {
-
-                }
-
-                @Override
-                public void onAllDataReceived(SendBird.SendBirdDataType sendbirdDataType, int i) {
-
-                }
-
-                @Override
-                public void onMessageDelivery(boolean b, String s, String s2, String s3) {
-
-                }
-
-                @Override
-                public void onMessagingStarted(MessagingChannel messagingChannel) {
-
-                }
-
-                @Override
-                public void onMessagingUpdated(MessagingChannel messagingChannel) {
-
-                }
-
-                @Override
-                public void onMessagingEnded(MessagingChannel messagingChannel) {
-                }
-
-                @Override
-                public void onAllMessagingEnded() {
-                }
-
-                @Override
-                public void onMessagingHidden(MessagingChannel messagingChannel) {
-
-                }
-
-                @Override
-                public void onAllMessagingHidden() {
-                }
-            });
-
-        }
+    private void initSendBird() {
+        SendBird.init(this, mAppId);
+        SendBird.login(SendBird.LoginOption.build(mUserId).setUserName(mNickname).setGCMRegToken(mGcmRegToken));
     }
 
     @Override
@@ -236,14 +117,14 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SendBird.join("");
-        SendBird.connect();
+//        SendBird.join("");
+//        SendBird.connect();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        SendBird.disconnect();
+//        SendBird.disconnect();
     }
 
     @Override
@@ -253,17 +134,14 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
     }
 
     private void initFragment() {
-        mSendBirdMessagingChannelAdapter = new SendBirdMessagingChannelAdapter(this);
-
         mSendBirdMessagingChannelListFragment = new SendBirdMessagingChannelListFragment();
-        mSendBirdMessagingChannelListFragment.setSendBirdMessagingChannelAdapter(mSendBirdMessagingChannelAdapter);
         mSendBirdMessagingChannelListFragment.setSendBirdMessagingChannelListHandler(new SendBirdMessagingChannelListFragment.SendBirdMessagingChannelListHandler() {
             @Override
             public void onMessagingChannelSelected(MessagingChannel messagingChannel) {
-                Intent data = new Intent();
-                data.putExtra("channelUrl", messagingChannel.getUrl());
-                setResult(RESULT_OK, data);
-                finish();
+                Intent intent = new Intent(SendBirdMessagingChannelListActivity.this, SendBirdMessagingActivity.class);
+                Bundle args = SendBirdMessagingActivity.makeMessagingJoinArgs(mAppId, mUserId, mNickname, messagingChannel.getUrl());
+                intent.putExtras(args);
+                startActivity(intent);
             }
 
         });
@@ -308,18 +186,10 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
         private SendBirdMessagingChannelListHandler mHandler;
         private ListView mListView;
         private SendBirdMessagingChannelAdapter mAdapter;
-        private Channel mCurrentChannel;
         private MessagingChannelListQuery mMessagingChannelListQuery;
 
         public static interface SendBirdMessagingChannelListHandler {
             public void onMessagingChannelSelected(MessagingChannel channel);
-        }
-
-        public void setSendBirdMessagingChannelAdapter(SendBirdMessagingChannelAdapter adapter) {
-            mAdapter = adapter;
-            if(mListView != null) {
-                mListView.setAdapter(adapter);
-            }
         }
 
         public void setSendBirdMessagingChannelListHandler(SendBirdMessagingChannelListHandler handler) {
@@ -336,8 +206,8 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
             View rootView = inflater.inflate(R.layout.sendbird_fragment_messaging_channel_list, container, false);
             initUIComponents(rootView);
             return rootView;
-
         }
+
         private void initUIComponents(View rootView) {
             mListView = (ListView)rootView.findViewById(R.id.list);
             mListView.setAdapter(mAdapter);
@@ -359,7 +229,7 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
                 @Override
                 public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                     if (firstVisibleItem + visibleItemCount >= (int) (totalItemCount * 0.8f)) {
-                        loadMoreChannels();
+                        loadNextChannels();
                     }
                 }
             });
@@ -394,16 +264,15 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
                     return true;
                 }
             });
+
+            mAdapter = new SendBirdMessagingChannelAdapter(getActivity());
             mListView.setAdapter(mAdapter);
         }
 
-        private void loadMoreChannels() {
-            if(mMessagingChannelListQuery == null) {
-                mMessagingChannelListQuery = SendBird.queryMessagingChannelList();
-                mMessagingChannelListQuery.setLimit(30);
-            }
-
-            if(mMessagingChannelListQuery.isLoading()) {
+        private void initChannelQuery() {
+        }
+        private void loadNextChannels() {
+            if(mMessagingChannelListQuery == null || mMessagingChannelListQuery.isLoading()) {
                 return;
             }
 
@@ -421,26 +290,62 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
             }
         }
 
-
         @Override
         public void onResume() {
             super.onResume();
-            try {
-                mCurrentChannel = SendBird.getCurrentChannel();
-                mAdapter.setCurrentChannelId(mCurrentChannel.getId());
-            } catch (IOException e) {
+
+            SendBird.registerNotificationHandler(new SendBirdNotificationHandler() {
+                @Override
+                public void onMessagingChannelUpdated(MessagingChannel messagingChannel) {
+                    mAdapter.replace(messagingChannel);
+                }
+
+                @Override
+                public void onMentionUpdated(Mention mention) {
+
+                }
+            });
+
+
+            if(mMessagingChannelListQuery == null) {
+                mMessagingChannelListQuery = SendBird.queryMessagingChannelList();
+                mMessagingChannelListQuery.setLimit(30);
             }
 
-            mAdapter.notifyDataSetChanged();
+            mMessagingChannelListQuery.next(new MessagingChannelListQuery.MessagingChannelListQueryResult() {
+                @Override
+                public void onResult(List<MessagingChannel> list) {
+                    mAdapter.clear();
+                    mAdapter.addAll(list);
+                    mAdapter.notifyDataSetChanged();
+
+                    SendBird.join("");
+                    SendBird.connect();
+                }
+
+                @Override
+                public void onError(int i) {
+
+                }
+            });
         }
 
+        @Override
+        public void onPause() {
+            super.onPause();
+            if(mMessagingChannelListQuery != null) {
+                mMessagingChannelListQuery.cancel();
+                mMessagingChannelListQuery = null;
+            }
+
+            SendBird.disconnect();
+        }
     }
 
     public static class SendBirdMessagingChannelAdapter extends BaseAdapter {
         private final Context mContext;
         private final LayoutInflater mInflater;
         private final ArrayList<MessagingChannel> mItemList;
-        private long mCurrentChannelId;
 
         public static List<MessagingChannel> sortMessagingChannels(List<MessagingChannel> messagingChannels) {
             Collections.sort(messagingChannels, new Comparator<MessagingChannel>() {
@@ -460,10 +365,6 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
             mContext = context;
             mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mItemList = new ArrayList<MessagingChannel>();
-        }
-
-        public void setCurrentChannelId(long channelId) {
-            mCurrentChannelId = channelId;
         }
 
         @Override
@@ -519,8 +420,6 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
                 viewHolder = new ViewHolder();
 
                 convertView = mInflater.inflate(R.layout.sendbird_view_messaging_channel, parent, false);
-                viewHolder.setView("selected_container", convertView.findViewById(R.id.selected_container));
-                viewHolder.getView("selected_container").setVisibility(View.GONE);
                 viewHolder.setView("img_thumbnail", convertView.findViewById(R.id.img_thumbnail));
                 viewHolder.setView("txt_topic", convertView.findViewById(R.id.txt_topic));
                 viewHolder.setView("txt_member_count", convertView.findViewById(R.id.txt_member_count));
@@ -557,12 +456,6 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
             } else {
                 viewHolder.getView("txt_date", TextView.class).setText("");
                 viewHolder.getView("txt_desc", TextView.class).setText("");
-            }
-
-            if(mCurrentChannelId == item.getId()) {
-                viewHolder.getView("selected_container").setVisibility(View.VISIBLE);
-            } else {
-                viewHolder.getView("selected_container").setVisibility(View.GONE);
             }
 
             return convertView;
