@@ -27,7 +27,7 @@
                 android:layout_height="42dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/sendbird_ic_launcher"
-                android:visibility="gone"
+                android:visibility="visible"
                 />
         </LinearLayout>
 
@@ -156,7 +156,7 @@
                     android:layout_height="42dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/sendbird_ic_launcher"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     />
             </LinearLayout>
         </LinearLayout>
