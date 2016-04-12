@@ -63,6 +63,7 @@ import com.sendbird.android.SendBirdEventHandler;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdFileUploadEventHandler;
 import com.sendbird.android.SendBirdNotificationHandler;
+import com.sendbird.android.SendBirdSystemEventHandler;
 import com.sendbird.android.handler.DeleteMessageHandler;
 import com.sendbird.android.model.BroadcastMessage;
 import com.sendbird.android.model.Channel;
@@ -73,6 +74,7 @@ import com.sendbird.android.model.Message;
 import com.sendbird.android.model.MessageModel;
 import com.sendbird.android.model.MessagingChannel;
 import com.sendbird.android.model.ReadStatus;
+import com.sendbird.android.model.SystemEvent;
 import com.sendbird.android.model.SystemMessage;
 import com.sendbird.android.model.TypeStatus;
 
@@ -113,6 +115,8 @@ public class SendBirdMessagingActivity extends FragmentActivity {
     private MessagingChannel mMessagingChannel;
     private Bundle mSendBirdInfo;
 
+
+    private boolean isUploading;
     private boolean isForeground;
 
     public static Bundle makeMessagingStartArgs(String appKey, String uuid, String nickname, String targetUserId) {
@@ -199,12 +203,16 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         mSendBirdMessagingAdapter.clear();
         mSendBirdMessagingAdapter.notifyDataSetChanged();
 
-        if (mSendBirdInfo.getBoolean("start")) {
-            String[] targetUserIds = mSendBirdInfo.getStringArray("targetUserIds");
-            SendBird.startMessaging(Arrays.asList(targetUserIds));
-        } else if (mSendBirdInfo.getBoolean("join")) {
-            String channelUrl = mSendBirdInfo.getString("channelUrl");
-            SendBird.joinMessaging(channelUrl);
+        if(isUploading) {
+            isUploading = false;
+        } else {
+            if (mSendBirdInfo.getBoolean("start")) {
+                String[] targetUserIds = mSendBirdInfo.getStringArray("targetUserIds");
+                SendBird.startMessaging(Arrays.asList(targetUserIds));
+            } else if (mSendBirdInfo.getBoolean("join")) {
+                String channelUrl = mSendBirdInfo.getString("channelUrl");
+                SendBird.joinMessaging(channelUrl);
+            }
         }
 
     }
@@ -219,7 +227,9 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             mTimer.cancel();
         }
 
-        SendBird.disconnect();
+        if(!isUploading) {
+            SendBird.disconnect();
+        }
     }
 
     @Override
@@ -563,6 +573,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
             mBtnUpload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    ((SendBirdMessagingActivity)getActivity()).isUploading = true;
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
