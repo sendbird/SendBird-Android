@@ -200,12 +200,13 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         };
         mTimer.start();
 
-        mSendBirdMessagingAdapter.clear();
-        mSendBirdMessagingAdapter.notifyDataSetChanged();
 
         if(isUploading) {
             isUploading = false;
         } else {
+            mSendBirdMessagingAdapter.clear();
+            mSendBirdMessagingAdapter.notifyDataSetChanged();
+
             if (mSendBirdInfo.getBoolean("start")) {
                 String[] targetUserIds = mSendBirdInfo.getStringArray("targetUserIds");
                 SendBird.startMessaging(Arrays.asList(targetUserIds));
