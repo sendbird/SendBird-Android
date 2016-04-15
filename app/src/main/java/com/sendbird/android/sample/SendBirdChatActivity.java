@@ -1,5 +1,7 @@
 package com.sendbird.android.sample;
 
+import android.*;
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,6 +9,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -21,8 +24,10 @@ import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -85,6 +90,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SendBirdChatActivity extends FragmentActivity {
     public static final int REQUEST_CHANNEL_LIST = 100;
+    private static final int MY_PERMISSION_REQUEST_STORAGE = 100;
 
     private SendBirdChatFragment mSendBirdChatFragment;
     private SendBirdChatAdapter mSendBirdChatAdapter;
@@ -115,6 +121,7 @@ public class SendBirdChatActivity extends FragmentActivity {
         overridePendingTransition(R.anim.sendbird_slide_in_from_bottom, R.anim.sendbird_slide_out_to_top);
         setContentView(R.layout.activity_sendbird_chat);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
 
         initFragment();
 
@@ -230,6 +237,22 @@ public class SendBirdChatActivity extends FragmentActivity {
             }
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_REQUEST_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                                grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+
 
     private void initSendBird(Bundle extras) {
         String appKey = extras.getString("appKey");
@@ -453,12 +476,15 @@ public class SendBirdChatActivity extends FragmentActivity {
             });
 
             mBtnUpload.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_PICK_IMAGE);
+                    if(Helper.requestReadWriteStoragePermissions(getActivity())) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_PICK_IMAGE);
+                    }
                 }
             });
 
@@ -1238,7 +1264,39 @@ public class SendBirdChatActivity extends FragmentActivity {
                 sb.append(String.format("%02X", b));
             }
 
+
             return sb.toString();
+        }
+
+        public static boolean requestReadWriteStoragePermissions(Activity activity) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        Toast.makeText(activity, "Please allow a requested permission to upload.", Toast.LENGTH_SHORT).show();
+                        ActivityCompat.requestPermissions(activity,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                MY_PERMISSION_REQUEST_STORAGE);
+                    } else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        Toast.makeText(activity, "Please allow a requested permission to upload.", Toast.LENGTH_SHORT).show();
+                        ActivityCompat.requestPermissions(activity,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                MY_PERMISSION_REQUEST_STORAGE);
+                    } else {
+                        ActivityCompat.requestPermissions(activity,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                MY_PERMISSION_REQUEST_STORAGE);
+                    }
+
+                    return false;
+                }
+
+            }
+
+
+            return true;
         }
 
         public static void hideKeyboard(Activity activity) {
