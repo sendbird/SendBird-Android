@@ -132,6 +132,7 @@
     <orderEntry type="library" exported="" name="play-services-location-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-plus-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-auth-8.4.0" level="project" />
+    <orderEntry type="library" exported="" name="sendbird-android-2.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-wearable-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-measurement-8.4.0" level="project" />
@@ -146,7 +147,6 @@
     <orderEntry type="library" exported="" name="play-services-analytics-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-drive-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.2.0" level="project" />
-    <orderEntry type="library" exported="" name="sendbird-android-2.0.9" level="project" />
     <orderEntry type="library" exported="" name="play-services-ads-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-appinvite-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-safetynet-8.4.0" level="project" />

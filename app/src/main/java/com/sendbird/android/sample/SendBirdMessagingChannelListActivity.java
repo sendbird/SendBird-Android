@@ -29,8 +29,11 @@ import android.widget.Toast;
 import com.sendbird.android.MessagingChannelListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdNotificationHandler;
+import com.sendbird.android.model.BroadcastMessage;
+import com.sendbird.android.model.FileLink;
 import com.sendbird.android.model.Mention;
 import com.sendbird.android.model.Message;
+import com.sendbird.android.model.MessageModel;
 import com.sendbird.android.model.MessagingChannel;
 
 import java.io.BufferedInputStream;
@@ -450,9 +453,20 @@ public class SendBirdMessagingChannelListActivity extends FragmentActivity {
             }
 
             if(item.hasLastMessage()) {
-                Message message = item.getLastMessage();
-                viewHolder.getView("txt_date", TextView.class).setText(getDisplayTimeOrDate(mContext, message.getTimestamp()));
-                viewHolder.getView("txt_desc", TextView.class).setText("" + message.getMessage());
+                MessageModel message = item.getLastMessage();
+                if(message instanceof Message) {
+                    viewHolder.getView("txt_date", TextView.class).setText(getDisplayTimeOrDate(mContext, message.getTimestamp()));
+                    viewHolder.getView("txt_desc", TextView.class).setText("" + ((Message)message).getMessage());
+                } else if(message instanceof BroadcastMessage) {
+                    viewHolder.getView("txt_date", TextView.class).setText(getDisplayTimeOrDate(mContext, message.getTimestamp()));
+                    viewHolder.getView("txt_desc", TextView.class).setText("" + ((BroadcastMessage) message).getMessage());
+                } else if(message instanceof FileLink) {
+                    viewHolder.getView("txt_date", TextView.class).setText(getDisplayTimeOrDate(mContext, message.getTimestamp()));
+                    viewHolder.getView("txt_desc", TextView.class).setText("(FILE)");
+                } else {
+                    viewHolder.getView("txt_date", TextView.class).setText("");
+                    viewHolder.getView("txt_desc", TextView.class).setText("");
+                }
             } else {
                 viewHolder.getView("txt_date", TextView.class).setText("");
                 viewHolder.getView("txt_desc", TextView.class).setText("");

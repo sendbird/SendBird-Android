@@ -1,3 +1,6 @@
+- 2.1.0 (Apr, 19, 2016)
+MessagingChannel.getLastMessage() now returns MessageModel.
+
 - 2.0.9 (Mar, 17, 2016)
 Added user mute system event.
 
