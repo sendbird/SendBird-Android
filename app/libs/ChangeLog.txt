@@ -1,3 +1,6 @@
+- 2.1.1 (Apr, 19, 2016)
+Minor stability fix.
+
 - 2.1.0 (Apr, 19, 2016)
 MessagingChannel.getLastMessage() now returns MessageModel.
 
