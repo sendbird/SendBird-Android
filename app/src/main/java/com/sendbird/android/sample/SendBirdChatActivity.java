@@ -56,6 +56,7 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdEventHandler;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdFileUploadEventHandler;
+import com.sendbird.android.SendBirdMultiChannelEventHandler;
 import com.sendbird.android.SendBirdSystemEventHandler;
 import com.sendbird.android.handler.DeleteMessageHandler;
 import com.sendbird.android.model.BroadcastMessage;
@@ -261,9 +262,60 @@ public class SendBirdChatActivity extends FragmentActivity {
         String gcmRegToken = PreferenceManager.getDefaultSharedPreferences(SendBirdChatActivity.this).getString("SendBirdGCMToken", "");
 
         mChannelUrl = extras.getString("channelUrl");
-
+        SendBird.send(Message, Data, tempId, {}, channel);
         SendBird.init(this, appKey);
         SendBird.login(SendBird.LoginOption.build(uuid).setUserName(nickname).setGCMRegToken(gcmRegToken));
+        SendBird.setMultiChannelEventHandler(new SendBirdMultiChannelEventHandler() {
+            @Override
+            public void onMultiChannelConnect(ArrayList<Channel> arrayList) {
+
+            }
+
+            @Override
+            public void onMultiChannelError(int i) {
+
+            }
+
+            @Override
+            public void onMultiChannelLeft(ArrayList<Channel> arrayList) {
+
+            }
+
+            @Override
+            public void onMultiChannelMessageReceived(Channel channel, Message message) {
+
+            }
+
+            @Override
+            public void onMultiChannelMutedMessageReceived(Channel channel, Message message) {
+
+            }
+
+            @Override
+            public void onMultiChannelSystemMessageReceived(Channel channel, SystemMessage systemMessage) {
+
+            }
+
+            @Override
+            public void onMultiChannelBroadcastMessageReceived(Channel channel, BroadcastMessage broadcastMessage) {
+
+            }
+
+            @Override
+            public void onMultiChannelFileReceived(Channel channel, FileLink fileLink) {
+
+            }
+
+            @Override
+            public void onMultiChannelMutedFileReceived(Channel channel, FileLink fileLink) {
+
+            }
+
+            @Override
+            public void onMultiChannelMessageDelivery(Channel channel, boolean b, String s, String s1, String s2) {
+
+            }
+        });
         SendBird.setEventHandler(new SendBirdEventHandler() {
             @Override
             public void onConnect(Channel channel) {

@@ -21,7 +21,7 @@ public class MainActivity extends FragmentActivity {
     private static final int REQUEST_SENDBIRD_MESSAGING_CHANNEL_LIST_ACTIVITY = 201;
     private static final int REQUEST_SENDBIRD_USER_LIST_ACTIVITY = 300;
 
-    public static String VERSION = "2.2.0.0";
+    public static String VERSION = "2.2.1.0";
 
     /**
         To test push notifications with your own appId, you should replace google-services.json with yours.
