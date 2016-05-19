@@ -1,3 +1,7 @@
+- 2.2.3 (May, 19, 2016)
+Added methods for push registration and unregistration.
+Added method for creating group messaging channel.
+
 - 2.2.2 (May, 10, 2016)
 Introduced new error ERR_RECONNECT_FAILED that will be fired when exceeding max limit of reconnection.
 Stability improved.
