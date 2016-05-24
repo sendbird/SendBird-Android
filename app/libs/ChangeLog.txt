@@ -1,3 +1,6 @@
+- 2.2.4 (May, 24, 2016)
+Performance improved.
+
 - 2.2.3 (May, 19, 2016)
 Added methods for push registration and unregistration.
 Added method for creating group messaging channel.
