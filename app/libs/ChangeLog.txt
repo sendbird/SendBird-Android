@@ -1,3 +1,6 @@
+- 2.2.5 (Jun, 1, 2016)
+Stability improved.
+
 - 2.2.4 (May, 24, 2016)
 Performance improved.
 
