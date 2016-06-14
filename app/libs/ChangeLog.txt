@@ -1,3 +1,6 @@
+- 2.2.8 (Jun, 14, 2016)
+Stability improved.
+
 - 2.2.7 (Jun, 9, 2016)
 Introduced new API checkUserExistence() which returns information about the given users or null if they don't exist.
 
