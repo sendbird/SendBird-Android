@@ -40,29 +40,28 @@ Build and run the Quick Start project to start an open chat or a 1:1 messaging.
   3. **Start a Messaging Channel**: You can find members from the lobby channel and start 1:1 or 1:n private messaging.
   4. **See My Messaging Channel List**: You can see and manage a list of your private messaging channels.
 
-![preview](https://raw.githubusercontent.com/smilefam/sendbird-android-doc/master/file/sample_preview_da.png)
+![preview](https://raw.githubusercontent.com/smilefam/SendBird-Docs/master/images/android/sample_preview_da.png)
 
 ----
 ### Join Lobby channel
 - You have joined an open chat channel named Lobby, you can send/receive messages or files.
 
-![sample_1](https://raw.githubusercontent.com/smilefam/sendbird-android-doc/master/file/sample_1_da.png)
+![sample_1](https://raw.githubusercontent.com/smilefam/SendBird-Docs/master/images/android/sample_1_da.png)
 
 ----
 ### See Channel List
 - You can browse all open chat channels created in `dashboard` or through `server API`.
 
-![sample_2](https://raw.githubusercontent.com/smilefam/sendbird-android-doc/master/file
-/sample_2_da.png)
+![sample_2](https://raw.githubusercontent.com/smilefam/sendbird-android-doc/master/file/sample_2_da.png)
 
 ----
 ### Start a Messaging Channel
 - You can see a list of member from Lobby channel and start a messaging channel with them. You should join into the lobby channel first to be listed here.
 
-![sample_3](https://raw.githubusercontent.com/smilefam/sendbird-android-doc/master/file/sample_3_da.png)
+![sample_3](https://raw.githubusercontent.com/smilefam/SendBird-Docs/master/images/android/sample_3_da.png)
 
 ----
 ### See My Messaging Channel List
 - This page shows the list of my 1-on-1 and group messaging channels.
 
-![sample_4](https://raw.githubusercontent.com/smilefam/sendbird-android-doc/master/file/sample_4_da.png)
+![sample_4](https://raw.githubusercontent.com/smilefam/SendBird-Docs/master/images/android/sample_4_da.png)
