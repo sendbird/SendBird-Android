@@ -330,6 +330,7 @@ public class SendBirdMessagingActivity extends FragmentActivity {
         SendBird.setEventHandler(new SendBirdEventHandler() {
             @Override
             public void onConnect(Channel channel) {
+                SendBird.markAsRead(channel.getUrl());
             }
 
             @Override
@@ -428,7 +429,6 @@ public class SendBirdMessagingActivity extends FragmentActivity {
                         mSendBirdMessagingAdapter.notifyDataSetChanged();
                         mSendBirdMessagingFragment.mListView.setSelection(30);
 
-                        SendBird.markAsRead(messagingChannel.getUrl());
                         SendBird.join(messagingChannel.getUrl());
                         SendBird.connect(mSendBirdMessagingAdapter.getMaxMessageTimestamp());
                     }
