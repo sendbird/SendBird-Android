@@ -27,7 +27,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#ffffff"
         >
@@ -52,8 +52,8 @@
             android:layout_toRightOf="@+id/btn_channel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
             android:orientation="horizontal"
+            android:minHeight="32dp"
             android:background="@drawable/sendbird_chat_input_bg"
             android:layout_marginRight="10dp"
             android:layout_marginTop="8dp"
@@ -62,7 +62,7 @@
 
             <LinearLayout
                 android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 >
                 <ProgressBar
@@ -86,11 +86,11 @@
                 android:id="@+id/etxt_message"
                 android:layout_width="0dp"
                 android:layout_weight="5"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxLines="3"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:singleLine="true"
-                android:gravity="center_vertical"
                 android:textColorHint="#bbc3c9"
                 android:hint="What's on your mind?"
                 android:textColor="#37434f"
@@ -98,6 +98,7 @@
                 android:text=""
                 android:background="#00000000"
                 />
+
             <Button
                 android:id="@+id/btn_send"
                 android:layout_width="0dp"
@@ -109,8 +110,6 @@
                 android:text="Send"
                 android:background="@drawable/sendbird_btn_send"
                 />
-
-
         </LinearLayout>
 
     </RelativeLayout>
