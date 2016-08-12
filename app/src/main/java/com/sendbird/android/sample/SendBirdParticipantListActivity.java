@@ -1,9 +1,7 @@
 package com.sendbird.android.sample;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,39 +10,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sendbird.android.SendBird;
+import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
-public class SendBirdUserListActivity extends FragmentActivity {
-    private SendBirdUserListFragment mSendBirdUserListFragment;
+public class SendBirdParticipantListActivity extends FragmentActivity {
+    private SendBirdParticipantListFragment mSendBirdParticipantListFragment;
 
     private ImageButton mBtnClose;
-    private Button mBtnOK;
     private View mTopBarContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.sendbird_slide_in_from_bottom, R.anim.sendbird_slide_out_to_top);
-        setContentView(R.layout.activity_sendbird_user_list);
+        setContentView(R.layout.activity_sendbird_participant_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         initFragment();
@@ -77,20 +72,18 @@ public class SendBirdUserListActivity extends FragmentActivity {
 
 
     private void initFragment() {
-        mSendBirdUserListFragment = new SendBirdUserListFragment();
-        mSendBirdUserListFragment.setArguments(getIntent().getExtras());
+        mSendBirdParticipantListFragment = new SendBirdParticipantListFragment();
+        mSendBirdParticipantListFragment.setArguments(getIntent().getExtras());
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, mSendBirdUserListFragment)
+                .replace(R.id.fragment_container, mSendBirdParticipantListFragment)
                 .commit();
     }
-
 
     private void initUIComponents() {
         mTopBarContainer = findViewById(R.id.top_bar_container);
 
         mBtnClose = (ImageButton)findViewById(R.id.btn_close);
-        mBtnOK = (Button)findViewById(R.id.btn_ok);
 
         mBtnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,47 +92,51 @@ public class SendBirdUserListActivity extends FragmentActivity {
             }
         });
 
-        mBtnOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String [] userIds = mSendBirdUserListFragment.mSelectedUserIds.toArray(new String[0]);
-                if(userIds.length > 0) {
-                    Intent data = new Intent();
-                    data.putExtra("user_ids", userIds);
-                    setResult(RESULT_OK, data);
-                    finish();
-                }
-            }
-        });
-
         resizeMenubar();
     }
 
 
-    public static class SendBirdUserListFragment extends Fragment {
+    public static class SendBirdParticipantListFragment extends Fragment {
         private ListView mListView;
         private UserListQuery mUserListQuery;
         private SendBirdUserAdapter mAdapter;
-        private HashSet<String> mSelectedUserIds;
+        private String mChannelUrl;
 
 
-        public SendBirdUserListFragment() {}
+        public SendBirdParticipantListFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.sendbird_fragment_user_list, container, false);
+            View rootView = inflater.inflate(R.layout.sendbird_fragment_participant_list, container, false);
             initUIComponents(rootView);
 
-            mUserListQuery  = SendBird.createUserListQuery();
+            mChannelUrl = getArguments().getString("channel_url");
+
+            OpenChannel.getChannel(mChannelUrl, new OpenChannel.OpenChannelGetHandler() {
+                @Override
+                public void onResult(OpenChannel openChannel, SendBirdException e) {
+                    if(e != null) {
+                        Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    mUserListQuery = openChannel.createParticipantListQuery();
+                }
+            });
+
 
             return rootView;
 
         }
         private void initUIComponents(View rootView) {
-            mSelectedUserIds = new HashSet<String>();
             mListView = (ListView)rootView.findViewById(R.id.list);
             mAdapter = new SendBirdUserAdapter(getActivity());
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                }
+            });
             mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -162,20 +159,15 @@ public class SendBirdUserListActivity extends FragmentActivity {
                     @Override
                     public void onResult(List<User> list, SendBirdException e) {
                         if(e != null) {
-                            if(e != null) {
-                                Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
+                            Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             return;
                         }
                         mAdapter.addAll(list);
                         mAdapter.notifyDataSetChanged();
-
                     }
                 });
             }
         }
-
 
         public class SendBirdUserAdapter extends BaseAdapter {
             private final Context mContext;
@@ -227,8 +219,9 @@ public class SendBirdUserListActivity extends FragmentActivity {
                     viewHolder.setView("root_view", convertView);
                     viewHolder.setView("img_thumbnail", convertView.findViewById(R.id.img_thumbnail));
                     viewHolder.setView("txt_name", convertView.findViewById(R.id.txt_name));
-                    viewHolder.setView("chk_select", convertView.findViewById(R.id.chk_select));
                     viewHolder.setView("txt_status", convertView.findViewById(R.id.txt_status));
+                    viewHolder.setView("chk_select", convertView.findViewById(R.id.chk_select));
+                    viewHolder.getView("chk_select", CheckBox.class).setVisibility(View.GONE);
 
 
                     convertView.setTag(viewHolder);
@@ -238,27 +231,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
                 viewHolder = (ViewHolder) convertView.getTag();
                 Helper.displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), item.getProfileUrl());
                 viewHolder.getView("txt_name", TextView.class).setText(item.getNickname());
-                viewHolder.getView("chk_select", CheckBox.class).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if(isChecked) {
-                            mSelectedUserIds.add(item.getUserId());
-                        } else {
-                            mSelectedUserIds.remove(item.getUserId());
-                        }
-                        if(mSelectedUserIds.size() <= 0) {
-                            ((Button)getActivity().findViewById(R.id.btn_ok)).setTextColor(Color.parseColor("#6f5ca7"));
-                        } else {
-                            ((Button)getActivity().findViewById(R.id.btn_ok)).setTextColor(Color.parseColor("#35f8ca"));
-                        }
-                    }
-                });
-                viewHolder.getView("chk_select", CheckBox.class).setChecked(mSelectedUserIds.contains(item.getUserId()));
-                if(item.getConnectionStatus() == User.ConnectionStatus.ONLINE) {
-                    viewHolder.getView("txt_status", TextView.class).setText("Online");
-                } else {
-                    viewHolder.getView("txt_status", TextView.class).setText("");
-                }
+                viewHolder.getView("txt_status", TextView.class).setText(""); // Always online
                 return convertView;
             }
 

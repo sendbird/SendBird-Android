@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SendBirdChatActivity"
+            android:name=".SendBirdOpenChatActivity"
             android:label="SendBird"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
@@ -50,21 +50,28 @@
             >
         </activity>
         <activity
-            android:name=".SendBirdChannelListActivity"
+            android:name=".SendBirdParticipantListActivity"
             android:label="SendBird"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             >
         </activity>
         <activity
-            android:name=".SendBirdMessagingActivity"
+            android:name=".SendBirdOpenChannelListActivity"
             android:label="SendBird"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             >
         </activity>
         <activity
-            android:name=".SendBirdMessagingChannelListActivity"
+            android:name=".SendBirdGroupChatActivity"
+            android:label="SendBird"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            >
+        </activity>
+        <activity
+            android:name=".SendBirdGroupChannelListActivity"
             android:label="SendBird"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
@@ -95,7 +102,11 @@
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
-        </service>
+        </service><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
     </application>
 

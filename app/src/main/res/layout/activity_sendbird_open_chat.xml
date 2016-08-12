@@ -34,7 +34,7 @@
                 android:orientation="vertical"
                 >
                 <TextView
-                    android:id="@+id/txt_channel_url"
+                    android:id="@+id/txt_channel_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -60,18 +60,11 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/top_bar_container"
         >
-
-        <!--<ImageView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:src="@drawable/sendbird_img_bg_default"-->
-            <!--android:scaleType="centerCrop"-->
-            <!--/>-->
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="#f0f1f2"
             />
     </FrameLayout>
 
@@ -86,13 +79,13 @@
         android:layout_alignParentRight="true"
         >
         <Button
-            android:id="@+id/btn_members"
+            android:id="@+id/btn_participants"
             android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:padding="10dp"
-            android:text="Members"
+            android:text="Participants"
             android:background="@android:color/transparent"
             />
         <View
@@ -101,13 +94,13 @@
             android:background="#ededed"
             />
         <Button
-            android:id="@+id/btn_invite"
+            android:id="@+id/btn_blocked_user"
             android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:padding="10dp"
-            android:text="Invite"
+            android:text="BLOCKED USERS"
             android:background="@android:color/transparent"
             />
     </LinearLayout>

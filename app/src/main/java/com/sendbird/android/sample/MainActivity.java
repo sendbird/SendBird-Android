@@ -1,41 +1,54 @@
+/*
+ * Copyright (c) 2016 SendBird, Inc.
+ */
+
 package com.sendbird.android.sample;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
 import com.sendbird.android.sample.gcm.RegistrationIntentService;
 
 /**
- * SendBird Prebuilt UI
+ * SendBird Android Sample UI
  */
 public class MainActivity extends FragmentActivity {
-    private static final int REQUEST_SENDBIRD_CHAT_ACTIVITY = 100;
-    private static final int REQUEST_SENDBIRD_CHANNEL_LIST_ACTIVITY = 101;
-    private static final int REQUEST_SENDBIRD_MESSAGING_ACTIVITY = 200;
-    private static final int REQUEST_SENDBIRD_MESSAGING_CHANNEL_LIST_ACTIVITY = 201;
-    private static final int REQUEST_SENDBIRD_USER_LIST_ACTIVITY = 300;
+    public static String VERSION = "3.0.0.0";
 
-    public static String VERSION = "2.2.11.0";
+    private enum State {DISCONNECTED, CONNECTED}
 
     /**
-        To test push notifications with your own appId, you should replace google-services.json with yours.
-        Also you need to set Server API Token and Sender ID in SendBird dashboard.
-        Please carefully read "Push notifications" section in SendBird Android documentation
-    */ 
-    final String appId = "A7A2672C-AD11-11E4-8DAA-0A18B21C2D82"; /* Sample SendBird Application */
-    String userId = SendBirdChatActivity.Helper.generateDeviceUUID(MainActivity.this); /* Generate Device UUID */
-    String userName = "User-" + userId.substring(0, 5); /* Generate User Nickname */
+     * To test push notifications with your own appId, you should replace google-services.json with yours.
+     * Also you need to set Server API Token and Sender ID in SendBird dashboard.
+     * Please carefully read "Push notifications" section in SendBird Android documentation
+     */
+    private static final String appId = "A7A2672C-AD11-11E4-8DAA-0A18B21C2D82"; /* Sample SendBird Application */
+
+    public static String sUserId;
+    private String mNickname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sUserId = getPreferences(Context.MODE_PRIVATE).getString("user_id", "");
+        mNickname = getPreferences(Context.MODE_PRIVATE).getString("nickname", "");
+
+        SendBird.init(appId, this);
 
         /**
          * Start GCM Service.
@@ -43,10 +56,8 @@ public class MainActivity extends FragmentActivity {
         Intent intent = new Intent(this, RegistrationIntentService.class);
         startService(intent);
 
-
-        ((EditText)findViewById(R.id.etxt_nickname)).setText(userName);
-
-        ((EditText)findViewById(R.id.etxt_nickname)).addTextChangedListener(new TextWatcher() {
+        ((EditText) findViewById(R.id.etxt_user_id)).setText(sUserId);
+        ((EditText) findViewById(R.id.etxt_user_id)).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -57,119 +68,125 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                userName = s.toString();
+                sUserId = s.toString();
             }
         });
 
-        findViewById(R.id.btn_start_open_chat).setOnClickListener(new View.OnClickListener() {
+        ((EditText) findViewById(R.id.etxt_nickname)).setText(mNickname);
+        ((EditText) findViewById(R.id.etxt_nickname)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mNickname = s.toString();
+            }
+        });
+
+        findViewById(R.id.btn_connect).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startChannelList();
+                Button btn = (Button) view;
+                if (btn.getText().equals("Connect")) {
+                    connect();
+                } else {
+                    disconnect();
+                }
+
+                Helper.hideKeyboard(MainActivity.this);
             }
         });
 
-        findViewById(R.id.main_container).setVisibility(View.VISIBLE);
-        findViewById(R.id.messaging_container).setVisibility(View.GONE);
-        findViewById(R.id.btn_start_messaging).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_open_channel_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SendBirdOpenChannelListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        findViewById(R.id.btn_group_channel_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                findViewById(R.id.main_container).setVisibility(View.GONE);
-                findViewById(R.id.messaging_container).setVisibility(View.VISIBLE);
+                Intent intent = new Intent(MainActivity.this, SendBirdGroupChannelListActivity.class);
+                startActivity(intent);
             }
         });
 
-        findViewById(R.id.btn_messaging_back).setOnClickListener(new View.OnClickListener() {
+        setState(State.DISCONNECTED);
+    }
+
+    private void setState(State state) {
+        switch (state) {
+            case DISCONNECTED:
+                ((Button) findViewById(R.id.btn_connect)).setText("Connect");
+                findViewById(R.id.btn_open_channel_list).setEnabled(false);
+                findViewById(R.id.btn_group_channel_list).setEnabled(false);
+                break;
+
+            case CONNECTED:
+                ((Button) findViewById(R.id.btn_connect)).setText("Disconnect");
+                findViewById(R.id.btn_open_channel_list).setEnabled(true);
+                findViewById(R.id.btn_group_channel_list).setEnabled(true);
+                break;
+        }
+    }
+
+    private void connect() {
+        SendBird.connect(sUserId, new SendBird.ConnectHandler() {
             @Override
-            public void onClick(View v) {
-                findViewById(R.id.main_container).setVisibility(View.VISIBLE);
-                findViewById(R.id.messaging_container).setVisibility(View.GONE);
+            public void onConnected(User user, SendBirdException e) {
+                if (e != null) {
+                    Toast.makeText(MainActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String nickname = mNickname;
+
+                SendBird.updateCurrentUserInfo(nickname, null, new SendBird.UserInfoUpdateHandler() {
+                    @Override
+                    public void onUpdated(SendBirdException e) {
+                        if (e != null) {
+                            Toast.makeText(MainActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        SharedPreferences.Editor editor = getPreferences(Context.MODE_PRIVATE).edit();
+                        editor.putString("user_id", sUserId);
+                        editor.putString("nickname", mNickname);
+                        editor.commit();
+
+                        setState(State.CONNECTED);
+                    }
+                });
+
+                String gcmRegToken = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).getString("SendBirdGCMToken", "");
+                if(gcmRegToken != null && gcmRegToken.length() > 0) {
+                    SendBird.registerPushTokenForCurrentUser(gcmRegToken, new SendBird.RegisterPushTokenHandler() {
+                        @Override
+                        public void onRegistered(SendBirdException e) {
+                            if (e != null) {
+                                Toast.makeText(MainActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                    });
+                }
             }
         });
+    }
 
-        findViewById(R.id.btn_select_member).setOnClickListener(new View.OnClickListener() {
+    private void disconnect() {
+        SendBird.disconnect(new SendBird.DisconnectHandler() {
             @Override
-            public void onClick(View v) {
-                startUserList();
+            public void onDisconnected() {
+                setState(State.DISCONNECTED);
             }
         });
-
-        findViewById(R.id.btn_start_messaging_list).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startMessagingChannelList();
-            }
-        });
-
-    }
-
-    private void startChat(String channelUrl) {
-        Intent intent = new Intent(MainActivity.this, SendBirdChatActivity.class);
-        Bundle args = SendBirdChatActivity.makeSendBirdArgs(appId, userId, userName, channelUrl);
-
-        intent.putExtras(args);
-
-        startActivityForResult(intent, REQUEST_SENDBIRD_CHAT_ACTIVITY);
-    }
-
-    private void startChannelList() {
-        Intent intent = new Intent(MainActivity.this, SendBirdChannelListActivity.class);
-        Bundle args = SendBirdChannelListActivity.makeSendBirdArgs(appId, userId, userName);
-
-        intent.putExtras(args);
-
-        startActivityForResult(intent, REQUEST_SENDBIRD_CHANNEL_LIST_ACTIVITY);
-    }
-
-    private void startUserList() {
-        Intent intent = new Intent(MainActivity.this, SendBirdUserListActivity.class);
-        Bundle args = SendBirdUserListActivity.makeSendBirdArgs(appId, userId, userName);
-        intent.putExtras(args);
-
-        startActivityForResult(intent, REQUEST_SENDBIRD_USER_LIST_ACTIVITY);
-    }
-
-    private void startMessaging(String [] targetUserIds) {
-        Intent intent = new Intent(MainActivity.this, SendBirdMessagingActivity.class);
-        Bundle args = SendBirdMessagingActivity.makeMessagingStartArgs(appId, userId, userName, targetUserIds);
-        intent.putExtras(args);
-
-        startActivityForResult(intent, REQUEST_SENDBIRD_MESSAGING_ACTIVITY);
-    }
-
-    private void joinMessaging(String channelUrl) {
-        Intent intent = new Intent(MainActivity.this, SendBirdMessagingActivity.class);
-        Bundle args = SendBirdMessagingActivity.makeMessagingJoinArgs(appId, userId, userName, channelUrl);
-        intent.putExtras(args);
-
-        startActivityForResult(intent, REQUEST_SENDBIRD_MESSAGING_ACTIVITY);
-    }
-
-    private void startMessagingChannelList() {
-        Intent intent = new Intent(MainActivity.this, SendBirdMessagingChannelListActivity.class);
-        Bundle args = SendBirdMessagingChannelListActivity.makeSendBirdArgs(appId, userId, userName);
-        intent.putExtras(args);
-
-        startActivityForResult(intent, REQUEST_SENDBIRD_MESSAGING_CHANNEL_LIST_ACTIVITY);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(resultCode == RESULT_OK && requestCode == REQUEST_SENDBIRD_MESSAGING_CHANNEL_LIST_ACTIVITY && data != null) {
-            joinMessaging(data.getStringExtra("channelUrl"));
-        }
-
-        if(resultCode == RESULT_OK && requestCode == REQUEST_SENDBIRD_USER_LIST_ACTIVITY && data != null) {
-            startMessaging(data.getStringArrayExtra("userIds"));
-        }
-
-        if(resultCode == RESULT_OK && requestCode == REQUEST_SENDBIRD_CHAT_ACTIVITY && data != null) {
-            startMessaging(data.getStringArrayExtra("userIds"));
-        }
-
-        if(resultCode == RESULT_OK && requestCode == REQUEST_SENDBIRD_CHANNEL_LIST_ACTIVITY && data != null) {
-            startChat(data.getStringExtra("channelUrl"));
-        }
     }
 }

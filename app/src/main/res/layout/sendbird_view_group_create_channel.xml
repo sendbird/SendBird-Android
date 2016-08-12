@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016 SendBird, Inc.
+  -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <EditText
+        android:id="@+id/etxt_chname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Channel Name"
+        android:singleLine="true"
+        android:gravity="center"
+        android:maxLength="200"/>
+
+    <CheckBox
+        android:id="@+id/chk_distinct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Distinct"
+        />
+
+</LinearLayout>

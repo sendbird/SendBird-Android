@@ -12,13 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/img_op_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/sendbird_icon_admin"
-        android:paddingTop="3dp"
-        />
     <TextView
         android:id="@+id/txt_sender_name"
         android:layout_width="match_parent"
@@ -133,7 +126,7 @@
                     android:layout_width="128dp"
                     android:layout_height="128dp"
                     android:paddingTop="4dp"
-                    android:scaleType="centerInside"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/sendbird_icon_file"
                     />
             </LinearLayout>

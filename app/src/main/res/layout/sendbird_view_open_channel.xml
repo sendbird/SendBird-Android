@@ -4,23 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     >
-    <RelativeLayout
-        android:id="@+id/selected_container"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <ImageView
-            android:id="@+id/img_current_channel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/sendbird_icon_check"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            />
-    </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"

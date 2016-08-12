@@ -37,7 +37,6 @@
             android:singleLine="true"
             android:textSize="17sp"
             android:textColor="#3d3d3d"
-            android:text="Topic"
             android:gravity="center_vertical"
             />
 
@@ -51,7 +50,7 @@
                 android:id="@+id/chk_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/sendbird_chk_member"
+                android:button="@drawable/sendbird_chk_user"
                 android:checked="false"
                 android:layout_marginTop="18dp"
                 android:layout_gravity="right"
