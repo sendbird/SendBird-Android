@@ -16,3 +16,9 @@ Build and run the Sample UI project to play with Open Chat or Group Chat.
 
 - The sample project is shipped with **Testing App ID**.
 - You must replace with your own **App ID** found in **SendBird Dashboard** for a production app.
+
+### Access to Version 2
+
+You can check out `v2` branch instead of `master` branch to download version 2 samples.
+
+
