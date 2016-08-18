@@ -1,3 +1,7 @@
+- 2.2.12 (Aug, 18, 2016)
+Minor stability fix.
+Introduced filtered user list feature.
+
 - 2.2.11 (Aug, 1, 2016)
 Introduced logout.
 

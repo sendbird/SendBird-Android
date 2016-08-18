@@ -8,7 +8,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
-import com.sendbird.android.SendBird;
 import com.sendbird.android.sample.gcm.RegistrationIntentService;
 
 /**
@@ -21,7 +20,7 @@ public class MainActivity extends FragmentActivity {
     private static final int REQUEST_SENDBIRD_MESSAGING_CHANNEL_LIST_ACTIVITY = 201;
     private static final int REQUEST_SENDBIRD_USER_LIST_ACTIVITY = 300;
 
-    public static String VERSION = "2.2.11.0";
+    public static String VERSION = "2.2.12.0";
 
     /**
         To test push notifications with your own appId, you should replace google-services.json with yours.
