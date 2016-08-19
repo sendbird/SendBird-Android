@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2016 SendBird, Inc.
- */
-
 package com.sendbird.android.sample;
 
 import android.app.AlertDialog;
@@ -36,7 +32,6 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
-
 public class SendBirdOpenChannelListActivity extends FragmentActivity {
     private SendBirdChannelListFragment mSendBirdChannelListFragment;
 
@@ -60,7 +55,6 @@ public class SendBirdOpenChannelListActivity extends FragmentActivity {
         resizeMenubar();
     }
 
-
     private void resizeMenubar() {
         ViewGroup.LayoutParams lp = mTopBarContainer.getLayoutParams();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -76,7 +70,6 @@ public class SendBirdOpenChannelListActivity extends FragmentActivity {
         super.finish();
         overridePendingTransition(R.anim.sendbird_slide_in_from_top, R.anim.sendbird_slide_out_to_bottom);
     }
-
 
     private void initFragment() {
         mSendBirdChannelListFragment = new SendBirdChannelListFragment();
@@ -132,8 +125,9 @@ public class SendBirdOpenChannelListActivity extends FragmentActivity {
                                             return;
                                         }
 
-                                        if (!mSendBirdChannelListFragment.mChannelListQuery.hasNext())
+                                        if (!mSendBirdChannelListFragment.mChannelListQuery.hasNext()) {
                                             mSendBirdChannelListFragment.mAdapter.add(openChannel);
+                                        }
 
                                         Intent intent = new Intent(SendBirdOpenChannelListActivity.this, SendBirdOpenChatActivity.class);
                                         intent.putExtra("channel_url", openChannel.getUrl());

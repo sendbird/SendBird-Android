@@ -1,9 +1,9 @@
 package com.sendbird.android.sample;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,11 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,8 +31,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
-public class SendBirdUserListActivity extends FragmentActivity {
-    private SendBirdUserListFragment mSendBirdUserListFragment;
+public class SendBirdBlockedUserListActivity extends FragmentActivity {
+    private SendBirdBlockedUserListFragment mSendBirdBlockedUserListFragment;
 
     private View mTopBarContainer;
 
@@ -42,7 +40,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.sendbird_slide_in_from_bottom, R.anim.sendbird_slide_out_to_top);
-        setContentView(R.layout.activity_sendbird_user_list);
+        setContentView(R.layout.activity_sendbird_blocked_user_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         initFragment();
@@ -57,7 +55,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
 
     private void resizeMenubar() {
         ViewGroup.LayoutParams lp = mTopBarContainer.getLayoutParams();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             lp.height = (int) (28 * getResources().getDisplayMetrics().density);
         } else {
             lp.height = (int) (48 * getResources().getDisplayMetrics().density);
@@ -72,11 +70,11 @@ public class SendBirdUserListActivity extends FragmentActivity {
     }
 
     private void initFragment() {
-        mSendBirdUserListFragment = new SendBirdUserListFragment();
-        mSendBirdUserListFragment.setArguments(getIntent().getExtras());
+        mSendBirdBlockedUserListFragment = new SendBirdBlockedUserListFragment();
+        mSendBirdBlockedUserListFragment.setArguments(getIntent().getExtras());
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, mSendBirdUserListFragment)
+                .replace(R.id.fragment_container, mSendBirdBlockedUserListFragment)
                 .commit();
     }
 
@@ -90,47 +88,63 @@ public class SendBirdUserListActivity extends FragmentActivity {
             }
         });
 
-        findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String[] userIds = mSendBirdUserListFragment.mSelectedUserIds.toArray(new String[0]);
-                if (userIds.length > 0) {
-                    Intent data = new Intent();
-                    data.putExtra("user_ids", userIds);
-                    setResult(RESULT_OK, data);
-                    finish();
-                }
-            }
-        });
-
         resizeMenubar();
     }
 
-    public static class SendBirdUserListFragment extends Fragment {
+    public static class SendBirdBlockedUserListFragment extends Fragment {
         private ListView mListView;
         private UserListQuery mUserListQuery;
         private SendBirdUserAdapter mAdapter;
         private HashSet<String> mSelectedUserIds;
 
-        public SendBirdUserListFragment() {
-        }
+        public SendBirdBlockedUserListFragment() {}
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.sendbird_fragment_user_list, container, false);
             initUIComponents(rootView);
 
-            mUserListQuery = SendBird.createUserListQuery();
+            mUserListQuery = SendBird.createBlockedUserListQuery();
 
             return rootView;
-
         }
 
         private void initUIComponents(View rootView) {
-            mSelectedUserIds = new HashSet<>();
-            mListView = (ListView) rootView.findViewById(R.id.list);
+            mListView = (ListView)rootView.findViewById(R.id.list);
             mAdapter = new SendBirdUserAdapter(getActivity());
 
+            mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("User Unblock")
+                            .setMessage("Do you want to unblock the user?")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    final User target = mAdapter.getItem(position);
+                                    SendBird.unblockUser(target, new SendBird.UserUnblockHandler() {
+                                        @Override
+                                        public void onUnblocked(SendBirdException e) {
+                                            if (e != null) {
+                                                Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+
+                                            Toast.makeText(getActivity(), target.getNickname() + " is unblocked.", Toast.LENGTH_SHORT).show();
+                                            mAdapter.remove(position);
+                                            mAdapter.notifyDataSetChanged();
+                                        }
+                                    });
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create().show();
+
+                    return true;
+                }
+            });
             mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -147,11 +161,11 @@ public class SendBirdUserListActivity extends FragmentActivity {
         }
 
         private void loadMoreUsers() {
-            if (mUserListQuery != null && mUserListQuery.hasNext() && !mUserListQuery.isLoading()) {
+            if(mUserListQuery != null && mUserListQuery.hasNext() && !mUserListQuery.isLoading()) {
                 mUserListQuery.next(new UserListQuery.UserListQueryResultHandler() {
                     @Override
                     public void onResult(List<User> list, SendBirdException e) {
-                        if (e != null) {
+                        if(e != null) {
                             Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -169,7 +183,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
 
             public SendBirdUserAdapter(Context context) {
                 mContext = context;
-                mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 mItemList = new ArrayList<>();
             }
 
@@ -205,7 +219,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
             public View getView(int position, View convertView, ViewGroup parent) {
                 ViewHolder viewHolder;
 
-                if (convertView == null) {
+                if(convertView == null) {
                     viewHolder = new ViewHolder();
 
                     convertView = mInflater.inflate(R.layout.sendbird_view_user, parent, false);
@@ -214,6 +228,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
                     viewHolder.setView("txt_name", convertView.findViewById(R.id.txt_name));
                     viewHolder.setView("chk_select", convertView.findViewById(R.id.chk_select));
                     viewHolder.setView("txt_status", convertView.findViewById(R.id.txt_status));
+                    viewHolder.getView("chk_select", CheckBox.class).setVisibility(View.GONE);
 
                     convertView.setTag(viewHolder);
                 }
@@ -222,23 +237,7 @@ public class SendBirdUserListActivity extends FragmentActivity {
                 viewHolder = (ViewHolder) convertView.getTag();
                 Helper.displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), item.getProfileUrl());
                 viewHolder.getView("txt_name", TextView.class).setText(item.getNickname());
-                viewHolder.getView("chk_select", CheckBox.class).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            mSelectedUserIds.add(item.getUserId());
-                        } else {
-                            mSelectedUserIds.remove(item.getUserId());
-                        }
-                        if (mSelectedUserIds.size() <= 0) {
-                            ((Button) getActivity().findViewById(R.id.btn_ok)).setTextColor(Color.parseColor("#6f5ca7"));
-                        } else {
-                            ((Button) getActivity().findViewById(R.id.btn_ok)).setTextColor(Color.parseColor("#35f8ca"));
-                        }
-                    }
-                });
-                viewHolder.getView("chk_select", CheckBox.class).setChecked(mSelectedUserIds.contains(item.getUserId()));
-                if (item.getConnectionStatus() == User.ConnectionStatus.ONLINE) {
+                if(item.getConnectionStatus() == User.ConnectionStatus.ONLINE) {
                     viewHolder.getView("txt_status", TextView.class).setText("Online");
                 } else {
                     viewHolder.getView("txt_status", TextView.class).setText("");

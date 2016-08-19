@@ -51,15 +51,10 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
-
 public class SendBirdGroupChatActivity extends FragmentActivity {
     private SendBirdChatFragment mSendBirdMessagingFragment;
 
-    private ImageButton mBtnClose;
-    private ImageButton mBtnSettings;
     private View mTopBarContainer;
-    private Button mBtnInvite;
-    private Button mBtnMembers;
     private View mSettingsContainer;
     private String mChannelUrl;
 
@@ -96,7 +91,6 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         overridePendingTransition(R.anim.sendbird_slide_in_from_top, R.anim.sendbird_slide_out_to_bottom);
     }
 
-
     private void initFragment() {
         mSendBirdMessagingFragment = new SendBirdChatFragment();
         mChannelUrl = getIntent().getStringExtra("channel_url");
@@ -120,47 +114,20 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         }
     }
 
-
     private void initUIComponents() {
-
         mTopBarContainer = findViewById(R.id.top_bar_container);
 
         mSettingsContainer = findViewById(R.id.settings_container);
         mSettingsContainer.setVisibility(View.GONE);
 
-        mBtnClose = (ImageButton) findViewById(R.id.btn_close);
-        mBtnSettings = (ImageButton) findViewById(R.id.btn_settings);
-
-        mBtnMembers = (Button) findViewById(R.id.btn_members);
-        mBtnMembers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SendBirdGroupChatActivity.this, SendBirdMemberListActivity.class);
-                intent.putExtra("view_only", true);
-                intent.putExtra("channel_url", mChannelUrl);
-                startActivity(intent);
-                mSettingsContainer.setVisibility(View.GONE);
-            }
-        });
-
-        mBtnInvite = (Button) findViewById(R.id.btn_invite);
-        mBtnInvite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SendBirdGroupChatActivity.this, SendBirdUserListActivity.class);
-                mSendBirdMessagingFragment.startActivityForResult(intent, SendBirdChatFragment.REQUEST_INVITE_USERS);
-                mSettingsContainer.setVisibility(View.GONE);
-            }
-        });
-
-        mBtnClose.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        mBtnSettings.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mSettingsContainer.getVisibility() != View.VISIBLE) {
@@ -168,6 +135,25 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                 } else {
                     mSettingsContainer.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        findViewById(R.id.btn_members).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SendBirdGroupChatActivity.this, SendBirdMemberListActivity.class);
+                intent.putExtra("channel_url", mChannelUrl);
+                startActivity(intent);
+                mSettingsContainer.setVisibility(View.GONE);
+            }
+        });
+
+        findViewById(R.id.btn_invite).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SendBirdGroupChatActivity.this, SendBirdUserListActivity.class);
+                mSendBirdMessagingFragment.startActivityForResult(intent, SendBirdChatFragment.REQUEST_INVITE_USERS);
+                mSettingsContainer.setVisibility(View.GONE);
             }
         });
 
@@ -193,10 +179,8 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         public SendBirdChatFragment() {
         }
 
-
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.sendbird_fragment_group_chat, container, false);
 
             mChannelUrl = getArguments().getString("channel_url");
@@ -229,13 +213,13 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         }
 
         private void updateGroupChannelTitle() {
-            ((TextView)getActivity().findViewById(R.id.txt_channel_name)).setText(Helper.getDisplayMemberNames(mGroupChannel.getMembers(), true));
+            ((TextView) getActivity().findViewById(R.id.txt_channel_name)).setText(Helper.getDisplayMemberNames(mGroupChannel.getMembers(), true));
         }
 
         @Override
         public void onPause() {
             super.onPause();
-            if(!isUploading) {
+            if (!isUploading) {
                 SendBird.removeChannelHandler(identifier);
             }
         }
@@ -243,7 +227,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         @Override
         public void onResume() {
             super.onResume();
-            if(!isUploading) {
+            if (!isUploading) {
                 SendBird.addChannelHandler(identifier, new SendBird.ChannelHandler() {
                     @Override
                     public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
@@ -307,7 +291,6 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
             });
 
             mBtnUpload.setOnClickListener(new View.OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
                     if (Helper.requestReadWriteStoragePermissions(getActivity())) {
@@ -337,12 +320,10 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
             mEtxtMessage.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                 }
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 }
 
                 @Override
@@ -351,11 +332,12 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
 
                     if (s.length() == 1) {
                         mGroupChannel.startTyping();
-                    } else if(s.length() <= 0){
+                    } else if (s.length() <= 0) {
                         mGroupChannel.endTyping();
                     }
                 }
             });
+
             mListView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -380,19 +362,19 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         }
 
         private void loadPrevMessages(final boolean refresh) {
-            if(mGroupChannel == null) {
+            if (mGroupChannel == null) {
                 return;
             }
 
-            if(refresh || mPrevMessageListQuery == null) {
+            if (refresh || mPrevMessageListQuery == null) {
                 mPrevMessageListQuery = mGroupChannel.createPreviousMessageListQuery();
             }
 
-            if(mPrevMessageListQuery.isLoading()) {
+            if (mPrevMessageListQuery.isLoading()) {
                 return;
             }
 
-            if(!mPrevMessageListQuery.hasMore()) {
+            if (!mPrevMessageListQuery.hasMore()) {
                 return;
             }
 
@@ -404,7 +386,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                         return;
                     }
 
-                    if(refresh) {
+                    if (refresh) {
                         mAdapter.clear();
                     }
 
@@ -440,11 +422,11 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
             listView.setCacheColorHint(0x00000000); // For Gingerbread scrolling bug fix
         }
 
-        private void invite(String [] userIds) {
+        private void invite(String[] userIds) {
             mGroupChannel.inviteWithUserIds(Arrays.asList(userIds), new GroupChannel.GroupChannelInviteHandler() {
                 @Override
                 public void onResult(SendBirdException e) {
-                    if(e != null) {
+                    if (e != null) {
                         Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -458,16 +440,15 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
             if (resultCode == Activity.RESULT_OK) {
                 if (requestCode == REQUEST_PICK_IMAGE && data != null && data.getData() != null) {
                     upload(data.getData());
-                } else if(requestCode == REQUEST_INVITE_USERS) {
-                    String [] userIds = data.getStringArrayExtra("user_ids");
+                } else if (requestCode == REQUEST_INVITE_USERS) {
+                    String[] userIds = data.getStringArrayExtra("user_ids");
                     invite(userIds);
                 }
             }
         }
 
-
         private void send() {
-            if(mEtxtMessage.getText().length() <= 0) {
+            if (mEtxtMessage.getText().length() <= 0) {
                 return;
             }
 
@@ -518,7 +499,6 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                 });
             }
         }
-
     }
 
     public static class SendBirdMessagingAdapter extends BaseAdapter {
@@ -536,7 +516,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         public SendBirdMessagingAdapter(Context context, GroupChannel channel) {
             mContext = context;
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mItemList = new ArrayList<Object>();
+            mItemList = new ArrayList<>();
             mGroupChannel = channel;
         }
 
@@ -549,7 +529,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         public Object getItem(int position) {
             if (position >= mItemList.size()) {
                 List<User> members = mGroupChannel.getTypingMembers();
-                ArrayList<String> names = new ArrayList<String>();
+                ArrayList<String> names = new ArrayList<>();
                 for (User member : members) {
                     names.add(member.getNickname());
                 }
@@ -718,7 +698,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                         int unreadCount = mGroupChannel.getReadReceipt(message);
                         if (unreadCount > 1) {
                             viewHolder.getView("right_status", TextView.class).setText("Unread " + unreadCount);
-                        } else if(unreadCount == 1) {
+                        } else if (unreadCount == 1) {
                             viewHolder.getView("right_status", TextView.class).setText("Unread");
                         } else {
                             viewHolder.getView("right_status", TextView.class).setText("");
@@ -757,7 +737,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                         int unreadCount = mGroupChannel.getReadReceipt(fileLink);
                         if (unreadCount > 1) {
                             viewHolder.getView("right_status", TextView.class).setText("Unread " + unreadCount);
-                        } else if(unreadCount == 1) {
+                        } else if (unreadCount == 1) {
                             viewHolder.getView("right_status", TextView.class).setText("Unread");
                         } else {
                             viewHolder.getView("right_status", TextView.class).setText("");
@@ -779,11 +759,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                                                 }
                                             }
                                         })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                            }
-                                        })
+                                        .setNegativeButton("Cancel", null)
                                         .create()
                                         .show();
                             }
@@ -800,6 +776,28 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                             viewHolder.getView("left_image", ImageView.class).setImageResource(R.drawable.sendbird_icon_file);
                         }
                         viewHolder.getView("left_time", TextView.class).setText(Helper.getDisplayDateTime(mContext, fileLink.getCreatedAt()));
+
+                        viewHolder.getView("left_container").setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new AlertDialog.Builder(mContext)
+                                        .setTitle("SendBird")
+                                        .setMessage("Do you want to download this file?")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                try {
+                                                    Helper.downloadUrl(fileLink.getUrl(), fileLink.getName(), mContext);
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", null)
+                                        .create()
+                                        .show();
+                            }
+                        });
                     }
                     break;
 
@@ -818,7 +816,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
         }
 
         private class ViewHolder {
-            private Hashtable<String, View> holder = new Hashtable<String, View>();
+            private Hashtable<String, View> holder = new Hashtable<>();
             private int type;
 
             public int getViewType() {
@@ -842,6 +840,4 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
             }
         }
     }
-
-
 }

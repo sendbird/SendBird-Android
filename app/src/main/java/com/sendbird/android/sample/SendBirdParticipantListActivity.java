@@ -1,6 +1,8 @@
 package com.sendbird.android.sample;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,13 +15,13 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sendbird.android.OpenChannel;
+import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
@@ -32,7 +34,6 @@ import java.util.List;
 public class SendBirdParticipantListActivity extends FragmentActivity {
     private SendBirdParticipantListFragment mSendBirdParticipantListFragment;
 
-    private ImageButton mBtnClose;
     private View mTopBarContainer;
 
     @Override
@@ -52,7 +53,6 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
         resizeMenubar();
     }
 
-
     private void resizeMenubar() {
         ViewGroup.LayoutParams lp = mTopBarContainer.getLayoutParams();
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -63,13 +63,11 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
         mTopBarContainer.setLayoutParams(lp);
     }
 
-
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.sendbird_slide_in_from_top, R.anim.sendbird_slide_out_to_bottom);
     }
-
 
     private void initFragment() {
         mSendBirdParticipantListFragment = new SendBirdParticipantListFragment();
@@ -83,9 +81,7 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
     private void initUIComponents() {
         mTopBarContainer = findViewById(R.id.top_bar_container);
 
-        mBtnClose = (ImageButton)findViewById(R.id.btn_close);
-
-        mBtnClose.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -95,19 +91,16 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
         resizeMenubar();
     }
 
-
     public static class SendBirdParticipantListFragment extends Fragment {
         private ListView mListView;
         private UserListQuery mUserListQuery;
         private SendBirdUserAdapter mAdapter;
         private String mChannelUrl;
 
-
         public SendBirdParticipantListFragment() {}
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.sendbird_fragment_participant_list, container, false);
             initUIComponents(rootView);
 
@@ -115,26 +108,60 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
 
             OpenChannel.getChannel(mChannelUrl, new OpenChannel.OpenChannelGetHandler() {
                 @Override
-                public void onResult(OpenChannel openChannel, SendBirdException e) {
+                public void onResult(final OpenChannel openChannel, SendBirdException e) {
                     if(e != null) {
                         Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    mUserListQuery = openChannel.createParticipantListQuery();
+                    openChannel.refresh(new OpenChannel.OpenChannelRefreshHandler() {
+                        @Override
+                        public void onResult(SendBirdException e) {
+                            if (e != null) {
+                                Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            ((TextView)getActivity().findViewById(R.id.txt_channel_name)).setText("Participants (" + openChannel.getParticipantCount() + ")");
+                            mUserListQuery = openChannel.createParticipantListQuery();
+                            loadMoreUsers();
+                        }
+                    });
                 }
             });
 
-
             return rootView;
-
         }
+
         private void initUIComponents(View rootView) {
             mListView = (ListView)rootView.findViewById(R.id.list);
             mAdapter = new SendBirdUserAdapter(getActivity());
-            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("User Block")
+                            .setMessage("Do you want to block the user?")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    SendBird.blockUser(mAdapter.getItem(position), new SendBird.UserBlockHandler() {
+                                        @Override
+                                        public void onBlocked(User user, SendBirdException e) {
+                                            if (e != null) {
+                                                Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+
+                                            Toast.makeText(getActivity(), user.getNickname() + " is blocked.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create().show();
+
+                    return true;
                 }
             });
             mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -177,7 +204,7 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
             public SendBirdUserAdapter(Context context) {
                 mContext = context;
                 mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                mItemList = new ArrayList<User>();
+                mItemList = new ArrayList<>();
             }
 
             @Override
@@ -223,7 +250,6 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
                     viewHolder.setView("chk_select", convertView.findViewById(R.id.chk_select));
                     viewHolder.getView("chk_select", CheckBox.class).setVisibility(View.GONE);
 
-
                     convertView.setTag(viewHolder);
                 }
 
@@ -236,7 +262,7 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
             }
 
             private class ViewHolder {
-                private Hashtable<String, View> holder = new Hashtable<String, View>();
+                private Hashtable<String, View> holder = new Hashtable<>();
 
                 public void setView(String k, View v) {
                     holder.put(k, v);

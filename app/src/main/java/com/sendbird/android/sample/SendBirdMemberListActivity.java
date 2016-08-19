@@ -48,7 +48,6 @@ public class SendBirdMemberListActivity extends FragmentActivity {
         resizeMenubar();
     }
 
-
     private void resizeMenubar() {
         ViewGroup.LayoutParams lp = mTopBarContainer.getLayoutParams();
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -59,13 +58,11 @@ public class SendBirdMemberListActivity extends FragmentActivity {
         mTopBarContainer.setLayoutParams(lp);
     }
 
-
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.sendbird_slide_in_from_top, R.anim.sendbird_slide_out_to_bottom);
     }
-
 
     private void initFragment() {
         mSendBirdMemberListFragment = new SendBirdMemberListFragment();
@@ -79,9 +76,7 @@ public class SendBirdMemberListActivity extends FragmentActivity {
     private void initUIComponents() {
         mTopBarContainer = findViewById(R.id.top_bar_container);
 
-        mBtnClose = (ImageButton)findViewById(R.id.btn_close);
-
-        mBtnClose.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -91,18 +86,15 @@ public class SendBirdMemberListActivity extends FragmentActivity {
         resizeMenubar();
     }
 
-
     public static class SendBirdMemberListFragment extends Fragment {
         private ListView mListView;
         private SendBirdUserAdapter mAdapter;
         private String mChannelUrl;
 
-
         public SendBirdMemberListFragment() {}
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.sendbird_fragment_member_list, container, false);
             mChannelUrl = getArguments().getString("channel_url");
 
@@ -110,20 +102,30 @@ public class SendBirdMemberListActivity extends FragmentActivity {
 
             GroupChannel.getChannel(mChannelUrl, new GroupChannel.GroupChannelGetHandler() {
                 @Override
-                public void onResult(GroupChannel groupChannel, SendBirdException e) {
+                public void onResult(final GroupChannel groupChannel, SendBirdException e) {
                     if(e != null) {
                         Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    mAdapter.addAll(groupChannel.getMembers());
-                    mAdapter.notifyDataSetChanged();
+                    groupChannel.refresh(new GroupChannel.GroupChannelRefreshHandler() {
+                        @Override
+                        public void onResult(SendBirdException e) {
+                            if(e != null) {
+                                Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            ((TextView)(getActivity().findViewById(R.id.txt_channel_name))).setText("Members (" + groupChannel.getMemberCount() + ")");
+                            mAdapter.addAll(groupChannel.getMembers());
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
                 }
             });
 
             return rootView;
-
         }
+
         private void initUIComponents(View rootView) {
             mListView = (ListView)rootView.findViewById(R.id.list);
             mAdapter = new SendBirdUserAdapter(getActivity());
@@ -138,7 +140,7 @@ public class SendBirdMemberListActivity extends FragmentActivity {
             public SendBirdUserAdapter(Context context) {
                 mContext = context;
                 mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                mItemList = new ArrayList<User>();
+                mItemList = new ArrayList<>();
             }
 
             @Override
@@ -183,6 +185,8 @@ public class SendBirdMemberListActivity extends FragmentActivity {
                     viewHolder.setView("txt_status", convertView.findViewById(R.id.txt_status));
                     viewHolder.setView("chk_select", convertView.findViewById(R.id.chk_select));
                     viewHolder.getView("chk_select", CheckBox.class).setVisibility(View.GONE);
+                    viewHolder.setView("txt_last_seen_at", convertView.findViewById(R.id.txt_last_seen_at));
+                    viewHolder.getView("txt_last_seen_at", TextView.class).setVisibility(View.VISIBLE);
 
                     convertView.setTag(viewHolder);
                 }
@@ -194,14 +198,21 @@ public class SendBirdMemberListActivity extends FragmentActivity {
 
                 if(item.getConnectionStatus() == User.ConnectionStatus.ONLINE) {
                     viewHolder.getView("txt_status", TextView.class).setText("Online");
+                    viewHolder.getView("txt_last_seen_at", TextView.class).setText("");
                 } else {
-                    viewHolder.getView("txt_status", TextView.class).setText("");
+                    viewHolder.getView("txt_status", TextView.class).setText("Was Online At");
+                    if (item.getLastSeenAt() != 0) {
+                        viewHolder.getView("txt_last_seen_at", TextView.class).setText(Helper.getDisplayDateTime(mContext, item.getLastSeenAt()));
+                    } else {
+                        viewHolder.getView("txt_last_seen_at", TextView.class).setText("");
+                    }
                 }
+
                 return convertView;
             }
 
             private class ViewHolder {
-                private Hashtable<String, View> holder = new Hashtable<String, View>();
+                private Hashtable<String, View> holder = new Hashtable<>();
 
                 public void setView(String k, View v) {
                     holder.put(k, v);

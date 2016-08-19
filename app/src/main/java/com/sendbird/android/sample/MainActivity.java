@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2016 SendBird, Inc.
- */
-
 package com.sendbird.android.sample;
 
 import android.content.Context;
@@ -26,7 +22,7 @@ import com.sendbird.android.sample.gcm.RegistrationIntentService;
  * SendBird Android Sample UI
  */
 public class MainActivity extends FragmentActivity {
-    public static String VERSION = "3.0.0.0";
+    public static String VERSION = "3.0.0.1";
 
     private enum State {DISCONNECTED, CONNECTED}
 
@@ -166,7 +162,7 @@ public class MainActivity extends FragmentActivity {
                 });
 
                 String gcmRegToken = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).getString("SendBirdGCMToken", "");
-                if(gcmRegToken != null && gcmRegToken.length() > 0) {
+                if (gcmRegToken != null && gcmRegToken.length() > 0) {
                     SendBird.registerPushTokenForCurrentUser(gcmRegToken, new SendBird.RegisterPushTokenHandler() {
                         @Override
                         public void onRegistered(SendBirdException e) {

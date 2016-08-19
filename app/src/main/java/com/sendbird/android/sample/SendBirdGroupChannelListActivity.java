@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
-import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
@@ -40,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
-
 
 public class SendBirdGroupChannelListActivity extends FragmentActivity {
     private SendBirdGroupChannelListFragment mSendBirdGroupChannelListFragment;
@@ -58,9 +55,8 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
         initFragment();
         initUIComponents();
 
-        Toast.makeText(this, "Long press the channel to leave.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Long press the channel to hide or leave it.", Toast.LENGTH_LONG).show();
     }
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -68,10 +64,9 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
         resizeMenubar();
     }
 
-
     private void resizeMenubar() {
         ViewGroup.LayoutParams lp = mTopBarContainer.getLayoutParams();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             lp.height = (int) (28 * getResources().getDisplayMetrics().density);
         } else {
             lp.height = (int) (48 * getResources().getDisplayMetrics().density);
@@ -104,7 +99,6 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
                 finish();
             }
         });
-
 
         findViewById(R.id.btn_settings).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,21 +142,18 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
         private SendBirdGroupChannelAdapter mAdapter;
         private GroupChannelListQuery mQuery;
 
-
         public SendBirdGroupChannelListFragment() {
         }
 
-
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.sendbird_fragment_group_channel_list, container, false);
             initUIComponents(rootView);
             return rootView;
         }
 
         private void initUIComponents(View rootView) {
-            mListView = (ListView)rootView.findViewById(R.id.list);
+            mListView = (ListView) rootView.findViewById(R.id.list);
             mListView.setAdapter(mAdapter);
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -176,7 +167,6 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
             mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
-
                 }
 
                 @Override
@@ -192,18 +182,19 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
                     final GroupChannel channel = mAdapter.getItem(position);
                     new AlertDialog.Builder(getActivity())
                             .setTitle("Leave")
-                            .setMessage("Do you want to leave this channel?")
+                            .setMessage("Do you want to leave or hide this channel?")
                             .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     channel.leave(new GroupChannel.GroupChannelLeaveHandler() {
                                         @Override
                                         public void onResult(SendBirdException e) {
-                                            if(e != null) {
+                                            if (e != null) {
                                                 Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
 
+                                            Toast.makeText(getActivity(), "Channel left.", Toast.LENGTH_SHORT).show();
                                             mAdapter.remove(position);
                                             mAdapter.notifyDataSetChanged();
                                         }
@@ -216,22 +207,19 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
                                     channel.hide(new GroupChannel.GroupChannelHideHandler() {
                                         @Override
                                         public void onResult(SendBirdException e) {
-                                            if(e != null) {
+                                            if (e != null) {
                                                 Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
 
+                                            Toast.makeText(getActivity(), "Channel hidden.", Toast.LENGTH_SHORT).show();
                                             mAdapter.remove(position);
                                             mAdapter.notifyDataSetChanged();
                                         }
                                     });
                                 }
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }).create().show();
+                            .setNegativeButton("Cancel", null).create().show();
                     return true;
                 }
             });
@@ -241,33 +229,32 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
         }
 
         private void loadNextChannels() {
-            if(mQuery == null || mQuery.isLoading()) {
+            if (mQuery == null || mQuery.isLoading()) {
                 return;
             }
 
-            if(!mQuery.hasNext()) {
+            if (!mQuery.hasNext()) {
                 return;
             }
 
             mQuery.next(new GroupChannelListQuery.GroupChannelListQueryResultHandler() {
-
                 @Override
                 public void onResult(List<GroupChannel> list, SendBirdException e) {
-                    if(e != null) {
+                    if (e != null) {
                         Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
                     mAdapter.addAll(list);
                     mAdapter.notifyDataSetChanged();
 
-                    if(mAdapter.getCount() == 0) {
+                    if (mAdapter.getCount() == 0) {
                         Toast.makeText(getActivity(), "No channels found.", Toast.LENGTH_LONG).show();
                     }
                 }
             });
         }
 
-        private void create(final String [] userIds) {
+        private void create(final String[] userIds) {
             View view = getActivity().getLayoutInflater().inflate(R.layout.sendbird_view_group_create_channel, null);
             final EditText chName = (EditText) view.findViewById(R.id.etxt_chname);
             final CheckBox distinct = (CheckBox) view.findViewById(R.id.chk_distinct);
@@ -299,8 +286,8 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
             if (resultCode == Activity.RESULT_OK) {
-                if(requestCode == REQUEST_INVITE_USERS) {
-                    String [] userIds = data.getStringArrayExtra("user_ids");
+                if (requestCode == REQUEST_INVITE_USERS) {
+                    String[] userIds = data.getStringArrayExtra("user_ids");
                     create(userIds);
                 }
             }
@@ -319,17 +306,11 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
             SendBird.addChannelHandler(identifier, new SendBird.ChannelHandler() {
                 @Override
                 public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
-                    if(baseChannel instanceof GroupChannel) {
-                        GroupChannel groupChannel = (GroupChannel)baseChannel;
+                    if (baseChannel instanceof GroupChannel) {
+                        GroupChannel groupChannel = (GroupChannel) baseChannel;
                         mAdapter.replace(groupChannel);
                     }
                 }
-
-                @Override
-                public void onReadReceiptUpdated(GroupChannel groupChannel) {}
-
-                @Override
-                public void onTypingStatusUpdated(GroupChannel groupChannel) {}
 
                 @Override
                 public void onUserJoined(GroupChannel groupChannel, User user) {
@@ -344,15 +325,14 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
                 }
             });
 
-
             mAdapter.clear();
             mAdapter.notifyDataSetChanged();
 
-            if(SendBird.getConnectionState() != SendBird.ConnectionState.OPEN) {
+            if (SendBird.getConnectionState() != SendBird.ConnectionState.OPEN) {
                 SendBird.connect(MainActivity.sUserId, new SendBird.ConnectHandler() {
                     @Override
                     public void onConnected(User user, SendBirdException e) {
-                        if(e != null) {
+                        if (e != null) {
                             Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -375,8 +355,8 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
 
         public SendBirdGroupChannelAdapter(Context context) {
             mContext = context;
-            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mItemList = new ArrayList<GroupChannel>();
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mItemList = new ArrayList<>();
         }
 
         @Override
@@ -407,8 +387,8 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
         }
 
         public void replace(GroupChannel newChannel) {
-            for(GroupChannel oldChannel : mItemList) {
-                if(oldChannel.getUrl().equals(newChannel.getUrl())) {
+            for (GroupChannel oldChannel : mItemList) {
+                if (oldChannel.getUrl().equals(newChannel.getUrl())) {
                     mItemList.remove(oldChannel);
                     break;
                 }
@@ -422,7 +402,7 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
 
-            if(convertView == null) {
+            if (convertView == null) {
                 viewHolder = new ViewHolder();
 
                 convertView = mInflater.inflate(R.layout.sendbird_view_group_channel, parent, false);
@@ -441,7 +421,7 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
             Helper.displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), Helper.getDisplayCoverImageUrl(item.getMembers()));
             viewHolder.getView("txt_topic", TextView.class).setText(Helper.getDisplayMemberNames(item.getMembers(), false));
 
-            if(item.getUnreadMessageCount() > 0) {
+            if (item.getUnreadMessageCount() > 0) {
                 viewHolder.getView("txt_unread_count", TextView.class).setVisibility(View.VISIBLE);
                 viewHolder.getView("txt_unread_count", TextView.class).setText("" + item.getUnreadMessageCount());
             } else {
@@ -452,16 +432,16 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
             viewHolder.getView("txt_member_count", TextView.class).setText("" + item.getMemberCount());
 
             BaseMessage message = item.getLastMessage();
-            if(message == null) {
+            if (message == null) {
                 viewHolder.getView("txt_date", TextView.class).setText("");
                 viewHolder.getView("txt_desc", TextView.class).setText("");
-            } else if(message instanceof UserMessage) {
+            } else if (message instanceof UserMessage) {
                 viewHolder.getView("txt_date", TextView.class).setText(Helper.getDisplayTimeOrDate(mContext, message.getCreatedAt()));
-                viewHolder.getView("txt_desc", TextView.class).setText("" + ((UserMessage)message).getMessage());
-            } else if(message instanceof AdminMessage) {
+                viewHolder.getView("txt_desc", TextView.class).setText(((UserMessage) message).getMessage());
+            } else if (message instanceof AdminMessage) {
                 viewHolder.getView("txt_date", TextView.class).setText(Helper.getDisplayTimeOrDate(mContext, message.getCreatedAt()));
-                viewHolder.getView("txt_desc", TextView.class).setText("" + ((AdminMessage) message).getMessage());
-            } else if(message instanceof FileMessage) {
+                viewHolder.getView("txt_desc", TextView.class).setText(((AdminMessage) message).getMessage());
+            } else if (message instanceof FileMessage) {
                 viewHolder.getView("txt_date", TextView.class).setText(Helper.getDisplayTimeOrDate(mContext, message.getCreatedAt()));
                 viewHolder.getView("txt_desc", TextView.class).setText("(FILE)");
             }
@@ -470,7 +450,7 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
         }
 
         private static class ViewHolder {
-            private Hashtable<String, View> holder = new Hashtable<String, View>();
+            private Hashtable<String, View> holder = new Hashtable<>();
 
             public void setView(String k, View v) {
                 holder.put(k, v);
@@ -485,5 +465,4 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
             }
         }
     }
-
 }

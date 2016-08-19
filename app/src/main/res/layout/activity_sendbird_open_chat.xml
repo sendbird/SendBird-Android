@@ -94,7 +94,7 @@
             android:background="#ededed"
             />
         <Button
-            android:id="@+id/btn_blocked_user"
+            android:id="@+id/btn_blocked_users"
             android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="0dp"

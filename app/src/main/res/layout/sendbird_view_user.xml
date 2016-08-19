@@ -62,7 +62,17 @@
                 android:textSize="10sp"
                 android:textColor="#8e8e8e"
                 android:text="Online"
-                android:layout_gravity="top"
+                android:layout_gravity="top|right"
+                />
+            <TextView
+                android:id="@+id/txt_last_seen_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="#8e8e8e"
+                android:layout_marginTop="21dp"
+                android:layout_gravity="top|right"
+                android:visibility="gone"
                 />
 
         </FrameLayout>

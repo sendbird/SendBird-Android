@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2016 SendBird, Inc.
- */
-
 package com.sendbird.android.sample;
 
 import android.app.Activity;
@@ -27,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,6 +42,7 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.PreviousMessageListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 
 import java.io.File;
@@ -57,13 +55,9 @@ import java.util.List;
 public class SendBirdOpenChatActivity extends FragmentActivity {
     private SendBirdChatFragment mSendBirdChatFragment;
 
-    private ImageButton mBtnClose;
-    private ImageButton mBtnSettings;
-    private TextView mTxtChannelUrl;
     private View mTopBarContainer;
     private View mSettingsContainer;
     private String mChannelUrl;
-    private Button mBtnParticipants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +67,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mChannelUrl = getIntent().getStringExtra("channel_url");
-        if(mChannelUrl == null || mChannelUrl.length() <= 0) {
+        if (mChannelUrl == null || mChannelUrl.length() <= 0) {
             finish();
             return;
         }
@@ -82,17 +76,15 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         initUIComponents();
     }
 
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         resizeMenubar();
     }
 
-
     private void resizeMenubar() {
         ViewGroup.LayoutParams lp = mTopBarContainer.getLayoutParams();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             lp.height = (int) (28 * getResources().getDisplayMetrics().density);
         } else {
             lp.height = (int) (48 * getResources().getDisplayMetrics().density);
@@ -127,7 +119,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         switch (requestCode) {
             case Helper.MY_PERMISSION_REQUEST_STORAGE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                                grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
@@ -138,13 +130,29 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
 
     private void initUIComponents() {
         mTopBarContainer = findViewById(R.id.top_bar_container);
-        mTxtChannelUrl = (TextView)findViewById(R.id.txt_channel_name);
 
         mSettingsContainer = findViewById(R.id.settings_container);
         mSettingsContainer.setVisibility(View.GONE);
 
-        mBtnParticipants = (Button)findViewById(R.id.btn_participants);
-        mBtnParticipants.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        findViewById(R.id.btn_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSettingsContainer.getVisibility() != View.VISIBLE) {
+                    mSettingsContainer.setVisibility(View.VISIBLE);
+                } else {
+                    mSettingsContainer.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        findViewById(R.id.btn_participants).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSettingsContainer.setVisibility(View.GONE);
@@ -154,24 +162,12 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             }
         });
 
-        mBtnClose = (ImageButton)findViewById(R.id.btn_close);
-        mBtnSettings = (ImageButton)findViewById(R.id.btn_settings);
-
-        mBtnClose.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_blocked_users).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-            }
-        });
-
-        mBtnSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mSettingsContainer.getVisibility() != View.VISIBLE) {
-                    mSettingsContainer.setVisibility(View.VISIBLE);
-                } else {
-                    mSettingsContainer.setVisibility(View.GONE);
-                }
+                mSettingsContainer.setVisibility(View.GONE);
+                Intent intent = new Intent(SendBirdOpenChatActivity.this, SendBirdBlockedUserListActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -203,22 +199,24 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             mChannelUrl = getArguments().getString("channel_url");
 
             initUIComponents(rootView);
+
+            enterChannel(mChannelUrl);
+
             return rootView;
         }
 
         @Override
         public void onPause() {
             super.onPause();
-            if(!isUploading) {
+            if (!isUploading) {
                 SendBird.removeChannelHandler(identifier);
-                exitChannel();
             }
         }
 
         @Override
         public void onResume() {
             super.onResume();
-            if(!isUploading) {
+            if (!isUploading) {
                 SendBird.addChannelHandler(identifier, new SendBird.ChannelHandler() {
                     @Override
                     public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
@@ -227,28 +225,54 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                             mAdapter.notifyDataSetChanged();
                         }
                     }
+
+                    @Override
+                    public void onMessageDeleted(BaseChannel channel, long msgId) {
+                        if (channel.getUrl().equals(mChannelUrl)) {
+                            boolean deleteMsg = false;
+
+                            for (int i = 0; i < mAdapter.getCount(); i++) {
+                                BaseMessage msg = (BaseMessage) mAdapter.getItem(i);
+                                if (msg.getMessageId() == msgId) {
+                                    mAdapter.delete(msg);
+                                    deleteMsg = true;
+                                    break;
+                                }
+                            }
+
+                            if (deleteMsg) {
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
                 });
 
-                enterChannel(mChannelUrl);
+                loadPrevMessages(true);
             } else {
                 isUploading = false;
             }
         }
 
+        @Override
+        public void onDestroy() {
+            exitChannel();
+            super.onDestroy();
+        }
+
         private void loadPrevMessages(final boolean refresh) {
-            if(mOpenChannel == null) {
+            if (mOpenChannel == null) {
                 return;
             }
 
-            if(refresh || mPrevMessageListQuery == null) {
+            if (refresh || mPrevMessageListQuery == null) {
                 mPrevMessageListQuery = mOpenChannel.createPreviousMessageListQuery();
             }
 
-            if(mPrevMessageListQuery.isLoading()) {
+            if (mPrevMessageListQuery.isLoading()) {
                 return;
             }
 
-            if(!mPrevMessageListQuery.hasMore()) {
+            if (!mPrevMessageListQuery.hasMore()) {
                 return;
             }
 
@@ -260,7 +284,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                         return;
                     }
 
-                    if(refresh) {
+                    if (refresh) {
                         mAdapter.clear();
                     }
 
@@ -277,7 +301,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             OpenChannel.getChannel(channelUrl, new OpenChannel.OpenChannelGetHandler() {
                 @Override
                 public void onResult(final OpenChannel openChannel, SendBirdException e) {
-                    if(e != null) {
+                    if (e != null) {
                         Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -285,24 +309,23 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                     openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
                         @Override
                         public void onResult(SendBirdException e) {
-                            if(e != null) {
+                            if (e != null) {
                                 Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
                             mOpenChannel = openChannel;
-                            ((TextView)getActivity().findViewById(R.id.txt_channel_name)).setText(openChannel.getName());
+                            ((TextView) getActivity().findViewById(R.id.txt_channel_name)).setText(openChannel.getName());
 
                             loadPrevMessages(true);
                         }
                     });
                 }
             });
-
         }
 
         private void exitChannel() {
-            if(mOpenChannel != null) {
+            if (mOpenChannel != null) {
                 mOpenChannel.exit(null);
             }
         }
@@ -310,14 +333,14 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         private void initUIComponents(View rootView) {
             mAdapter = new SendBirdChatAdapter(getActivity());
 
-            mListView = (ListView)rootView.findViewById(R.id.list);
+            mListView = (ListView) rootView.findViewById(R.id.list);
             turnOffListViewDecoration(mListView);
             mListView.setAdapter(mAdapter);
 
-            mBtnSend = (Button)rootView.findViewById(R.id.btn_send);
-            mBtnUpload = (ImageButton)rootView.findViewById(R.id.btn_upload);
-            mProgressBtnUpload = (ProgressBar)rootView.findViewById(R.id.progress_btn_upload);
-            mEtxtMessage = (EditText)rootView.findViewById(R.id.etxt_message);
+            mBtnSend = (Button) rootView.findViewById(R.id.btn_send);
+            mBtnUpload = (ImageButton) rootView.findViewById(R.id.btn_upload);
+            mProgressBtnUpload = (ProgressBar) rootView.findViewById(R.id.progress_btn_upload);
+            mEtxtMessage = (EditText) rootView.findViewById(R.id.etxt_message);
 
             mBtnSend.setEnabled(false);
             mBtnSend.setOnClickListener(new View.OnClickListener() {
@@ -327,11 +350,10 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                 }
             });
 
-
             mBtnUpload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(Helper.requestReadWriteStoragePermissions(getActivity())) {
+                    if (Helper.requestReadWriteStoragePermissions(getActivity())) {
                         isUploading = true;
 
                         Intent intent = new Intent();
@@ -345,8 +367,8 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             mEtxtMessage.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(keyCode == KeyEvent.KEYCODE_ENTER) {
-                        if(event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                        if (event.getAction() == KeyEvent.ACTION_DOWN) {
                             send();
                         }
                         return true; // Do not hide keyboard.
@@ -358,12 +380,10 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             mEtxtMessage.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                 }
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 }
 
                 @Override
@@ -371,6 +391,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                     mBtnSend.setEnabled(s.length() > 0);
                 }
             });
+
             mListView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -381,8 +402,8 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
-                    if(scrollState == SCROLL_STATE_IDLE) {
-                        if(view.getFirstVisiblePosition() == 0 && view.getChildCount() > 0 && view.getChildAt(0).getTop() == 0) {
+                    if (scrollState == SCROLL_STATE_IDLE) {
+                        if (view.getFirstVisiblePosition() == 0 && view.getChildCount() > 0 && view.getChildAt(0).getTop() == 0) {
                             loadPrevMessages(false);
                         }
                     }
@@ -392,11 +413,68 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                 public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 }
             });
-            // TODO: Add long click listener to delete message and block user
+            mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Select")
+                            .setItems(new String[]{"Delete Message", "Block User"}, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case 0:
+                                            final BaseMessage msg0 = (BaseMessage) mAdapter.getItem(position);
+                                            mOpenChannel.deleteMessage(msg0, new BaseChannel.DeleteMessageHandler() {
+                                                @Override
+                                                public void onResult(SendBirdException e) {
+                                                    if (e != null) {
+                                                        Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
+
+                                                    Toast.makeText(getActivity(), "Message deleted.", Toast.LENGTH_SHORT).show();
+                                                    // Message will be deleted at ChannelHandler.
+                                                }
+                                            });
+                                            break;
+
+                                        case 1:
+                                            BaseMessage msg1 = (BaseMessage) mAdapter.getItem(position);
+                                            User target = null;
+
+                                            if (msg1 instanceof AdminMessage) {
+                                                Toast.makeText(getActivity(), "Admin message can not be deleted.", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            } else if (msg1 instanceof UserMessage) {
+                                                target = ((UserMessage) msg1).getSender();
+                                            } else if (msg1 instanceof FileMessage) {
+                                                target = ((FileMessage) msg1).getSender();
+                                            }
+
+                                            SendBird.blockUser(target, new SendBird.UserBlockHandler() {
+                                                @Override
+                                                public void onBlocked(User user, SendBirdException e) {
+                                                    if (e != null) {
+                                                        Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
+
+                                                    Toast.makeText(getActivity(), user.getNickname() + " is blocked.", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                            break;
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Cancel", null).create().show();
+
+                    return true;
+                }
+            });
         }
 
         private void showUploadProgress(boolean tf) {
-            if(tf) {
+            if (tf) {
                 mBtnUpload.setEnabled(false);
                 mBtnUpload.setVisibility(View.INVISIBLE);
                 mProgressBtnUpload.setVisibility(View.VISIBLE);
@@ -420,8 +498,8 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
 
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            if(resultCode == Activity.RESULT_OK) {
-                if(requestCode == REQUEST_PICK_IMAGE && data != null && data.getData() != null) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == REQUEST_PICK_IMAGE && data != null && data.getData() != null) {
                     upload(data.getData());
                 }
             }
@@ -431,7 +509,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             mOpenChannel.sendUserMessage(mEtxtMessage.getText().toString(), new BaseChannel.SendUserMessageHandler() {
                 @Override
                 public void onSent(UserMessage userMessage, SendBirdException e) {
-                    if(e != null) {
+                    if (e != null) {
                         Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -443,20 +521,20 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                 }
             });
 
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 Helper.hideKeyboard(getActivity());
             }
         }
 
         private void upload(Uri uri) {
             Hashtable<String, Object> info = Helper.getFileInfo(getActivity(), uri);
-            final String path = (String)info.get("path");
+            final String path = (String) info.get("path");
             final File file = new File(path);
             final String name = file.getName();
-            final String mime = (String)info.get("mime");
-            final int size = (Integer)info.get("size");
+            final String mime = (String) info.get("mime");
+            final int size = (Integer) info.get("size");
 
-            if(path == null) {
+            if (path == null) {
                 Toast.makeText(getActivity(), "Uploading file must be located in local storage.", Toast.LENGTH_LONG).show();
             } else {
                 showUploadProgress(true);
@@ -464,7 +542,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                     @Override
                     public void onSent(FileMessage fileMessage, SendBirdException e) {
                         showUploadProgress(false);
-                        if(e != null) {
+                        if (e != null) {
                             Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -489,8 +567,8 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
 
         public SendBirdChatAdapter(Context context) {
             mContext = context;
-            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mItemList = new ArrayList<Object>();
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mItemList = new ArrayList<>();
         }
 
         public void delete(Object message) {
@@ -527,11 +605,11 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         @Override
         public int getItemViewType(int position) {
             Object item = mItemList.get(position);
-            if(item instanceof UserMessage) {
+            if (item instanceof UserMessage) {
                 return TYPE_USER_MESSAGE;
-            } else if(item instanceof FileMessage) {
+            } else if (item instanceof FileMessage) {
                 return TYPE_FILE_MESSAGE;
-            } else if(item instanceof AdminMessage) {
+            } else if (item instanceof AdminMessage) {
                 return TYPE_ADMIN_MESSAGE;
             }
 
@@ -548,11 +626,11 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             ViewHolder viewHolder;
             final Object item = getItem(position);
 
-            if(convertView == null || ((ViewHolder)convertView.getTag()).getViewType() != getItemViewType(position)) {
+            if (convertView == null || ((ViewHolder) convertView.getTag()).getViewType() != getItemViewType(position)) {
                 viewHolder = new ViewHolder();
                 viewHolder.setViewType(getItemViewType(position));
 
-                switch(getItemViewType(position)) {
+                switch (getItemViewType(position)) {
                     case TYPE_UNSUPPORTED:
                         convertView = new View(mInflater.getContext());
                         convertView.setTag(viewHolder);
@@ -597,24 +675,23 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                 }
             }
 
-
             viewHolder = (ViewHolder) convertView.getTag();
-            switch(getItemViewType(position)) {
+            switch (getItemViewType(position)) {
                 case TYPE_UNSUPPORTED:
                     break;
                 case TYPE_USER_MESSAGE:
-                    final UserMessage message = (UserMessage)item;
+                    final UserMessage message = (UserMessage) item;
                     viewHolder.getView("message", TextView.class).setText(Html.fromHtml("<font color='#824096'><b>" + message.getSender().getNickname() + "</b></font>: " + message.getMessage()));
                     break;
                 case TYPE_ADMIN_MESSAGE:
-                    AdminMessage adminMessage = (AdminMessage)item;
+                    AdminMessage adminMessage = (AdminMessage) item;
                     viewHolder.getView("message", TextView.class).setText(Html.fromHtml(adminMessage.getMessage()));
                     break;
                 case TYPE_FILE_MESSAGE:
-                    final FileMessage fileLink = (FileMessage)item;
+                    final FileMessage fileLink = (FileMessage) item;
 
                     viewHolder.getView("txt_sender_name", TextView.class).setText(Html.fromHtml("<font color='#824096'><b>" + fileLink.getSender().getNickname() + "</b></font>: "));
-                    if(fileLink.getType().toLowerCase().startsWith("image")) {
+                    if (fileLink.getType().toLowerCase().startsWith("image")) {
                         viewHolder.getView("file_container").setVisibility(View.GONE);
 
                         viewHolder.getView("image_container").setVisibility(View.VISIBLE);
@@ -626,7 +703,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
 
                         viewHolder.getView("file_container").setVisibility(View.VISIBLE);
                         viewHolder.getView("txt_file_name", TextView.class).setText(fileLink.getName());
-                        viewHolder.getView("txt_file_size", TextView.class).setText("" + fileLink.getSize());
+                        viewHolder.getView("txt_file_size", TextView.class).setText(Helper.readableFileSize(fileLink.getSize()));
                     }
                     viewHolder.getView("img_file_container").setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -660,7 +737,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         }
 
         private class ViewHolder {
-            private Hashtable<String, View> holder = new Hashtable<String, View>();
+            private Hashtable<String, View> holder = new Hashtable<>();
             private int type;
 
             public int getViewType() {
@@ -670,6 +747,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             public void setViewType(int type) {
                 this.type = type;
             }
+
             public void setView(String k, View v) {
                 holder.put(k, v);
             }
@@ -683,5 +761,4 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
             }
         }
     }
-
 }
