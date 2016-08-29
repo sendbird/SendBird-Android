@@ -1,3 +1,6 @@
+- 2.2.14 (Aug, 29, 2016)
+Stability improved.
+
 - 2.2.13 (Aug, 23, 2016)
 Introduced user do-not-disturb option and push on/off preference setting.
 
