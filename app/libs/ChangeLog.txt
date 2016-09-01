@@ -1,3 +1,6 @@
+- 2.2.15 (Sep, 1, 2016)
+Stability improved.
+
 - 2.2.14 (Aug, 29, 2016)
 Stability improved.
 
