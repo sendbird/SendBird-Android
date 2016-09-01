@@ -22,7 +22,7 @@ import com.sendbird.android.sample.gcm.RegistrationIntentService;
  * SendBird Android Sample UI
  */
 public class MainActivity extends FragmentActivity {
-    public static String VERSION = "3.0.0.1";
+    public static String VERSION = "3.0.1.0";
 
     private enum State {DISCONNECTED, CONNECTED}
 
