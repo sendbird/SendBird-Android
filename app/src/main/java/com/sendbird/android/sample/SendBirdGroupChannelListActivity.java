@@ -59,6 +59,26 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityResumedForOldAndroids();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityPausedForOldAndroids();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         resizeMenubar();
@@ -328,22 +348,9 @@ public class SendBirdGroupChannelListActivity extends FragmentActivity {
             mAdapter.clear();
             mAdapter.notifyDataSetChanged();
 
-            if (SendBird.getConnectionState() != SendBird.ConnectionState.OPEN) {
-                SendBird.connect(MainActivity.sUserId, new SendBird.ConnectHandler() {
-                    @Override
-                    public void onConnected(User user, SendBirdException e) {
-                        if (e != null) {
-                            Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        mQuery = GroupChannel.createMyGroupChannelListQuery();
-                        mQuery.setIncludeEmpty(true);
-                    }
-                });
-            } else {
-                mQuery = GroupChannel.createMyGroupChannelListQuery();
-                mQuery.setIncludeEmpty(true);
-            }
+            mQuery = GroupChannel.createMyGroupChannelListQuery();
+            mQuery.setIncludeEmpty(true);
+            loadNextChannels();
         }
 
     }

@@ -15,15 +15,19 @@ package com.sendbird.android.sample.gcm;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
 import com.sendbird.android.sample.R;
 
 public class RegistrationIntentService extends IntentService {
@@ -55,6 +59,20 @@ public class RegistrationIntentService extends IntentService {
             Editor e = sharedPreferences.edit();
             e.putString("SendBirdGCMToken", token);
             e.commit();
+
+            SendBird.registerPushTokenForCurrentUser(token, new SendBird.RegisterPushTokenWithStatusHandler() {
+                @Override
+                public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
+                    if (e != null) {
+                        Toast.makeText(RegistrationIntentService.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (pushTokenRegistrationStatus == SendBird.PushTokenRegistrationStatus.PENDING) {
+                        Toast.makeText(RegistrationIntentService.this, "Connection required to register push token.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
             // [END register_for_gcm]
         } catch (Exception e) {
             Log.d(TAG, "Failed to complete token refresh", e);

@@ -77,6 +77,26 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityResumedForOldAndroids();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityPausedForOldAndroids();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         resizeMenubar();
@@ -187,7 +207,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         private String mChannelUrl;
         private OpenChannel mOpenChannel;
         private PreviousMessageListQuery mPrevMessageListQuery;
-        private boolean isUploading;
+        private boolean mIsUploading;
 
         public SendBirdChatFragment() {
         }
@@ -208,7 +228,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         @Override
         public void onPause() {
             super.onPause();
-            if (!isUploading) {
+            if (!mIsUploading) {
                 SendBird.removeChannelHandler(identifier);
             }
         }
@@ -216,7 +236,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         @Override
         public void onResume() {
             super.onResume();
-            if (!isUploading) {
+            if (!mIsUploading) {
                 SendBird.addChannelHandler(identifier, new SendBird.ChannelHandler() {
                     @Override
                     public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
@@ -249,7 +269,13 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
 
                 loadPrevMessages(true);
             } else {
-                isUploading = false;
+                mIsUploading = false;
+
+                /**
+                 * Set this as true to restart auto-background detection,
+                 * when your Activity is shown again after the external Activity is finished.
+                 */
+                SendBird.setAutoBackgroundDetection(true);
             }
         }
 
@@ -354,12 +380,18 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                 @Override
                 public void onClick(View v) {
                     if (Helper.requestReadWriteStoragePermissions(getActivity())) {
-                        isUploading = true;
+                        mIsUploading = true;
 
                         Intent intent = new Intent();
                         intent.setType("image/*");
                         intent.setAction(Intent.ACTION_GET_CONTENT);
                         startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_PICK_IMAGE);
+
+                        /**
+                         * Set this as false to maintain SendBird connection,
+                         * even when an external Activity is started.
+                         */
+                        SendBird.setAutoBackgroundDetection(false);
                     }
                 }
             });

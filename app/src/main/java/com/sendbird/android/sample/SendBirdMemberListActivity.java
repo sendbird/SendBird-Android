@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,8 +26,6 @@ import java.util.Hashtable;
 
 public class SendBirdMemberListActivity extends FragmentActivity {
     private SendBirdMemberListFragment mSendBirdMemberListFragment;
-
-    private ImageButton mBtnClose;
     private View mTopBarContainer;
 
     @Override
@@ -43,6 +40,26 @@ public class SendBirdMemberListActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityResumedForOldAndroids();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityPausedForOldAndroids();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         resizeMenubar();
@@ -50,7 +67,7 @@ public class SendBirdMemberListActivity extends FragmentActivity {
 
     private void resizeMenubar() {
         ViewGroup.LayoutParams lp = mTopBarContainer.getLayoutParams();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             lp.height = (int) (28 * getResources().getDisplayMetrics().density);
         } else {
             lp.height = (int) (48 * getResources().getDisplayMetrics().density);
@@ -91,7 +108,8 @@ public class SendBirdMemberListActivity extends FragmentActivity {
         private SendBirdUserAdapter mAdapter;
         private String mChannelUrl;
 
-        public SendBirdMemberListFragment() {}
+        public SendBirdMemberListFragment() {
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -103,7 +121,7 @@ public class SendBirdMemberListActivity extends FragmentActivity {
             GroupChannel.getChannel(mChannelUrl, new GroupChannel.GroupChannelGetHandler() {
                 @Override
                 public void onResult(final GroupChannel groupChannel, SendBirdException e) {
-                    if(e != null) {
+                    if (e != null) {
                         Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -111,11 +129,11 @@ public class SendBirdMemberListActivity extends FragmentActivity {
                     groupChannel.refresh(new GroupChannel.GroupChannelRefreshHandler() {
                         @Override
                         public void onResult(SendBirdException e) {
-                            if(e != null) {
+                            if (e != null) {
                                 Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 return;
                             }
-                            ((TextView)(getActivity().findViewById(R.id.txt_channel_name))).setText("Members (" + groupChannel.getMemberCount() + ")");
+                            ((TextView) (getActivity().findViewById(R.id.txt_channel_name))).setText("Members (" + groupChannel.getMemberCount() + ")");
                             mAdapter.addAll(groupChannel.getMembers());
                             mAdapter.notifyDataSetChanged();
                         }
@@ -127,7 +145,7 @@ public class SendBirdMemberListActivity extends FragmentActivity {
         }
 
         private void initUIComponents(View rootView) {
-            mListView = (ListView)rootView.findViewById(R.id.list);
+            mListView = (ListView) rootView.findViewById(R.id.list);
             mAdapter = new SendBirdUserAdapter(getActivity());
             mListView.setAdapter(mAdapter);
         }
@@ -139,7 +157,7 @@ public class SendBirdMemberListActivity extends FragmentActivity {
 
             public SendBirdUserAdapter(Context context) {
                 mContext = context;
-                mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 mItemList = new ArrayList<>();
             }
 
@@ -175,7 +193,7 @@ public class SendBirdMemberListActivity extends FragmentActivity {
             public View getView(int position, View convertView, ViewGroup parent) {
                 ViewHolder viewHolder;
 
-                if(convertView == null) {
+                if (convertView == null) {
                     viewHolder = new ViewHolder();
 
                     convertView = mInflater.inflate(R.layout.sendbird_view_user, parent, false);
@@ -196,16 +214,15 @@ public class SendBirdMemberListActivity extends FragmentActivity {
                 Helper.displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), item.getProfileUrl());
                 viewHolder.getView("txt_name", TextView.class).setText(item.getNickname());
 
-                if(item.getConnectionStatus() == User.ConnectionStatus.ONLINE) {
+                if (item.getConnectionStatus() == User.ConnectionStatus.ONLINE) {
                     viewHolder.getView("txt_status", TextView.class).setText("Online");
                     viewHolder.getView("txt_last_seen_at", TextView.class).setText("");
-                } else {
+                } else if (item.getConnectionStatus() == User.ConnectionStatus.OFFLINE && item.getLastSeenAt() != 0) {
                     viewHolder.getView("txt_status", TextView.class).setText("Was Online At");
-                    if (item.getLastSeenAt() != 0) {
-                        viewHolder.getView("txt_last_seen_at", TextView.class).setText(Helper.getDisplayDateTime(mContext, item.getLastSeenAt()));
-                    } else {
-                        viewHolder.getView("txt_last_seen_at", TextView.class).setText("");
-                    }
+                    viewHolder.getView("txt_last_seen_at", TextView.class).setText(Helper.getDisplayDateTime(mContext, item.getLastSeenAt()));
+                } else {
+                    viewHolder.getView("txt_status", TextView.class).setText("");
+                    viewHolder.getView("txt_last_seen_at", TextView.class).setText("");
                 }
 
                 return convertView;

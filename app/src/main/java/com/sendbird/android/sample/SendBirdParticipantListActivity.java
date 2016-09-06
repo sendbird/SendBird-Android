@@ -48,6 +48,26 @@ public class SendBirdParticipantListActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityResumedForOldAndroids();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityPausedForOldAndroids();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         resizeMenubar();

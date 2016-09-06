@@ -27,7 +27,6 @@ import com.sendbird.android.UserListQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -45,6 +44,26 @@ public class SendBirdBlockedUserListActivity extends FragmentActivity {
 
         initFragment();
         initUIComponents();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityResumedForOldAndroids();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityPausedForOldAndroids();
     }
 
     @Override
@@ -95,7 +114,6 @@ public class SendBirdBlockedUserListActivity extends FragmentActivity {
         private ListView mListView;
         private UserListQuery mUserListQuery;
         private SendBirdUserAdapter mAdapter;
-        private HashSet<String> mSelectedUserIds;
 
         public SendBirdBlockedUserListFragment() {}
 
@@ -106,6 +124,7 @@ public class SendBirdBlockedUserListActivity extends FragmentActivity {
             initUIComponents(rootView);
 
             mUserListQuery = SendBird.createBlockedUserListQuery();
+            loadMoreUsers();
 
             return rootView;
         }

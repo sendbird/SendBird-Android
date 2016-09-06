@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,9 +21,9 @@ import com.sendbird.android.sample.gcm.RegistrationIntentService;
  * SendBird Android Sample UI
  */
 public class MainActivity extends FragmentActivity {
-    public static String VERSION = "3.0.1.0";
+    public static String VERSION = "3.0.2.0";
 
-    private enum State {DISCONNECTED, CONNECTED}
+    private enum State {DISCONNECTED, CONNECTING, CONNECTED}
 
     /**
      * To test push notifications with your own appId, you should replace google-services.json with yours.
@@ -117,16 +116,51 @@ public class MainActivity extends FragmentActivity {
         setState(State.DISCONNECTED);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SendBird.disconnect(null);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityResumedForOldAndroids();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityPausedForOldAndroids();
+    }
+
     private void setState(State state) {
         switch (state) {
             case DISCONNECTED:
                 ((Button) findViewById(R.id.btn_connect)).setText("Connect");
+                findViewById(R.id.btn_connect).setEnabled(true);
+                findViewById(R.id.btn_open_channel_list).setEnabled(false);
+                findViewById(R.id.btn_group_channel_list).setEnabled(false);
+                break;
+
+            case CONNECTING:
+                ((Button) findViewById(R.id.btn_connect)).setText("Connecting...");
+                findViewById(R.id.btn_connect).setEnabled(false);
                 findViewById(R.id.btn_open_channel_list).setEnabled(false);
                 findViewById(R.id.btn_group_channel_list).setEnabled(false);
                 break;
 
             case CONNECTED:
                 ((Button) findViewById(R.id.btn_connect)).setText("Disconnect");
+                findViewById(R.id.btn_connect).setEnabled(true);
                 findViewById(R.id.btn_open_channel_list).setEnabled(true);
                 findViewById(R.id.btn_group_channel_list).setEnabled(true);
                 break;
@@ -139,6 +173,7 @@ public class MainActivity extends FragmentActivity {
             public void onConnected(User user, SendBirdException e) {
                 if (e != null) {
                     Toast.makeText(MainActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    setState(State.DISCONNECTED);
                     return;
                 }
 
@@ -149,6 +184,7 @@ public class MainActivity extends FragmentActivity {
                     public void onUpdated(SendBirdException e) {
                         if (e != null) {
                             Toast.makeText(MainActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            setState(State.DISCONNECTED);
                             return;
                         }
 
@@ -161,20 +197,21 @@ public class MainActivity extends FragmentActivity {
                     }
                 });
 
-                String gcmRegToken = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).getString("SendBirdGCMToken", "");
-                if (gcmRegToken != null && gcmRegToken.length() > 0) {
-                    SendBird.registerPushTokenForCurrentUser(gcmRegToken, new SendBird.RegisterPushTokenHandler() {
-                        @Override
-                        public void onRegistered(SendBirdException e) {
-                            if (e != null) {
-                                Toast.makeText(MainActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
+                if (SendBird.getPendingPushToken() == null) return;
+
+                SendBird.registerPushTokenForCurrentUser(SendBird.getPendingPushToken(), new SendBird.RegisterPushTokenWithStatusHandler() {
+                    @Override
+                    public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
+                        if (e != null) {
+                            Toast.makeText(MainActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                    });
-                }
+                    }
+                });
             }
         });
+
+        setState(State.CONNECTING);
     }
 
     private void disconnect() {

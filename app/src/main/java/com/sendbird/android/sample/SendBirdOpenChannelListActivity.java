@@ -50,6 +50,26 @@ public class SendBirdOpenChannelListActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityResumedForOldAndroids();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /**
+         * If the minimum SDK version you support is under Android 4.0,
+         * you MUST uncomment the below code to receive push notifications.
+         */
+//        SendBird.notifyActivityPausedForOldAndroids();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         resizeMenubar();
@@ -170,23 +190,6 @@ public class SendBirdOpenChannelListActivity extends FragmentActivity {
             View rootView = inflater.inflate(R.layout.sendbird_fragment_open_channel_list, container, false);
             initUIComponents(rootView);
 
-            mChannelListQuery = OpenChannel.createOpenChannelListQuery();
-            mChannelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
-                @Override
-                public void onResult(List<OpenChannel> channels, SendBirdException e) {
-                    if (e != null) {
-                        Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    if (channels.size() <= 0) {
-                        Toast.makeText(getActivity(), "No channels were found.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        mAdapter.addAll(channels);
-                    }
-                }
-            });
-
             mListView.setAdapter(mAdapter);
 
             return rootView;
@@ -239,6 +242,26 @@ public class SendBirdOpenChannelListActivity extends FragmentActivity {
         @Override
         public void onResume() {
             super.onResume();
+
+            mAdapter.clear();
+            mAdapter.notifyDataSetChanged();
+
+            mChannelListQuery = OpenChannel.createOpenChannelListQuery();
+            mChannelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                @Override
+                public void onResult(List<OpenChannel> channels, SendBirdException e) {
+                    if (e != null) {
+                        Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (channels.size() <= 0) {
+                        Toast.makeText(getActivity(), "No channels were found.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mAdapter.addAll(channels);
+                    }
+                }
+            });
         }
 
         public static class SendBirdChannelAdapter extends BaseAdapter {
