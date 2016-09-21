@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
@@ -16,20 +16,21 @@ android {
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
     }
+
     defaultConfig {
         applicationId "com.sendbird.android.sample"
         minSdkVersion 10
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode getVersionCode()
         versionName getVersionName()
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
