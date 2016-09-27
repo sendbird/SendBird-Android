@@ -1,3 +1,6 @@
+- 2.2.16 (Sep, 27, 2016)
+Added Channel.getData and MessagingChannel.getData() to read custom data for channels.
+
 - 2.2.15 (Sep, 1, 2016)
 Stability improved.
 
