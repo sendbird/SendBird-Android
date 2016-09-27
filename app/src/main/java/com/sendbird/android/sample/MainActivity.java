@@ -12,16 +12,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
-import com.sendbird.android.sample.gcm.RegistrationIntentService;
 
 /**
  * SendBird Android Sample UI
  */
 public class MainActivity extends FragmentActivity {
-    public static String VERSION = "3.0.2.0";
+    public static String VERSION = "3.0.3.0";
 
     private enum State {DISCONNECTED, CONNECTING, CONNECTED}
 
@@ -44,12 +44,6 @@ public class MainActivity extends FragmentActivity {
         mNickname = getPreferences(Context.MODE_PRIVATE).getString("nickname", "");
 
         SendBird.init(appId, this);
-
-        /**
-         * Start GCM Service.
-         */
-        Intent intent = new Intent(this, RegistrationIntentService.class);
-        startService(intent);
 
         ((EditText) findViewById(R.id.etxt_user_id)).setText(sUserId);
         ((EditText) findViewById(R.id.etxt_user_id)).addTextChangedListener(new TextWatcher() {
@@ -197,9 +191,9 @@ public class MainActivity extends FragmentActivity {
                     }
                 });
 
-                if (SendBird.getPendingPushToken() == null) return;
+                if (FirebaseInstanceId.getInstance().getToken() == null) return;
 
-                SendBird.registerPushTokenForCurrentUser(SendBird.getPendingPushToken(), new SendBird.RegisterPushTokenWithStatusHandler() {
+                SendBird.registerPushTokenForCurrentUser(FirebaseInstanceId.getInstance().getToken(), new SendBird.RegisterPushTokenWithStatusHandler() {
                     @Override
                     public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
                         if (e != null) {

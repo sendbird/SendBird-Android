@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sendbird.android.sample" >
+    package="com.sendbird.android.sample">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-
-    <permission android:name="com.sendbird.android.sample.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="com.sendbird.android.sample.permission.C2D_MESSAGE" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/sendbird_ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
-            >
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,91 +22,55 @@
         </activity>
         <activity
             android:name=".SendBirdOpenChatActivity"
-            android:label="SendBird"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-        </activity>
+            android:label="SendBird"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
         <activity
             android:name=".SendBirdUserListActivity"
-            android:label="SendBird"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-        </activity>
+            android:label="SendBird"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
         <activity
             android:name=".SendBirdBlockedUserListActivity"
-            android:label="SendBird"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-        </activity>
+            android:label="SendBird"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
         <activity
             android:name=".SendBirdMemberListActivity"
-            android:label="SendBird"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-        </activity>
+            android:label="SendBird"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
         <activity
             android:name=".SendBirdParticipantListActivity"
-            android:label="SendBird"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-        </activity>
+            android:label="SendBird"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
         <activity
             android:name=".SendBirdOpenChannelListActivity"
-            android:label="SendBird"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-        </activity>
+            android:label="SendBird"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
         <activity
             android:name=".SendBirdGroupChatActivity"
-            android:label="SendBird"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-        </activity>
+            android:label="SendBird"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
         <activity
             android:name=".SendBirdGroupChannelListActivity"
-            android:label="SendBird"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-        </activity>
+            android:label="SendBird"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
 
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
+        <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <category android:name="com.sendbird.android.sample" />
-            </intent-filter>
-        </receiver>
-        <service
-            android:name=".gcm.MyGcmListenerService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".gcm.RegistrationIntentService"
-            android:exported="false" />
-        <service
-            android:name=".gcm.MyInstanceIDListenerService"
-            android:exported="false">
+        <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
-        </service><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+        </service>
 
     </application>
 
