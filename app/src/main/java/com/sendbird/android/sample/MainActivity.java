@@ -21,7 +21,7 @@ import com.sendbird.android.User;
  * SendBird Android Sample UI
  */
 public class MainActivity extends FragmentActivity {
-    public static String VERSION = "3.0.3.0";
+    public static String VERSION = "3.0.4.0";
 
     private enum State {DISCONNECTED, CONNECTING, CONNECTED}
 
