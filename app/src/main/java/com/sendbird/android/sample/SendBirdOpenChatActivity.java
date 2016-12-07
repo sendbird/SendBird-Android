@@ -114,6 +114,8 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
 
     @Override
     public void finish() {
+        mSendBirdChatFragment.exitChannel();
+
         super.finish();
         overridePendingTransition(R.anim.sendbird_slide_in_from_top, R.anim.sendbird_slide_out_to_bottom);
     }
@@ -267,6 +269,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                     }
                 });
 
+                refreshChannel();
                 loadPrevMessages(true);
             } else {
                 mIsUploading = false;
@@ -281,7 +284,6 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
 
         @Override
         public void onDestroy() {
-            exitChannel();
             super.onDestroy();
         }
 
@@ -353,6 +355,12 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
         private void exitChannel() {
             if (mOpenChannel != null) {
                 mOpenChannel.exit(null);
+            }
+        }
+
+        private void refreshChannel() {
+            if (mOpenChannel != null) {
+                mOpenChannel.refresh(null);
             }
         }
 

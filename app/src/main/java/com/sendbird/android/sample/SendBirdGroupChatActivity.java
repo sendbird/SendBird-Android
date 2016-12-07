@@ -206,6 +206,8 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
             mChannelUrl = getArguments().getString("channel_url");
 
             initUIComponents(rootView);
+            initGroupChannel();
+
             return rootView;
         }
 
@@ -227,6 +229,20 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
 
                     updateGroupChannelTitle();
 
+                    loadPrevMessages(true);
+                }
+            });
+        }
+
+        private void refreshGroupChannel() {
+            if (mGroupChannel == null) return;
+
+            mGroupChannel.markAsRead();
+            mGroupChannel.refresh(new GroupChannel.GroupChannelRefreshHandler() {
+                @Override
+                public void onResult(SendBirdException e) {
+                    mAdapter.notifyDataSetChanged();
+                    updateGroupChannelTitle();
                     loadPrevMessages(true);
                 }
             });
@@ -288,8 +304,7 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                         }
                     }
                 });
-
-                initGroupChannel();
+                refreshGroupChannel();
             } else {
                 mIsUploading = false;
 
