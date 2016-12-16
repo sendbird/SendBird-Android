@@ -21,7 +21,7 @@ import com.sendbird.android.User;
  * SendBird Android Sample UI
  */
 public class MainActivity extends FragmentActivity {
-    public static String VERSION = "3.0.10.0";
+    public static String VERSION = "3.0.11.0";
 
     private enum State {DISCONNECTED, CONNECTING, CONNECTED}
 
@@ -193,7 +193,7 @@ public class MainActivity extends FragmentActivity {
 
                 if (FirebaseInstanceId.getInstance().getToken() == null) return;
 
-                SendBird.registerPushTokenForCurrentUser(FirebaseInstanceId.getInstance().getToken(), new SendBird.RegisterPushTokenWithStatusHandler() {
+                SendBird.registerPushTokenForCurrentUser(FirebaseInstanceId.getInstance().getToken(), true, new SendBird.RegisterPushTokenWithStatusHandler() {
                     @Override
                     public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
                         if (e != null) {
