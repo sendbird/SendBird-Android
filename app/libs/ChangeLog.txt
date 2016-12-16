@@ -1,3 +1,6 @@
+- 2.2.17 (Dec, 16, 2016)
+Fixed SendBirdFileUploadEventHandler or SendBirdProfileUploadEventHandler are always called when files or profile images are sent.
+
 - 2.2.16 (Sep, 27, 2016)
 Added Channel.getData and MessagingChannel.getData() to read custom data for channels.
 
