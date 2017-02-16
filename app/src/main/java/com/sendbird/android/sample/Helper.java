@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -392,6 +394,11 @@ public class Helper {
                 public void onPostExecute(Object object, UrlDownloadAsyncTask task) {
                     if (object != null && object instanceof File) {
                         Toast.makeText(context, "Finish downloading: " + ((File) object).getAbsolutePath(), Toast.LENGTH_LONG).show();
+
+                        // Scan the newly downloaded file
+                        File imageFile = (File) object;
+                        MediaScannerConnection.scanFile(context, new String[] { imageFile.getPath() }, null, null);
+
                     } else {
                         Toast.makeText(context, "Error downloading", Toast.LENGTH_SHORT).show();
                     }
