@@ -395,8 +395,8 @@ public class Helper {
                         Toast.makeText(context, "Finish downloading: " + ((File) object).getAbsolutePath(), Toast.LENGTH_LONG).show();
 
                         // Scan the newly downloaded file
-                        File imageFile = (File) object;
-                        MediaScannerConnection.scanFile(context, new String[] { imageFile.getPath() }, null, null);
+                        File file = (File) object;
+                        MediaScannerConnection.scanFile(context, new String[] { file.getPath() }, null, null);
 
                     } else {
                         Toast.makeText(context, "Error downloading", Toast.LENGTH_SHORT).show();
