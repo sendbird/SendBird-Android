@@ -108,13 +108,4 @@
 
     </LinearLayout>
 
-    <android.support.v4.widget.ContentLoadingProgressBar
-        android:id="@+id/progress_bar_login"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="invisible" />
-
-
 </android.support.design.widget.CoordinatorLayout>
