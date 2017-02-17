@@ -3,5 +3,6 @@
 
     <string name="app_name">SendBird Sample</string>
     <string name="title_activity_sendbird">SendBird</string>
+    <string name="sendbird_version">SDK version %1$s</string>
 
 </resources>

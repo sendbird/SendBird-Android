@@ -533,7 +533,14 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                 Toast.makeText(getActivity(), "Uploading file must be located in local storage.", Toast.LENGTH_LONG).show();
             } else {
                 showUploadProgress(true);
-                mGroupChannel.sendFileMessage(file, name, mime, size, "", new BaseChannel.SendFileMessageHandler() {
+
+                // Specify two dimensions of thumbnails to generate
+                List<FileMessage.ThumbnailSize> thumbnailSizes = new ArrayList<>();
+                thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
+                thumbnailSizes.add(new FileMessage.ThumbnailSize(320, 320));
+
+                // Send image with thumbnails in the specified dimensions
+                mGroupChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, new BaseChannel.SendFileMessageHandler() {
                     @Override
                     public void onSent(FileMessage fileMessage, SendBirdException e) {
                         showUploadProgress(false);
@@ -777,7 +784,17 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
                         Helper.displayUrlImage(viewHolder.getView("right_thumbnail", ImageView.class), fileLink.getSender().getProfileUrl(), true);
                         viewHolder.getView("right_name", TextView.class).setText(fileLink.getSender().getNickname());
                         if (fileLink.getType().toLowerCase().startsWith("image")) {
-                            Helper.displayUrlImage(viewHolder.getView("right_image", ImageView.class), fileLink.getUrl());
+
+                            // Get thumbnails from filemessage
+                            ArrayList<FileMessage.Thumbnail> thumbnails = (ArrayList<FileMessage.Thumbnail>) fileLink.getThumbnails();
+
+                            // If thumbnails exist, get smallest (first) thumbnail and display it in the message
+                            if (thumbnails.size() > 0) {
+                                Helper.displayUrlImage(viewHolder.getView("right_image", ImageView.class), thumbnails.get(0).getUrl());
+                            } else {
+                                Helper.displayUrlImage(viewHolder.getView("right_image", ImageView.class), fileLink.getUrl());
+                            }
+
                         } else {
                             viewHolder.getView("right_image", ImageView.class).setImageResource(R.drawable.sendbird_icon_file);
                         }
