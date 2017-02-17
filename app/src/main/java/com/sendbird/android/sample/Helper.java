@@ -11,12 +11,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -28,6 +30,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -199,6 +202,9 @@ public class Helper {
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
+
+
+
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static Hashtable<String, Object> getFileInfo(final Context context, final Uri uri) {
@@ -410,7 +416,51 @@ public class Helper {
             }
         }
 
-        public static void display(String url, final ImageView imageView, final boolean circle) {
+        /**
+         * Takes an image and rotates it according to its EXIF data. If the image doesn not have EXIF data,
+         * or does not specify a different orientation in its EXIF, the original bitmap is returned.
+         * @param bitmap    The bitmap of the image.
+         * @param imagePath The path of the image.
+         * @return  The processed bitmap.
+         */
+        public static Bitmap rotateAccordingToExif(Bitmap bitmap, String imagePath) {
+//                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            ExifInterface exif;
+
+            try {
+                exif = new ExifInterface(imagePath);
+                Log.d("HELPER", "EXIF fetched.");
+            } catch (IOException e) {
+                // Failed to get exif data, just return the original bitmap.
+                e.printStackTrace();
+                return bitmap;
+            }
+
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+            Matrix matrix = new Matrix();
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    Log.d("HELPER", "ROTATE 90");
+                    matrix.postRotate(90);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    Log.d("HELPER", "ROTATE 180");
+                    matrix.postRotate(180);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    Log.d("HELPER", "ROTATE 270");
+                    matrix.postRotate(270);
+                    break;
+                default:
+                    Log.d("HELPER", "ROTATE 0");
+                    break;
+            }
+
+            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        }
+
+        public static void display(final String url, final ImageView imageView, final boolean circle) {
             UrlDownloadAsyncTask task = null;
 
             if (imageView.getTag() != null && imageView.getTag() instanceof UrlDownloadAsyncTask) {
@@ -463,7 +513,9 @@ public class Helper {
 
                         // Do the actual decoding
                         options.inJustDecodeBounds = false;
-                        bm = BitmapFactory.decodeStream(bin, null, options);
+                        Bitmap bitmap = BitmapFactory.decodeStream(bin, null, options);
+
+                        bm = rotateAccordingToExif(bitmap, file.getAbsolutePath());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -478,6 +530,7 @@ public class Helper {
                             imageView.setImageDrawable(new RoundedDrawable((Bitmap) object));
                         } else {
                             imageView.setImageBitmap((Bitmap) object);
+//                            imageView.setImageBitmap(bitmap);
                         }
                     } else {
                         imageView.setImageResource(R.drawable.sendbird_img_placeholder);
@@ -556,6 +609,7 @@ public class Helper {
             }
         }
 
+
         private static class LRUCache {
             private final int maxSize;
             private int totalSize;
@@ -601,8 +655,11 @@ public class Helper {
             private int getSize(String value) {
                 return value.length();
             }
+
+
         }
     }
+
     public static void displayUrlImage(ImageView imageView, String url) {
         displayUrlImage(imageView, url, false);
     }
