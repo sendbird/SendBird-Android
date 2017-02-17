@@ -12,7 +12,6 @@
 
     <TextView
         android:id="@+id/txt_sendbird_version"
-        android:text="Sample UI v1.0.5 / SDK 3.1.7"
         android:textColor="#8e8e8e"
         android:textSize="12sp"
         android:layout_width="wrap_content"
