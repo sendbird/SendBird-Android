@@ -41,7 +41,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_2);
+        setContentView(R.layout.activity_main);
 
         sUserId = getPreferences(Context.MODE_PRIVATE).getString("user_id", "");
         mNickname = getPreferences(Context.MODE_PRIVATE).getString("nickname", "");
