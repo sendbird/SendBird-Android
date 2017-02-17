@@ -321,7 +321,7 @@ public class SendBirdOpenChannelListActivity extends FragmentActivity {
                 viewHolder = (ViewHolder) convertView.getTag();
                 Helper.displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), item.getCoverUrl());
                 viewHolder.getView("txt_topic", TextView.class).setText("#" + item.getName());
-                viewHolder.getView("txt_desc", TextView.class).setText("" + item.getParticipantCount() + ((item.getParticipantCount() <= 1) ? " Member" : " Members"));
+                viewHolder.getView("txt_desc", TextView.class).setText("" + item.getParticipantCount() + ((item.getParticipantCount() == 1) ? " Participant" : " Participants"));
 
                 return convertView;
             }

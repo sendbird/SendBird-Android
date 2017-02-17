@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -107,6 +108,9 @@ public class MainActivity extends FragmentActivity {
                 startActivity(intent);
             }
         });
+
+        TextView versionText = (TextView) findViewById(R.id.txt_sendbird_version);
+        versionText.setText(String.format(getResources().getString(R.string.sendbird_version), SendBird.getSDKVersion()));
 
         setState(State.DISCONNECTED);
     }

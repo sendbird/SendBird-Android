@@ -11,6 +11,7 @@
 
 
     <TextView
+        android:id="@+id/txt_sendbird_version"
         android:text="Sample UI v1.0.5 / SDK 3.1.7"
         android:textColor="#8e8e8e"
         android:textSize="12sp"
@@ -38,7 +39,7 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="56dp">
+            android:layout_marginTop="28dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/etxt_user_id"
@@ -83,23 +84,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/btn_open_channel_list"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:theme="@style/ButtonStyle"
+                android:background="@null"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Open Channel"
+                android:text="Open Channels"
                 />
-            <android.support.v7.widget.AppCompatButton
+
+            <Button
                 android:id="@+id/btn_group_channel_list"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:theme="@style/ButtonStyle"
+                android:background="@null"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Group Channel"
+                android:text="Group Channels"
                 />
 
 
