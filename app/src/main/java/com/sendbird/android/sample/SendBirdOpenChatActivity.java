@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -744,10 +743,6 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                     if (fileLink.getType().toLowerCase().startsWith("image")) {
                         // Get thumbnails from filemessage
                         ArrayList<FileMessage.Thumbnail> thumbnails = (ArrayList<FileMessage.Thumbnail>) fileLink.getThumbnails();
-
-                        for (int i = 0; i < thumbnails.size(); i++) {
-                            Log.d("THUMBNAILS", thumbnails.get(i).getUrl());
-                        }
 
                         viewHolder.getView("file_container").setVisibility(View.GONE);
 

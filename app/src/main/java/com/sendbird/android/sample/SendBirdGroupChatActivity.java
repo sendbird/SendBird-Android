@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -788,11 +787,6 @@ public class SendBirdGroupChatActivity extends FragmentActivity {
 
                             // Get thumbnails from filemessage
                             ArrayList<FileMessage.Thumbnail> thumbnails = (ArrayList<FileMessage.Thumbnail>) fileLink.getThumbnails();
-
-                            for (int i = 0; i < thumbnails.size(); i++) {
-                                Log.d("THUMBNAILS", thumbnails.get(i).getUrl());
-                            }
-
 
                             // If thumbnails exist, get smallest (first) thumbnail and display it in the message
                             if (thumbnails.size() > 0) {
