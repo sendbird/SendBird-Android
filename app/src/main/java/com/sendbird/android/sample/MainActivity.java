@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,7 +39,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_2);
 
         sUserId = getPreferences(Context.MODE_PRIVATE).getString("user_id", "");
         mNickname = getPreferences(Context.MODE_PRIVATE).getString("nickname", "");
@@ -61,8 +62,8 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        ((EditText) findViewById(R.id.etxt_nickname)).setText(mNickname);
-        ((EditText) findViewById(R.id.etxt_nickname)).addTextChangedListener(new TextWatcher() {
+        ((TextInputEditText) findViewById(R.id.etxt_nickname)).setText(mNickname);
+        ((TextInputEditText) findViewById(R.id.etxt_nickname)).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }

@@ -1,8 +1,45 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Light">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+
+        <item name="colorAccent">@color/sendbird_purple_color</item>
+        <item name="colorPrimary">@color/sendbird_purple_color</item>
+    </style>
+
+    <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/sendbird_purple_color</item>
+        <item name="colorControlHighlight">#3c78df</item>
+        <item name="colorAccent">@color/sendbird_purple_color</item>
+        <item name="android:textColorPrimaryDisableOnly">#ffffff</item>
+    </style>
+
+    <style name="ButtonStyle2" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#3c78d8</item>
+        <item name="colorControlHighlight">#3c78df</item>
+        <item name="colorAccent">#3c78d8</item>
+    </style>
+
+    <style name="ButtonStyle3" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#e06666</item>
+        <item name="colorControlHighlight">@color/sendbird_purple_color</item>
+        <item name="colorAccent">#e06666</item>
+    </style>
+
+    <style name="AppTheme.ButtonStyle2" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">#3c78d8</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="AppTheme.ButtonStyle3" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">#e06666</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="textAllCaps">true</item>
     </style>
 
 </resources>
