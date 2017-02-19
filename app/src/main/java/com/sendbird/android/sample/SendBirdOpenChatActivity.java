@@ -578,7 +578,14 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                 Toast.makeText(getActivity(), "Uploading file must be located in local storage.", Toast.LENGTH_LONG).show();
             } else {
                 showUploadProgress(true);
-                mOpenChannel.sendFileMessage(file, name, mime, size, "", new BaseChannel.SendFileMessageHandler() {
+
+                // Specify two dimensions of thumbnails to generate
+                List<FileMessage.ThumbnailSize> thumbnailSizes = new ArrayList<>();
+                thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
+                thumbnailSizes.add(new FileMessage.ThumbnailSize(320, 320));
+
+                // Send image with thumbnails in the specified dimensions
+                mOpenChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, new BaseChannel.SendFileMessageHandler() {
                     @Override
                     public void onSent(FileMessage fileMessage, SendBirdException e) {
                         showUploadProgress(false);
@@ -592,6 +599,7 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                     }
                 });
             }
+
         }
     }
 
@@ -731,13 +739,24 @@ public class SendBirdOpenChatActivity extends FragmentActivity {
                     final FileMessage fileLink = (FileMessage) item;
 
                     viewHolder.getView("txt_sender_name", TextView.class).setText(Html.fromHtml("<font color='#824096'><b>" + fileLink.getSender().getNickname() + "</b></font>: "));
+
                     if (fileLink.getType().toLowerCase().startsWith("image")) {
+                        // Get thumbnails from filemessage
+                        ArrayList<FileMessage.Thumbnail> thumbnails = (ArrayList<FileMessage.Thumbnail>) fileLink.getThumbnails();
+
                         viewHolder.getView("file_container").setVisibility(View.GONE);
 
                         viewHolder.getView("image_container").setVisibility(View.VISIBLE);
                         viewHolder.getView("txt_image_name", TextView.class).setText(fileLink.getName());
                         viewHolder.getView("txt_image_size", TextView.class).setText(Helper.readableFileSize(fileLink.getSize()));
-                        Helper.displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), fileLink.getUrl());
+
+                        // If thumbnails exist, get smallest (first) thumbnail and display it in the message
+                        if (thumbnails.size() > 0) {
+                            Helper.displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), thumbnails.get(0).getUrl());
+                        } else {
+                            Helper.displayUrlImage(viewHolder.getView("img_thumbnail", ImageView.class), fileLink.getUrl());
+                        }
+
                     } else {
                         viewHolder.getView("image_container").setVisibility(View.GONE);
 

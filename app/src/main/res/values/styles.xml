@@ -1,8 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Light">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+
+        <item name="colorAccent">@color/sendbird_purple_color</item>
+        <item name="colorPrimary">@color/sendbird_purple_color</item>
+    </style>
+
+    <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/sendbird_purple_color</item>
+        <item name="colorControlHighlight">#3c78df</item>
+        <item name="colorAccent">@color/sendbird_purple_color</item>
     </style>
 
 </resources>

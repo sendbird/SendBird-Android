@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -61,8 +63,8 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        ((EditText) findViewById(R.id.etxt_nickname)).setText(mNickname);
-        ((EditText) findViewById(R.id.etxt_nickname)).addTextChangedListener(new TextWatcher() {
+        ((TextInputEditText) findViewById(R.id.etxt_nickname)).setText(mNickname);
+        ((TextInputEditText) findViewById(R.id.etxt_nickname)).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -106,6 +108,9 @@ public class MainActivity extends FragmentActivity {
                 startActivity(intent);
             }
         });
+
+        TextView versionText = (TextView) findViewById(R.id.txt_sendbird_version);
+        versionText.setText(String.format(getResources().getString(R.string.sendbird_version), SendBird.getSDKVersion()));
 
         setState(State.DISCONNECTED);
     }
