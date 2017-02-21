@@ -23,7 +23,7 @@ import com.sendbird.android.User;
  * SendBird Android Sample UI
  */
 public class MainActivity extends FragmentActivity {
-    public static String VERSION = "3.0.17.0";
+    public static String VERSION = "3.0.18.0";
 
     private enum State {DISCONNECTED, CONNECTING, CONNECTED}
 
@@ -32,7 +32,7 @@ public class MainActivity extends FragmentActivity {
      * Also you need to set Server API Token and Sender ID in SendBird dashboard.
      * Please carefully read "Push notifications" section in SendBird Android documentation
      */
-    private static final String appId = "A7A2672C-AD11-11E4-8DAA-0A18B21C2D82"; /* Sample SendBird Application */
+    private static final String appId = "9DA1B1F4-0BE6-4DA8-82C5-2E81DAB56F23"; /* Sample SendBird Application */
 
     public static String sUserId;
     private String mNickname;
