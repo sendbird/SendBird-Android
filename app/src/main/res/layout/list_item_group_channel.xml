@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="84dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true">
+
+
+    <ImageView
+        android:id="@+id/image_group_channel_list_cover"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:scaleType="centerCrop"
+        android:layout_centerVertical="true" />
+
+    <LinearLayout
+        android:id="@+id/container_group_channel_list_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/image_group_channel_list_cover"
+        android:layout_alignTop="@id/image_group_channel_list_cover"
+        android:layout_marginLeft="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/text_group_channel_list_topic"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:maxWidth="160dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Anna Bluiasdfasdfasdfasdfasdfasdfasdfasdfafm" />
+
+        <TextView
+            android:id="@+id/text_group_channel_list_member_count"
+            android:layout_width="wrap_content"
+            android:minWidth="16dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/group_channel_list_member_background"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="3" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container_group_channel_list_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/container_group_channel_list_topic"
+        android:layout_alignLeft="@id/container_group_channel_list_topic"
+        android:orientation="horizontal">
+
+
+        <include layout="@layout/layout_typing_indicator"
+            android:id="@+id/container_group_channel_list_typing_indicator"
+            android:layout_width="32dp"
+            android:layout_marginTop="4dp"
+            android:layout_height="16dp"/>
+
+        <TextView
+            android:id="@+id/text_group_channel_list_message"
+            android:layout_width="223dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="2dp"
+            android:textSize="14sp"
+            android:textColor="#8e8e8e"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="This sounded nonsense to Alice, so she said nothing, but set off at her being blah blah" />
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/text_group_channel_list_date"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/container_group_channel_list_topic"
+        android:maxLines="1"
+        android:text="9999/99/99" />
+
+    <TextView
+        android:id="@+id/text_group_channel_list_unread_count"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/groupChannelUnreadCountText"
+        android:background="@drawable/group_channel_list_unread_background"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="9+" />
+
+
+
+</RelativeLayout>

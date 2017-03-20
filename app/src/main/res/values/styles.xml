@@ -3,15 +3,27 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-
-        <item name="colorAccent">@color/sendbird_purple_color</item>
-        <item name="colorPrimary">@color/sendbird_purple_color</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@color/sendbird_purple_color</item>
-        <item name="colorControlHighlight">#3c78df</item>
-        <item name="colorAccent">@color/sendbird_purple_color</item>
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textColorPrimary">#ffffff</item>
     </style>
+
+    <style name="AppTheme.ButtonStyle" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">@color/colorButton</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

@@ -1,0 +1,101 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
+
+    <TextView
+        android:id="@+id/text_group_chat_date"
+        android:text="February 22"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/groupChatDateText"
+        android:background="@drawable/group_chat_date_background"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="0dp"
+        android:gravity="center"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/image_group_chat_profile"
+        android:src="@drawable/profile_placeholder"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/text_group_chat_date"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:text="Daniel Silberschatz"
+        android:id="@+id/text_group_chat_nickname"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/image_group_chat_profile"
+        android:layout_alignTop="@id/image_group_chat_profile"/>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_group_chat_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_group_chat_nickname"
+        android:layout_toRightOf="@id/image_group_chat_profile"
+        app:cardBackgroundColor="@color/cardview_light_background"
+        app:cardPreventCornerOverlap="false"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="4dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:id="@+id/image_group_chat_file_thumbnail"
+            android:layout_width="228dp"
+            android:layout_height="148dp"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            />
+
+        <ImageView
+            android:layout_width="228dp"
+            android:layout_height="148dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_play"
+            android:adjustViewBounds="true"
+            />
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/text_group_chat_time"
+        android:textSize="10dp"
+        android:text="21:27"
+        android:textColor="#8e8e8e"
+        android:layout_toRightOf="@id/card_group_chat_message"
+        android:layout_alignBottom="@id/card_group_chat_message"
+        android:layout_marginBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/text_group_chat_read_receipt"
+        android:textSize="10dp"
+        android:text="2"
+        android:textColor="@color/groupChatReadReceiptOther"
+        android:textStyle="bold"
+        android:layout_above="@id/text_group_chat_time"
+        android:layout_alignLeft="@id/text_group_chat_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
