@@ -62,15 +62,14 @@
                 android:maxWidth="288dp"
                 />
 
-
             <LinearLayout
                 android:id="@+id/url_preview_container"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 >
                 <View
-                    android:maxWidth="288dp"
+                    android:maxWidth="264dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginLeft="12dp"
@@ -120,6 +119,7 @@
                     />
                 <ImageView
                     android:id="@+id/image_url_preview_main"
+                    android:maxWidth="288dp"
                     android:layout_width="match_parent"
                     android:layout_height="148dp"
                     android:scaleType="centerCrop"
