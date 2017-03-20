@@ -54,12 +54,14 @@ public class ImageUtils {
             Glide.with(context)
                     .load(url)
                     .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .listener(listener)
                     .into(imageView);
         } else {
             Glide.with(context)
                     .load(url)
                     .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .into(imageView);
         }
     }
@@ -74,6 +76,7 @@ public class ImageUtils {
         Glide.with(context)
                 .load(url)
                 .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .placeholder(placeholderResId)
                 .into(imageView);
     }

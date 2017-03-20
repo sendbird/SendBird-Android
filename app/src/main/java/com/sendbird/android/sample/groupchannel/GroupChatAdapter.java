@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
@@ -481,7 +483,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (message.getCustomType().equals(URL_PREVIEW_CUSTOM_TYPE)) {
                 try {
                     urlPreviewContainer.setVisibility(View.VISIBLE);
-                    UrlPreviewInfo previewInfo = new UrlPreviewInfo(message.getData());
+                    final UrlPreviewInfo previewInfo = new UrlPreviewInfo(message.getData());
                     urlPreviewSiteNameText.setText("@" + previewInfo.getSiteName());
                     urlPreviewTitleText.setText(previewInfo.getTitle());
                     urlPreviewDescriptionText.setText(previewInfo.getDescription());

@@ -3,13 +3,13 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_item_open_channels"
-            android:icon="@drawable/ic_open_channels"
-            android:title="Open Channels" />
-        <item
             android:id="@+id/nav_item_group_channels"
             android:icon="@drawable/ic_group_channels"
             android:title="Group Channels" />
+        <item
+            android:id="@+id/nav_item_open_channels"
+            android:icon="@drawable/ic_open_channels"
+            android:title="Open Channels" />
 
     </group>
 
