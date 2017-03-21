@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Display current SendBird and app versions in a TextView
         String sdkVersion = String.format(getResources().getString(R.string.all_app_version),
-                SendBird.getSDKVersion());
+                BaseApplication.VERSION, SendBird.getSDKVersion());
         ((TextView) findViewById(R.id.text_login_versions)).setText(sdkVersion);
     }
 

@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Displays the SDK version in a TextView
         String sdkVersion = String.format(getResources().getString(R.string.all_app_version),
-                SendBird.getSDKVersion());
+                BaseApplication.VERSION, SendBird.getSDKVersion());
         ((TextView) findViewById(R.id.text_main_versions)).setText(sdkVersion);
 
 

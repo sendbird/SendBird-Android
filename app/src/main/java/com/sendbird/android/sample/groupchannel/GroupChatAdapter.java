@@ -9,18 +9,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.sendbird.android.AdminMessage;
+import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
+import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.DateUtils;
 import com.sendbird.android.sample.utils.ImageUtils;
-import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.UrlPreviewInfo;
 
 import org.json.JSONException;
@@ -53,6 +53,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<String> mFailedMessageIdList = new ArrayList<>();
     private Hashtable<String, Uri> mTempFileMessageUriTable = new Hashtable<>();
+    private boolean mIsMessageListLoading;
 
     interface OnItemLongClickListener {
         void onUserMessageItemLongClick(UserMessage message);
@@ -240,16 +241,6 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return mMessageList.size();
     }
 
-    void setMessageList(List<BaseMessage> messages) {
-        for (BaseMessage message : mMessageList) {
-            if (isTempMessage(message) || isFailedMessage(message)) {
-                messages.add(0, message);
-            }
-        }
-        mMessageList = messages;
-        notifyDataSetChanged();
-    }
-
     void setChannel(GroupChannel channel) {
         mChannel = channel;
     }
@@ -341,9 +332,104 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    void addLast(BaseMessage message) {
-        mMessageList.add(message);
+    private synchronized boolean isMessageListLoading() {
+        return mIsMessageListLoading;
+    }
+
+    private synchronized void setMessageListLoading(boolean tf) {
+        mIsMessageListLoading = tf;
+    }
+
+    /**
+     * Notifies that the user has read all (previously unread) messages in the channel.
+     * Typically, this would be called immediately after the user enters the chat and loads
+     * its most recent messages.
+     */
+    public void markAllMessagesAsRead() {
+        mChannel.markAsRead();
         notifyDataSetChanged();
+    }
+
+     /**
+     * Load old message list.
+     * @param limit
+     * @param handler
+     */
+    public void loadPreviousMessages(int limit, final BaseChannel.GetMessagesHandler handler) {
+        if(isMessageListLoading()) {
+            return;
+        }
+
+        long oldestMessageCreatedAt = Long.MAX_VALUE;
+        if(mMessageList.size() > 0) {
+            oldestMessageCreatedAt = mMessageList.get(mMessageList.size() - 1).getCreatedAt();
+        }
+
+        setMessageListLoading(true);
+        mChannel.getPreviousMessagesByTimestamp(oldestMessageCreatedAt, false, limit, false, BaseChannel.MessageTypeFilter.ALL, null, new BaseChannel.GetMessagesHandler() {
+            @Override
+            public void onResult(List<BaseMessage> list, SendBirdException e) {
+                if(handler != null) {
+                    handler.onResult(list, e);
+                }
+
+                setMessageListLoading(false);
+                if(e != null) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                for(BaseMessage message : list) {
+                    mMessageList.add(message);
+                }
+
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    /**
+     * Replaces current message list with new list.
+     * Should be used only on initial load or refresh.
+     */
+    public void loadLatestMessages(int limit, final BaseChannel.GetMessagesHandler handler) {
+        if(isMessageListLoading()) {
+            return;
+        }
+
+        setMessageListLoading(true);
+        mChannel.getPreviousMessagesByTimestamp(Long.MAX_VALUE, true, limit, true, BaseChannel.MessageTypeFilter.ALL, null, new BaseChannel.GetMessagesHandler() {
+           @Override
+           public void onResult(List<BaseMessage> list, SendBirdException e) {
+               if(handler != null) {
+                   handler.onResult(list, e);
+               }
+
+               setMessageListLoading(false);
+               if(e != null) {
+                   e.printStackTrace();
+                   return;
+               }
+
+               if(list.size() <= 0) {
+                   return;
+               }
+
+               for (BaseMessage message : mMessageList) {
+                   if (isTempMessage(message) || isFailedMessage(message)) {
+                       list.add(0, message);
+                   }
+               }
+
+               mMessageList.clear();
+
+               for(BaseMessage message : list) {
+                   mMessageList.add(message);
+               }
+
+               notifyDataSetChanged();
+           }
+        });
     }
 
     public void setItemLongClickListener(OnItemLongClickListener listener) {

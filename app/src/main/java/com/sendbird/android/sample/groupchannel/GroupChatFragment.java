@@ -155,9 +155,45 @@ public class GroupChatFragment extends Fragment {
 
     private void refresh() {
         if (mChannel == null) {
-            getChannelFromUrl(mChannelUrl);
+            GroupChannel.getChannel(mChannelUrl, new GroupChannel.GroupChannelGetHandler() {
+                @Override
+                public void onResult(GroupChannel groupChannel, SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    mChannel = groupChannel;
+                    mChatAdapter.setChannel(mChannel);
+                    mChatAdapter.loadLatestMessages(30, new BaseChannel.GetMessagesHandler() {
+                        @Override
+                        public void onResult(List<BaseMessage> list, SendBirdException e) {
+                            mChatAdapter.markAllMessagesAsRead();
+                        }
+                    });
+                    updateActionBarTitle();
+                }
+            });
         } else {
-            loadInitialMessageList(30);
+            mChannel.refresh(new GroupChannel.GroupChannelRefreshHandler() {
+                @Override
+                public void onResult(SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    mChatAdapter.loadLatestMessages(30, new BaseChannel.GetMessagesHandler() {
+                        @Override
+                        public void onResult(List<BaseMessage> list, SendBirdException e) {
+                            mChatAdapter.markAllMessagesAsRead();
+                        }
+                    });
+                    updateActionBarTitle();
+                }
+            });
         }
     }
 
@@ -174,7 +210,7 @@ public class GroupChatFragment extends Fragment {
             public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
 
                 if (baseChannel.getUrl().equals(mChannelUrl)) {
-                    markAllMessagesAsRead();
+                    mChatAdapter.markAllMessagesAsRead();
                     // Add new message to view
                     mChatAdapter.addFirst(baseMessage);
                 }
@@ -303,7 +339,7 @@ public class GroupChatFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
-                    loadNextMessageList(30);
+                    mChatAdapter.loadPreviousMessages(30, null);
                 }
             }
         });
@@ -470,7 +506,6 @@ public class GroupChatFragment extends Fragment {
     }
 
     private void showDownloadConfirmDialog(final FileMessage message) {
-
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             // If storage permissions are not granted, request permissions at run-time,
@@ -492,25 +527,6 @@ public class GroupChatFragment extends Fragment {
 
     }
 
-    private void getChannelFromUrl(String url) {
-        GroupChannel.getChannel(url, new GroupChannel.GroupChannelGetHandler() {
-            @Override
-            public void onResult(GroupChannel groupChannel, SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    e.printStackTrace();
-                    return;
-                }
-
-                mChannel = groupChannel;
-                loadInitialMessageList(30);
-
-                mChatAdapter.setChannel(mChannel);
-                updateActionBarTitle();
-            }
-        });
-    }
-
     private void updateActionBarTitle() {
         String title = "";
         if(mChannel != null) {
@@ -521,74 +537,6 @@ public class GroupChatFragment extends Fragment {
         ((MainActivity)getActivity()).setActionBarTitle(title);
     }
 
-    /**
-     * Notifies that the user has read all (previously unread) messages in the channel.
-     * Typically, this would be called immediately after the user enters the chat and loads
-     * its most recent messages.
-     */
-    private void markAllMessagesAsRead() {
-        mChannel.markAsRead();
-        mChatAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * Replaces current message list with new list.
-     * Should be used only on initial load.
-     */
-    private void loadInitialMessageList(int numMessages) {
-        mPrevMessageListQuery = mChannel.createPreviousMessageListQuery();
-        mPrevMessageListQuery.load(numMessages, true, new PreviousMessageListQuery.MessageListQueryResult() {
-            @Override
-            public void onResult(List<BaseMessage> list, SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    e.printStackTrace();
-                    return;
-                }
-
-                mChatAdapter.setMessageList(list);
-
-                // Marks all unread messages within the channel as read.
-                markAllMessagesAsRead();
-            }
-        });
-
-    }
-
-    /**
-     * Loads messages and adds them to current message list.
-     * <p>
-     * A PreviousMessageListQuery must have been already initialized through {@link #loadInitialMessageList(int)}
-     */
-    private void loadNextMessageList(int numMessages) {
-
-        if (mChannel == null) {
-            throw new NullPointerException("Current channel instance is null.");
-
-        }
-
-        if (mPrevMessageListQuery == null) {
-            throw new NullPointerException("Current query instance is null.");
-        }
-
-
-        mPrevMessageListQuery.load(numMessages, true, new PreviousMessageListQuery.MessageListQueryResult() {
-            @Override
-            public void onResult(List<BaseMessage> list, SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    e.printStackTrace();
-                    return;
-                }
-
-                for (BaseMessage message : list) {
-                    mChatAdapter.addLast((message));
-                }
-            }
-        });
-
-
-    }
 
     private void sendUserMessageWithUrl(final String text, String url) {
         new WebUtils.UrlPreviewAsyncTask() {
