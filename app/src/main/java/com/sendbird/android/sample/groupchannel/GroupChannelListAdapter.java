@@ -20,6 +20,7 @@ import com.sendbird.android.UserMessage;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.DateUtils;
 import com.sendbird.android.sample.utils.ImageUtils;
+import com.sendbird.android.sample.utils.TextUtils;
 import com.sendbird.android.sample.utils.TypingIndicator;
 
 import java.util.ArrayList;
@@ -140,7 +141,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         void bind(final Context context, final GroupChannel channel,
                   @Nullable final OnItemClickListener clickListener,
                   @Nullable final OnItemLongClickListener longClickListener) {
-            topicText.setText(channel.getName());
+            topicText.setText(TextUtils.getGroupChannelTitle(channel));
             memberCountText.setText(String.valueOf(channel.getMemberCount()));
 
             ImageUtils.displayRoundImageFromUrl(context, channel.getCoverUrl(), coverImage);

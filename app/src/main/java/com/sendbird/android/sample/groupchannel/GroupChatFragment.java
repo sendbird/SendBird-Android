@@ -148,8 +148,7 @@ public class GroupChatFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // Set action bar title to name of channel
-        ((MainActivity) getActivity())
-                .setActionBarTitle("");
+        updateActionBarTitle();
 
         return rootView;
     }
@@ -507,13 +506,19 @@ public class GroupChatFragment extends Fragment {
                 loadInitialMessageList(30);
 
                 mChatAdapter.setChannel(mChannel);
-
-                // Set action bar title to name of channel
-                ((MainActivity) getActivity())
-                        .setActionBarTitle(mChannel.getName());
-
+                updateActionBarTitle();
             }
         });
+    }
+
+    private void updateActionBarTitle() {
+        String title = "";
+        if(mChannel != null) {
+            title = TextUtils.getGroupChannelTitle(mChannel);
+        }
+
+        // Set action bar title to name of channel
+        ((MainActivity)getActivity()).setActionBarTitle(title);
     }
 
     /**
