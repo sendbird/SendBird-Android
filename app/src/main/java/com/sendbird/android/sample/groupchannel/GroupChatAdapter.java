@@ -3,6 +3,7 @@ package com.sendbird.android.sample.groupchannel;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +21,15 @@ import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.DateUtils;
+import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.ImageUtils;
+import com.sendbird.android.sample.utils.TextUtils;
 import com.sendbird.android.sample.utils.UrlPreviewInfo;
 
 import org.json.JSONException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -73,6 +78,71 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     GroupChatAdapter(Context context) {
         mMessageList = new ArrayList<>();
         mContext = context;
+    }
+
+    public void load(String channelUrl) {
+        try {
+            File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
+            appDir.mkdirs();
+
+            File dataFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + channelUrl) + ".data");
+
+            String content = FileUtils.loadFromFile(dataFile);
+            String [] dataArray = content.split("\n");
+
+            mChannel = (GroupChannel) GroupChannel.buildFromSerializedData(Base64.decode(dataArray[0], Base64.DEFAULT | Base64.NO_WRAP));
+
+            for(int i = 1; i < dataArray.length; i++) {
+                mMessageList.add(BaseMessage.buildFromSerializedData(Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
+            }
+
+            notifyDataSetChanged();
+        } catch(Exception e) {
+            // Nothing to load.
+        }
+    }
+
+    public void save() {
+        try {
+            StringBuilder sb = new StringBuilder();
+            if (mChannel != null) {
+                // Convert current data into string.
+                sb.append(Base64.encodeToString(mChannel.serialize(), Base64.DEFAULT | Base64.NO_WRAP));
+                BaseMessage message = null;
+                for (int i = 0; i < Math.min(mMessageList.size(), 100); i++) {
+                    message = mMessageList.get(i);
+                    if (!isTempMessage(message)) {
+                        sb.append("\n");
+                        sb.append(Base64.encodeToString(message.serialize(), Base64.DEFAULT | Base64.NO_WRAP));
+                    }
+                }
+
+                String data = sb.toString();
+                String md5 = TextUtils.generateMD5(data);
+
+                // Save the data into file.
+                File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
+                appDir.mkdirs();
+
+                File hashFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + mChannel.getUrl()) + ".hash");
+                File dataFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + mChannel.getUrl()) + ".data");
+
+                try {
+                    String content = FileUtils.loadFromFile(hashFile);
+                    // If data has not been changed, do not save.
+                    if(md5.equals(content)) {
+                        return;
+                    }
+                } catch(IOException e) {
+                    // File not found. Save the data.
+                }
+
+                FileUtils.saveToFile(dataFile, data);
+                FileUtils.saveToFile(hashFile, md5);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -283,7 +353,6 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void markMessageFailed(String requestId) {
-        System.out.println("Failed Message: " + requestId);
         mFailedMessageIdList.add(requestId);
         notifyDataSetChanged();
     }

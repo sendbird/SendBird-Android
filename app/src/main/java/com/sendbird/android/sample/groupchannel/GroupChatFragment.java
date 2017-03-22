@@ -285,6 +285,18 @@ public class GroupChatFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mChatAdapter.load(mChannelUrl);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mChatAdapter.save();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_CHANNEL_URL, mChannelUrl);
 
@@ -374,8 +386,6 @@ public class GroupChatFragment extends Fragment {
 
             @Override
             public void onFileMessageItemClick(FileMessage message) {
-                System.out.println("Click: " + message.getRequestId());
-
                 // Load media chooser and remove the failed message from list.
                 if (mChatAdapter.isFailedMessage(message)) {
                     retryFailedMessage(message);

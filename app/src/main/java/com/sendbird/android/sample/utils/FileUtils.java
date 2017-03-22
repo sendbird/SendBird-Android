@@ -14,9 +14,16 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
 
@@ -214,5 +221,28 @@ public class FileUtils {
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public static void saveToFile(File file, String data) throws IOException {
+        File tempFile = File.createTempFile("sendbird", "temp");
+        FileOutputStream fos = new FileOutputStream(tempFile);
+        fos.write(data.getBytes());
+        fos.close();
+
+        if(!tempFile.renameTo(file)) {
+            throw new IOException("Error to rename file to " + file.getAbsolutePath());
+        }
+    }
+
+    public static String loadFromFile(File file) throws IOException {
+        FileInputStream stream = new FileInputStream(file);
+        Reader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder builder = new StringBuilder();
+        char[] buffer = new char[8192];
+        int read;
+        while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
+            builder.append(buffer, 0, read);
+        }
+        return builder.toString();
     }
 }

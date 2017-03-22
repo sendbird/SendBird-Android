@@ -8,7 +8,7 @@ import com.sendbird.android.SendBird;
 public class BaseApplication extends Application {
 
     private static final String APP_ID = "9DA1B1F4-0BE6-4DA8-82C5-2E81DAB56F23"; // US-1 Demo
-    public static final String VERSION = "3.0.25";
+    public static final String VERSION = "3.0.26";
 
     @Override
     public void onCreate() {

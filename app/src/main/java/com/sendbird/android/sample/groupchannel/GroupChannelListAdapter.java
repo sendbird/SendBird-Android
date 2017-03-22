@@ -3,6 +3,7 @@ package com.sendbird.android.sample.groupchannel;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +17,17 @@ import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
+import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.DateUtils;
+import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.ImageUtils;
 import com.sendbird.android.sample.utils.TextUtils;
 import com.sendbird.android.sample.utils.TypingIndicator;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +53,68 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     GroupChannelListAdapter(Context context) {
         mChannelList = new ArrayList<>();
         mContext = context;
+    }
+
+    public void load() {
+        try {
+            File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
+            appDir.mkdirs();
+
+            File dataFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".data");
+
+            String content = FileUtils.loadFromFile(dataFile);
+            String [] dataArray = content.split("\n");
+
+            for(int i = 0; i < dataArray.length; i++) {
+                mChannelList.add((GroupChannel) BaseChannel.buildFromSerializedData(Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
+            }
+
+            notifyDataSetChanged();
+        } catch(Exception e) {
+            // Nothing to load.
+        }
+    }
+
+    public void save() {
+        try {
+            StringBuilder sb = new StringBuilder();
+            if (mChannelList != null && mChannelList.size() > 0) {
+                // Convert current data into string.
+                GroupChannel channel = null;
+                for (int i = 0; i < Math.min(mChannelList.size(), 100); i++) {
+                    channel = mChannelList.get(i);
+                    sb.append("\n");
+                    sb.append(Base64.encodeToString(channel.serialize(), Base64.DEFAULT | Base64.NO_WRAP));
+                }
+                // Remove first newline.
+                sb.delete(0, 1);
+
+                String data = sb.toString();
+                String md5 = TextUtils.generateMD5(data);
+
+                // Save the data into file.
+                File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
+                appDir.mkdirs();
+
+                File hashFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".hash");
+                File dataFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".data");
+
+                try {
+                    String content = FileUtils.loadFromFile(hashFile);
+                    // If data has not been changed, do not save.
+                    if(md5.equals(content)) {
+                        return;
+                    }
+                } catch(IOException e) {
+                    // File not found. Save the data.
+                }
+
+                FileUtils.saveToFile(dataFile, data);
+                FileUtils.saveToFile(hashFile, md5);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

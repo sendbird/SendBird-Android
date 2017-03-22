@@ -85,6 +85,18 @@ public class GroupChannelListFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mChannelListAdapter.load();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mChannelListAdapter.save();
+    }
+
+    @Override
     public void onResume() {
         Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
 
