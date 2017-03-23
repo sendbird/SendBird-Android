@@ -435,7 +435,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         setMessageListLoading(true);
-        mChannel.getPreviousMessagesByTimestamp(oldestMessageCreatedAt, false, limit, false, BaseChannel.MessageTypeFilter.ALL, null, new BaseChannel.GetMessagesHandler() {
+        mChannel.getPreviousMessagesByTimestamp(oldestMessageCreatedAt, false, limit, true, BaseChannel.MessageTypeFilter.ALL, null, new BaseChannel.GetMessagesHandler() {
             @Override
             public void onResult(List<BaseMessage> list, SendBirdException e) {
                 if(handler != null) {

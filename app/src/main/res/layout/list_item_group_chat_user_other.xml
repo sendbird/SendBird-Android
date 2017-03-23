@@ -54,7 +54,8 @@
         app:cardBackgroundColor="@color/groupChatBubbleOther"
         app:cardUseCompatPadding="true"
         app:cardCornerRadius="12dp"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+        app:cardPreventCornerOverlap="false">
 
         <LinearLayout
             android:id="@+id/group_chat_message_container"

@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                             .commit();
 
                 } else if (id == R.id.nav_item_disconnect) {
-                    // Disconnect from SendBird
+                    // Unregister push tokens and disconnect
                     disconnect();
                 }
 
@@ -240,30 +240,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Unregisters all push tokens for the current user so that they do not receive any notifications,
+     * then disconnects from SendBird.
+     */
     private void disconnect() {
-        SendBird.disconnect(new SendBird.DisconnectHandler() {
-            @Override
-            public void onDisconnected() {
-                unregisterPushTokens();
-                PreferenceUtils.setConnected(MainActivity.this, false);
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-    }
-
-    private void unregisterPushTokens() {
         SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
             @Override
             public void onUnregistered(SendBirdException e) {
                 if (e != null) {
                     // Error!
+                    e.printStackTrace();
+                    return;
                 }
 
                 Toast.makeText(MainActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT)
                         .show();
+
+                SendBird.disconnect(new SendBird.DisconnectHandler() {
+                    @Override
+                    public void onDisconnected() {
+                        PreferenceUtils.setConnected(MainActivity.this, false);
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
             }
         });
     }
