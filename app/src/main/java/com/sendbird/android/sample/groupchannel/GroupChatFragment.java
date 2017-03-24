@@ -340,6 +340,9 @@ public class GroupChatFragment extends Fragment {
 
             sendFileWithThumbnail(data.getData());
         }
+
+        // Set this as true to restore background connection management.
+        SendBird.setAutoBackgroundDetection(true);
     }
 
     private void setUpRecyclerView() {
