@@ -65,6 +65,8 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String content = FileUtils.loadFromFile(dataFile);
             String [] dataArray = content.split("\n");
 
+            // Reset channel list, then add cached data.
+            mChannelList.clear();
             for(int i = 0; i < dataArray.length; i++) {
                 mChannelList.add((GroupChannel) BaseChannel.buildFromSerializedData(Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
             }
