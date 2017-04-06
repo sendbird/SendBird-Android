@@ -12,28 +12,38 @@
         android:icon="@mipmap/sendbird_ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity android:name=".main.LoginActivity" >
+        android:theme="@style/AppTheme">
+        <activity android:name=".main.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.MainActivity" />
+        <activity android:name=".main.MainActivity"
+            android:label="@string/select_channel_type"/>
         <activity android:name=".utils.PhotoViewerActivity" />
-        <activity android:name=".utils.MediaPlayerActivity" android:screenOrientation="landscape" />
-        <activity android:name=".openchannel.CreateOpenChannelActivity"
+        <activity
+            android:name=".utils.MediaPlayerActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".openchannel.CreateOpenChannelActivity"
             android:label="@string/create_open_channel" />
-        <activity android:name=".groupchannel.InviteMemberActivity"
-            android:label="@string/invite_member"/>
-        <activity android:name=".groupchannel.MemberListActivity"
-            android:label="@string/member_list"/>
-        <activity android:name=".groupchannel.CreateGroupChannelActivity"
+        <activity
+            android:name=".groupchannel.InviteMemberActivity"
+            android:label="@string/invite_member" />
+        <activity
+            android:name=".groupchannel.MemberListActivity"
+            android:label="@string/member_list" />
+        <activity
+            android:name=".groupchannel.CreateGroupChannelActivity"
             android:label="@string/create_group_channel" />
         <activity
             android:name=".openchannel.ParticipantListActivity"
             android:label="@string/participant_list" />
+        <activity android:name=".openchannel.OpenChannelActivity" />
+        <activity android:name=".groupchannel.GroupChannelActivity" />
+
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -44,6 +54,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

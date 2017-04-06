@@ -21,7 +21,6 @@ import android.view.*;
 import android.widget.*;
 import com.sendbird.android.*;
 import com.sendbird.android.sample.R;
-import com.sendbird.android.sample.main.MainActivity;
 import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.MediaPlayerActivity;
 import com.sendbird.android.sample.utils.PhotoViewerActivity;
@@ -59,7 +58,7 @@ public class OpenChatFragment extends Fragment {
     private PreviousMessageListQuery mPrevMessageListQuery;
 
     /**
-     * To create an instance of this fragment, a Channel URL should be required.
+     * To create an instance of this fragment, a Channel URL should be passed.
      */
     public static OpenChatFragment newInstance(@NonNull String channelUrl) {
         OpenChatFragment fragment = new OpenChatFragment();
@@ -114,10 +113,6 @@ public class OpenChatFragment extends Fragment {
         // Gets channel from URL user requested
         mChannelUrl = getArguments().getString(OpenChannelListFragment.EXTRA_OPEN_CHANNEL_URL);
         enterChannel(mChannelUrl);
-
-        // Set action bar title to name of channel
-        ((MainActivity) getActivity())
-                .setActionBarTitle("");
 
         return rootView;
     }
@@ -427,8 +422,7 @@ public class OpenChatFragment extends Fragment {
                         loadInitialMessageList(30);
 
                         // Set action bar title to name of channel
-                        ((MainActivity) getActivity())
-                                .setActionBarTitle(mChannel.getName());
+                        ((OpenChannelActivity) getActivity()).setActionBarTitle(mChannel.getName());
                     }
                 });
             }

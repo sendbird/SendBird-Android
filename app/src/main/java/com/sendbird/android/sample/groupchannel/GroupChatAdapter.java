@@ -825,7 +825,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private static class OtherFileMessageHolder extends RecyclerView.ViewHolder {
-        TextView nicknameText, timeText, fileNameText, fileSizeText, dateText;
+        TextView nicknameText, timeText, fileNameText, fileSizeText, dateText, readReceiptText;
         ImageView profileImage;
 
         public OtherFileMessageHolder(View itemView) {
@@ -838,6 +838,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
             dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
+            readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
@@ -845,6 +846,16 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 //            fileSizeText.setText(String.valueOf(message.getSize()));
 
+            // Since setChannel is set slightly after adapter is created, check if null.
+            if (channel != null) {
+                int readReceipt = channel.getReadReceipt(message);
+                if (readReceipt > 0) {
+                    readReceiptText.setVisibility(View.VISIBLE);
+                    readReceiptText.setText(String.valueOf(readReceipt));
+                } else {
+                    readReceiptText.setVisibility(View.INVISIBLE);
+                }
+            }
 
             // Show the date if the message was sent on a different date than the previous message.
             if (isNewDay) {

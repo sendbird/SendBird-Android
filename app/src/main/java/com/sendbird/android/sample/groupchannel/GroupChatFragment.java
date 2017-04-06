@@ -23,7 +23,6 @@ import android.view.*;
 import android.widget.*;
 import com.sendbird.android.*;
 import com.sendbird.android.sample.R;
-import com.sendbird.android.sample.main.MainActivity;
 import com.sendbird.android.sample.utils.*;
 import org.json.JSONException;
 
@@ -147,9 +146,6 @@ public class GroupChatFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        // Set action bar title to name of channel
-        updateActionBarTitle();
-
         return rootView;
     }
 
@@ -203,7 +199,7 @@ public class GroupChatFragment extends Fragment {
 
         // Gets channel from URL user requested
 
-        Log.v(LOG_TAG, mChannelUrl);
+        Log.d(LOG_TAG, mChannelUrl);
 
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
@@ -542,14 +538,16 @@ public class GroupChatFragment extends Fragment {
 
     private void updateActionBarTitle() {
         String title = "";
+
         if(mChannel != null) {
             title = TextUtils.getGroupChannelTitle(mChannel);
         }
 
         // Set action bar title to name of channel
-        ((MainActivity)getActivity()).setActionBarTitle(title);
+        if (getActivity() != null) {
+            ((GroupChannelActivity) getActivity()).setActionBarTitle(title);
+        }
     }
-
 
     private void sendUserMessageWithUrl(final String text, String url) {
         new WebUtils.UrlPreviewAsyncTask() {

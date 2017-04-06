@@ -29,7 +29,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.android.sample.R;
-import com.sendbird.android.sample.main.MainActivity;
+import com.sendbird.android.sample.groupchannel.GroupChannelActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +90,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     public static void sendNotification(Context context, String messageBody, String channelUrl) {
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, GroupChannelActivity.class);
         intent.putExtra("groupChannelUrl", channelUrl);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 

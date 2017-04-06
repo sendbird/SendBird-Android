@@ -17,7 +17,6 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.sample.R;
-import com.sendbird.android.sample.main.MainActivity;
 
 import java.util.List;
 
@@ -51,7 +50,7 @@ public class OpenChannelListFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        ((MainActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_open_channels));
+        ((OpenChannelActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_open_channels));
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_open_channel_list);
         mChannelListAdapter = new OpenChannelListAdapter(getContext());
@@ -117,7 +116,7 @@ public class OpenChannelListFragment extends Fragment {
                 String channelUrl = channel.getUrl();
                 OpenChatFragment fragment = OpenChatFragment.newInstance(channelUrl);
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.container_main, fragment)
+                        .replace(R.id.container_open_channel, fragment)
                         .addToBackStack(null)
                         .commit();
             }

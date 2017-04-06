@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBirdException;
@@ -43,6 +44,9 @@ public class MemberListActivity extends AppCompatActivity{
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_member_list);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         setUpRecyclerView();
 
@@ -56,7 +60,17 @@ public class MemberListActivity extends AppCompatActivity{
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     private void getChannelFromUrl(String url) {
         GroupChannel.getChannel(url, new GroupChannel.GroupChannelGetHandler() {
@@ -87,7 +101,6 @@ public class MemberListActivity extends AppCompatActivity{
             }
         });
     }
-
 
     private void setUserList(List<User> userList) {
         mListAdapter.setUserList(userList);
