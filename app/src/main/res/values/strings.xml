@@ -13,6 +13,7 @@
     <!-- main -->
     <string name="main_drawer_open">Open navigation drawer</string>
     <string name="main_drawer_close">Close navigation drawer</string>
+    <string name="select_channel_type">Select channel type</string>
 
     <!-- login -->
     <string name="login_user_id">User ID</string>

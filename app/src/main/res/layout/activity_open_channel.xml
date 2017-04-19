@@ -2,10 +2,10 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sendbird.android.sample.main.MainActivity">
+    >
+
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:fitsSystemWindows="true">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_main"
+            android:id="@+id/toolbar_open_channel"
             android:layout_width="match_parent"
             android:theme="@style/Toolbar"
             android:layout_height="?attr/actionBarSize"
@@ -23,24 +23,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <!-- The navigation drawer -->
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view_main"
+    <FrameLayout
+        android:id="@+id/container_open_channel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:menu="@menu/nav_view">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </FrameLayout>
 
-        <TextView
-            android:id="@+id/text_main_versions"
-            android:text="@string/all_app_version"
-            android:textSize="12sp"
-            android:textColor="#8e8e8e"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </android.support.design.widget.NavigationView>
 
 </android.support.design.widget.CoordinatorLayout>

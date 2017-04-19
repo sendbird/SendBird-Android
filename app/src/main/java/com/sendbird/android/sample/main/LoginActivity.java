@@ -46,6 +46,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String userId = mUserIdConnectEditText.getText().toString();
+                // Remove all spaces from userID
+                userId = userId.replaceAll("\\s", "");
+
                 String userNickname = mUserNicknameEditText.getText().toString();
 
                 PreferenceUtils.setUserId(LoginActivity.this, userId);

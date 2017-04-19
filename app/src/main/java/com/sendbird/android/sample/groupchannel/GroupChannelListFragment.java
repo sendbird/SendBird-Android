@@ -15,14 +15,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.sendbird.android.*;
 import com.sendbird.android.sample.R;
-import com.sendbird.android.sample.main.MainActivity;
 
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-
 
 public class GroupChannelListFragment extends Fragment {
 
@@ -54,7 +54,7 @@ public class GroupChannelListFragment extends Fragment {
         setRetainInstance(true);
 
         // Change action bar title
-        ((MainActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_group_channels));
+        ((GroupChannelActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_group_channels));
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_group_channel_list);
         mChannelListAdapter = new GroupChannelListAdapter(getActivity());
@@ -177,17 +177,70 @@ public class GroupChannelListFragment extends Fragment {
         mChannelListAdapter.setOnItemLongClickListener(new GroupChannelListAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(final GroupChannel channel) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Leave channel " + channel.getName() + "?")
-                        .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                leaveChannel(channel);
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .create().show();
+                showChannelOptionsDialog(channel);
+            }
+        });
+    }
 
+    /**
+     * Displays a dialog listing channel-specific options.
+     */
+    private void showChannelOptionsDialog(final GroupChannel channel) {
+        String[] options;
+        final boolean pushCurrentlyEnabled = channel.isPushEnabled();
+
+        options = pushCurrentlyEnabled
+                ? new String[]{"Leave channel", "Turn push notifications OFF"}
+                : new String[]{"Leave channel", "Turn push notifications ON"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Channel options")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            // Show a dialog to confirm that the user wants to leave the channel.
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("Leave channel " + channel.getName() + "?")
+                                    .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            leaveChannel(channel);
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", null)
+                                    .create().show();
+                        } else if (which == 1) {
+                            setChannelPushPreferences(channel, !pushCurrentlyEnabled);
+                        }
+                    }
+                });
+        builder.create().show();
+    }
+
+    /**
+     * Turns push notifications on or off for a selected channel.
+     * @param channel   The channel for which push preferences should be changed.
+     * @param on    Whether to set push notifications on or off.
+     */
+    private void setChannelPushPreferences(final GroupChannel channel, final boolean on) {
+        // Change push preferences.
+        channel.setPushPreference(on, new GroupChannel.GroupChannelSetPushPreferenceHandler() {
+            @Override
+            public void onResult(SendBirdException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
+
+                String toast = on
+                        ? "Push notifications have been turned ON"
+                        : "Push notifications have been turned OFF";
+
+                Toast.makeText(getActivity(), toast, Toast.LENGTH_SHORT)
+                        .show();
             }
         });
     }
@@ -212,7 +265,7 @@ public class GroupChannelListFragment extends Fragment {
     void enterGroupChannel(String channelUrl) {
         GroupChatFragment fragment = GroupChatFragment.newInstance(channelUrl);
         getFragmentManager().beginTransaction()
-                .replace(R.id.container_main, fragment)
+                .replace(R.id.container_group_channel, fragment)
                 .addToBackStack(null)
                 .commit();
     }
