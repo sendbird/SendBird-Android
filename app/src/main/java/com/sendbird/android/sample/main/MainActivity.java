@@ -73,11 +73,12 @@ public class MainActivity extends AppCompatActivity {
                 if (e != null) {
                     // Error!
                     e.printStackTrace();
-                    return;
-                }
 
-                Toast.makeText(MainActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT)
-                        .show();
+                    // Don't return because we still need to disconnect.
+                } else {
+                    Toast.makeText(MainActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT)
+                            .show();
+                }
 
                 SendBird.disconnect(new SendBird.DisconnectHandler() {
                     @Override

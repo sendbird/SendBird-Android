@@ -54,6 +54,7 @@ public class MediaPlayerActivity extends Activity implements
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_media_player);
+
         mPreview = (SurfaceView) findViewById(R.id.surface);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         holder = mPreview.getHolder();
