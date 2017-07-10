@@ -236,7 +236,7 @@ public class GroupChatFragment extends Fragment {
             @Override
             public void onTypingStatusUpdated(GroupChannel channel) {
                 if (channel.getUrl().equals(mChannelUrl)) {
-                    List<User> typingUsers = channel.getTypingMembers();
+                    List<Member> typingUsers = channel.getTypingMembers();
                     displayTyping(typingUsers);
                 }
             }
@@ -446,7 +446,7 @@ public class GroupChatFragment extends Fragment {
      *
      * @param typingUsers The list of currently typing users.
      */
-    private void displayTyping(List<User> typingUsers) {
+    private void displayTyping(List<Member> typingUsers) {
 
         if (typingUsers.size() > 0) {
             mCurrentEventLayout.setVisibility(View.VISIBLE);

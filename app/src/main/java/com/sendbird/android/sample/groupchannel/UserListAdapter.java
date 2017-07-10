@@ -7,10 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.sendbird.android.User;
-import com.sendbird.android.sample.utils.ImageUtils;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +44,8 @@ public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return mUsers.size();
     }
 
-    public void setUserList(List<User> users) {
-        mUsers = users;
+    public void setUserList(List<? extends User> users) {
+        mUsers.addAll(users);
         notifyDataSetChanged();
     }
 
@@ -54,7 +53,6 @@ public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mUsers.add(user);
         notifyDataSetChanged();
     }
-
 
     private class UserHolder extends RecyclerView.ViewHolder {
         private TextView nameText;

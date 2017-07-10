@@ -10,10 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.sendbird.android.GroupChannel;
+import com.sendbird.android.Member;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.sample.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -102,7 +104,7 @@ public class MemberListActivity extends AppCompatActivity{
         });
     }
 
-    private void setUserList(List<User> userList) {
+    private void setUserList(List<Member> userList) {
         mListAdapter.setUserList(userList);
     }
 
