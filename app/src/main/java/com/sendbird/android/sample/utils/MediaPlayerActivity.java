@@ -72,7 +72,7 @@ public class MediaPlayerActivity extends Activity implements
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setDataSource(path);
             mMediaPlayer.setDisplay(holder);
-            mMediaPlayer.prepare();
+            mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnBufferingUpdateListener(this);
             mMediaPlayer.setOnCompletionListener(this);
             mMediaPlayer.setOnPreparedListener(this);
