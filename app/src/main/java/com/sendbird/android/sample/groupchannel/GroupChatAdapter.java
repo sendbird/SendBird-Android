@@ -80,6 +80,10 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         mContext = context;
     }
 
+    void setContext(Context context) {
+        mContext = context;
+    }
+
     public void load(String channelUrl) {
         try {
             File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
