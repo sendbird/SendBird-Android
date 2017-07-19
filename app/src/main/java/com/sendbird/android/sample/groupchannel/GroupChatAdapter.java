@@ -911,6 +911,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
+            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             if (isFailedMessage) {
                 readReceiptText.setText(R.string.message_failed);
@@ -989,6 +990,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
+            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             // Since setChannel is set slightly after adapter is created, check if null.
             if (channel != null) {
@@ -1069,6 +1071,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, Uri tempFileMessageUri, final OnItemClickListener listener) {
+            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             if (isFailedMessage) {
                 readReceiptText.setText(R.string.message_failed);
@@ -1133,6 +1136,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void bind(Context context, final FileMessage message, GroupChannel channel, boolean isNewDay, boolean isContinuous, final OnItemClickListener listener) {
+            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             // Since setChannel is set slightly after adapter is created, check if null.
             if (channel != null) {
