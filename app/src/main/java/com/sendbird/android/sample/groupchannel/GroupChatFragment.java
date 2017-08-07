@@ -256,6 +256,14 @@ public class GroupChatFragment extends Fragment {
             }
 
             @Override
+            public void onMessageDeleted(BaseChannel baseChannel, long msgId) {
+                super.onMessageDeleted(baseChannel, msgId);
+                if (baseChannel.getUrl().equals(mChannelUrl)) {
+                    mChatAdapter.delete(msgId);
+                }
+            }
+
+            @Override
             public void onReadReceiptUpdated(GroupChannel channel) {
                 if (channel.getUrl().equals(mChannelUrl)) {
                     mChatAdapter.notifyDataSetChanged();

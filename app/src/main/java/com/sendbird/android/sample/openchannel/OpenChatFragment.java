@@ -187,6 +187,14 @@ public class OpenChatFragment extends Fragment {
                     mChatAdapter.addFirst(baseMessage);
                 }
             }
+
+            @Override
+            public void onMessageDeleted(BaseChannel baseChannel, long msgId) {
+                super.onMessageDeleted(baseChannel, msgId);
+                if (baseChannel.getUrl().equals(mChannelUrl)) {
+                    mChatAdapter.delete(msgId);
+                }
+            }
         });
     }
 

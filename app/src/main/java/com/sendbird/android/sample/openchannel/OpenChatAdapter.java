@@ -86,6 +86,16 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    void delete(long msgId) {
+        for(BaseMessage msg : mMessageList) {
+            if(msg.getMessageId() == msgId) {
+                mMessageList.remove(msg);
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

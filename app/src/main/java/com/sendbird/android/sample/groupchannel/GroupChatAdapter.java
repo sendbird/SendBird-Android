@@ -407,6 +407,16 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    void delete(long msgId) {
+        for(BaseMessage msg : mMessageList) {
+            if(msg.getMessageId() == msgId) {
+                mMessageList.remove(msg);
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
     private synchronized boolean isMessageListLoading() {
         return mIsMessageListLoading;
     }
