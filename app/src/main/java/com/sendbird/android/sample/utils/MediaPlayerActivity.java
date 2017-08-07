@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 package com.sendbird.android.sample.utils;
+
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnVideoSizeChangedListener;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
 import com.sendbird.android.sample.R;
@@ -33,45 +36,76 @@ import com.sendbird.android.sample.R;
 public class MediaPlayerActivity extends Activity implements
         OnBufferingUpdateListener, OnCompletionListener,
         OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
-    private static final String TAG = "MediaPlayerActivity";
+    private MediaPlayer mMediaPlayer;
+    private SurfaceView mSurfaceView;
+    private SurfaceHolder mSurfaceHolder;
+    private String mUrl;
+    private String mName;
+
+    private ProgressBar mProgressBar;
+    private View mContainer;
+
     private int mVideoWidth;
     private int mVideoHeight;
-    private MediaPlayer mMediaPlayer;
-    private SurfaceView mPreview;
-    private SurfaceHolder holder;
-    private String path;
-    private Bundle extras;
-    private static final String MEDIA = "media";
-    private boolean mIsVideoSizeKnown = false;
-    private boolean mIsVideoReadyToBePlayed = false;
-    private ProgressBar mProgressBar;
 
-    /**
-     *
-     * Called when the activity is first created.
-     */
+    private boolean mIsVideoReadyToBePlayed = false;
+    private boolean mIsVideoSizeKnown = false;
+    private boolean mIsContainerSizeKnown = false;
+
+    private boolean mIsPaused = false;
+    private int mCurrentPosition = -1;
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_media_player);
 
-        mPreview = (SurfaceView) findViewById(R.id.surface);
+        mSurfaceView = (SurfaceView) findViewById(R.id.surface);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        holder = mPreview.getHolder();
-        holder.addCallback(this);
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        extras = getIntent().getExtras();
-        path = extras.getString("url");
+        mSurfaceHolder = mSurfaceView.getHolder();
+        mSurfaceHolder.addCallback(this);
+        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+        Bundle extras = getIntent().getExtras();
+        mUrl = extras.getString("url");
+        mName = extras.getString("name");
 
         mProgressBar.setVisibility(View.VISIBLE);
+        initToolbar();
     }
-    private void playVideo(Integer Media) {
+
+    private void initToolbar() {
+        mContainer = findViewById(R.id.layout_media_player);
+        setContainerLayoutListener(false);
+    }
+
+    private void setContainerLayoutListener(final boolean screenRotated) {
+        mContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT >= 16) {
+                    mContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    mContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+
+                mIsContainerSizeKnown = true;
+                if (screenRotated) {
+                    setVideoSize();
+                } else {
+                    tryToStartVideoPlayback();
+                }
+            }
+        });
+    }
+
+    private void playVideo() {
+        mProgressBar.setVisibility(View.VISIBLE);
         doCleanUp();
         try {
-            // Create a new media player and set the listeners
             mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setDataSource(path);
-            mMediaPlayer.setDisplay(holder);
+            mMediaPlayer.setDataSource(mUrl);
+            mMediaPlayer.setDisplay(mSurfaceHolder);
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnBufferingUpdateListener(this);
             mMediaPlayer.setOnCompletionListener(this);
@@ -79,73 +113,127 @@ public class MediaPlayerActivity extends Activity implements
             mMediaPlayer.setOnVideoSizeChangedListener(this);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         } catch (Exception e) {
-            Log.e(TAG, "error: " + e.getMessage(), e);
+            e.printStackTrace();
         }
     }
-    public void onBufferingUpdate(MediaPlayer arg0, int percent) {
-        Log.d(TAG, "onBufferingUpdate percent:" + percent);
+
+    public void onBufferingUpdate(MediaPlayer mp, int percent) {
     }
-    public void onCompletion(MediaPlayer arg0) {
-        Log.d(TAG, "onCompletion called");
+
+    public void onCompletion(MediaPlayer mp) {
+        finish();
     }
+
+    public void onPrepared(MediaPlayer mediaplayer) {
+        mIsVideoReadyToBePlayed = true;
+        tryToStartVideoPlayback();
+    }
+
     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-        Log.v(TAG, "onVideoSizeChanged called");
         if (width == 0 || height == 0) {
-            Log.e(TAG, "invalid video width(" + width + ") or height(" + height + ")");
             return;
         }
-        mIsVideoSizeKnown = true;
+
         mVideoWidth = width;
         mVideoHeight = height;
-        if (mIsVideoReadyToBePlayed && mIsVideoSizeKnown) {
-            startVideoPlayback();
-        }
+        mIsVideoSizeKnown = true;
+        tryToStartVideoPlayback();
     }
-    public void onPrepared(MediaPlayer mediaplayer) {
-        Log.d(TAG, "onPrepared called");
-        mIsVideoReadyToBePlayed = true;
-        if (mIsVideoReadyToBePlayed && mIsVideoSizeKnown) {
-            startVideoPlayback();
-        }
-    }
+
     public void surfaceChanged(SurfaceHolder surfaceholder, int i, int j, int k) {
-        Log.d(TAG, "surfaceChanged called");
     }
+
     public void surfaceDestroyed(SurfaceHolder surfaceholder) {
-        Log.d(TAG, "surfaceDestroyed called");
     }
+
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceCreated called");
-        playVideo(extras.getInt(MEDIA));
+        playVideo();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
-        releaseMediaPlayer();
-        doCleanUp();
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+            mCurrentPosition = mMediaPlayer.getCurrentPosition();
+            mIsPaused = true;
+        }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         releaseMediaPlayer();
         doCleanUp();
     }
+
     private void releaseMediaPlayer() {
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
     }
+
     private void doCleanUp() {
         mVideoWidth = 0;
         mVideoHeight = 0;
+
         mIsVideoReadyToBePlayed = false;
         mIsVideoSizeKnown = false;
     }
+
+    private void tryToStartVideoPlayback() {
+        if (mIsVideoReadyToBePlayed && mIsVideoSizeKnown && mIsContainerSizeKnown) {
+            startVideoPlayback();
+        }
+    }
+
     private void startVideoPlayback() {
-        Log.v(TAG, "startVideoPlayback");
-        holder.setFixedSize(mVideoWidth, mVideoHeight);
-        mMediaPlayer.start();
         mProgressBar.setVisibility(View.INVISIBLE);
+        if (!mMediaPlayer.isPlaying()) {
+            mSurfaceHolder.setFixedSize(mVideoWidth, mVideoHeight);
+            setVideoSize();
+
+            if (mIsPaused) {
+                mMediaPlayer.seekTo(mCurrentPosition);
+                mIsPaused = false;
+            }
+            mMediaPlayer.start();
+        }
+    }
+
+    private void setVideoSize() {
+        try {
+            int videoWidth = mMediaPlayer.getVideoWidth();
+            int videoHeight = mMediaPlayer.getVideoHeight();
+            float videoProportion = (float) videoWidth / (float) videoHeight;
+
+            int videoWidthInContainer = mContainer.getWidth();
+            int videoHeightInContainer = mContainer.getHeight();
+            float videoInContainerProportion = (float) videoWidthInContainer / (float) videoHeightInContainer;
+
+            android.view.ViewGroup.LayoutParams lp = mSurfaceView.getLayoutParams();
+            if (videoProportion > videoInContainerProportion) {
+                lp.width = videoWidthInContainer;
+                lp.height = (int) ((float) videoWidthInContainer / videoProportion);
+            } else {
+                lp.width = (int) (videoProportion * (float) videoHeightInContainer);
+                lp.height = videoHeightInContainer;
+            }
+            mSurfaceView.setLayoutParams(lp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContainerLayoutListener(true);
     }
 }

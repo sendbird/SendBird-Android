@@ -25,7 +25,7 @@
         <activity android:name=".utils.PhotoViewerActivity" />
         <activity
             android:name=".utils.MediaPlayerActivity"
-            android:screenOrientation="landscape" />
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".openchannel.CreateOpenChannelActivity"
             android:label="@string/create_open_channel" />
