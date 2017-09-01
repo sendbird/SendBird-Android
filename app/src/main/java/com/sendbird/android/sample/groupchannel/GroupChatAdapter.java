@@ -431,7 +431,9 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * its most recent messages.
      */
     public void markAllMessagesAsRead() {
-        mChannel.markAsRead();
+        if (mChannel != null) {
+            mChannel.markAsRead();
+        }
         notifyDataSetChanged();
     }
 
