@@ -124,8 +124,20 @@ public class WebUtils {
                     }
                 }
 
+                if(!result.containsKey("site_name")) {
+                    result.put("site_name", result.get("title"));
+                }
+
                 if(!result.containsKey("url")) {
                     result.put("url", url);
+                }
+
+                if(result.get("image") != null && result.get("image").startsWith("//")) {
+                    result.put("image", "http:" + result.get("image"));
+                }
+
+                if(result.get("url") != null && result.get("url").startsWith("//")) {
+                    result.put("url", "http:" + result.get("url"));
                 }
 
                 /**
