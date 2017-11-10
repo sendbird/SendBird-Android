@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:layout_weight="0">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_settings"
+                android:layout_width="match_parent"
+                android:theme="@style/Toolbar"
+                android:layout_height="?attr/actionBarSize">
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#e6e6e6">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#ffffff">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="17.5dp"
+                    android:layout_marginBottom="16.5dp"
+                    android:layout_marginLeft="23dp"
+                    android:gravity="center_vertical">
+
+                    <RelativeLayout
+                        android:layout_width="76dp"
+                        android:layout_height="76dp"
+                        android:background="@drawable/profile_thumbnail">
+
+                        <ImageView
+                            android:id="@+id/image_view_profile"
+                            android:layout_width="76dp"
+                            android:layout_height="76dp"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:layout_width="31.5dp"
+                            android:layout_height="31.5dp"
+                            android:background="@drawable/camera"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentBottom="true"/>
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="26.5dp"
+                        android:orientation="horizontal">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="16dp"
+                            android:layout_weight="1">
+
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/edit_text_nickname"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:focusable="false"
+                                android:focusableInTouchMode="false"
+                                android:hint="Nickname"
+                                android:imeOptions="actionDone"
+                                android:inputType="text"
+                                android:textSize="15sp"/>
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/button_save_nickname"
+                            android:text="EDIT"
+                            android:textSize="13sp"
+                            android:textColor="#774df2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:background="?attr/selectableItemBackground"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="21dp"
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="21dp"
+                    android:paddingRight="20dp"
+                    android:background="#e6e6e6">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:layout_marginRight="16dp"
+                        android:text="Group channel notifications"
+                        android:textColor="#1b1d1d"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switch_notifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:layout_weight="0"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="13.5dp"
+                        android:paddingBottom="13.5dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="16dp"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="Show previews"
+                            android:textColor="#1b1d1d"
+                            android:textSize="15sp"/>
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/switch_notifications_show_previews"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="0"
+                            android:gravity="center_vertical" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#e6e6e6" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="13.5dp"
+                        android:paddingBottom="13.5dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="16dp"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="Do not disturb"
+                            android:textColor="#1b1d1d"
+                            android:textSize="15sp"/>
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/switch_notifications_do_not_disturb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="0"
+                            android:gravity="center_vertical" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout_do_not_disturb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#e6e6e6" />
+
+                        <LinearLayout
+                            android:id="@+id/linear_layout_notifications_do_not_disturb_from"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="From"
+                                android:textColor="#1b1d1d"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/text_view_notifications_do_not_disturb_from"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0"
+                                android:text=""
+                                android:textColor="#757b7b"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#e6e6e6" />
+
+                        <LinearLayout
+                            android:id="@+id/linear_layout_notifications_do_not_disturb_to"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="To"
+                                android:textColor="#1b1d1d"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/text_view_notifications_do_not_disturb_to"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0"
+                                android:text=""
+                                android:textColor="#757b7b"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="21dp"
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="21dp"
+                    android:paddingRight="20dp"
+                    android:background="#e6e6e6">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:text="Group channel distinct"
+                        android:textColor="#1b1d1d"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="13.5dp"
+                    android:paddingBottom="13.5dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="16dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Make channel distinct"
+                        android:textColor="#1b1d1d"
+                        android:textSize="15sp"/>
+
+                    <android.support.v7.widget.AppCompatCheckBox
+                        android:id="@+id/checkbox_make_group_channel_distinct"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="17.5dp"
+                    android:background="#e6e6e6" />
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_blocked_members_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="21dp"
+                    android:paddingRight="20dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="16dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Blocked members list"
+                        android:textColor="#1b1d1d"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+
+                    <ImageView
+                        android:layout_width="6dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/shape" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="17.5dp"
+                    android:background="#e6e6e6" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

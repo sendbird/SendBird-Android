@@ -7,40 +7,128 @@
     android:layout_height="match_parent"
     tools:context="com.sendbird.android.sample.main.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_main"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:theme="@style/Toolbar"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/Theme.AppCompat.Light">
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:layout_weight="0">
 
-        </android.support.v7.widget.Toolbar>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_main"
+                android:layout_width="match_parent"
+                android:theme="@style/Toolbar"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/Theme.AppCompat.Light">
 
-    </android.support.design.widget.AppBarLayout>
+            </android.support.v7.widget.Toolbar>
 
-    <!-- The navigation drawer -->
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:menu="@menu/nav_view">
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/linear_layout_group_channels"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/group_icon_40_dp"
+                    android:layout_marginLeft="19.5dp"
+                    android:layout_marginRight="14dp"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Group Channels"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#000000"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_weight="0"
+                android:background="#e0e0e0"/>
+
+            <LinearLayout
+                android:id="@+id/linear_layout_open_channels"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/open_icon_40_dp"
+                    android:layout_marginLeft="19.5dp"
+                    android:layout_marginRight="14dp"
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Open Channels"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#000000"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_weight="0"
+                android:background="#e0e0e0"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/button_disconnect"
+            android:text="@string/login_disconnect"
+            style="@style/Widget.AppCompat.Button.Colored"
+            app:theme="@style/AppTheme.ButtonStyle2"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_weight="0"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:stateListAnimator="@null"
+            android:background="@drawable/selector_btn_white">
+        </android.support.v7.widget.AppCompatButton>
 
         <TextView
             android:id="@+id/text_main_versions"
             android:text="@string/all_app_version"
             android:textSize="12sp"
-            android:textColor="#8e8e8e"
+            android:textColor="#a0a0a0"
             android:layout_gravity="center_horizontal|bottom"
             android:layout_marginBottom="16dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="0"/>
 
-    </android.support.design.widget.NavigationView>
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

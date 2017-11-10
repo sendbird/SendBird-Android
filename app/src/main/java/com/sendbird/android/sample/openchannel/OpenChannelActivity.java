@@ -22,6 +22,7 @@ public class OpenChannelActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
 
         // Load list of Open Channels
@@ -33,6 +34,23 @@ public class OpenChannelActivity extends AppCompatActivity{
         manager.beginTransaction()
                 .replace(R.id.container_open_channel, fragment)
                 .commit();
+    }
+
+    interface onBackPressedListener {
+        boolean onBack();
+    }
+    private onBackPressedListener mOnBackPressedListener;
+
+    public void setOnBackPressedListener(onBackPressedListener listener) {
+        mOnBackPressedListener = listener;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mOnBackPressedListener != null && mOnBackPressedListener.onBack()) {
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override

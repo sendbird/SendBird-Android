@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.sendbird.android.sample">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-sdk tools:overrideLibrary="com.stfalcon.multiimageview"/> <!-- min 16 -->
 
     <application
         android:name=".main.BaseApplication"
@@ -22,6 +25,13 @@
         </activity>
         <activity android:name=".main.MainActivity"
             android:label="@string/select_channel_type"/>
+        <activity
+            android:name=".main.SettingsActivity"
+            android:label="@string/settings" />
+        <activity
+            android:name=".main.BlockedMembersListActivity"
+            android:label="@string/blocked_members_list" />
+
         <activity android:name=".utils.PhotoViewerActivity" />
         <activity
             android:name=".utils.MediaPlayerActivity"

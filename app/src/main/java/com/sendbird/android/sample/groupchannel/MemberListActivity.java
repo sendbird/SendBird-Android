@@ -12,10 +12,8 @@ import android.view.MenuItem;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.Member;
 import com.sendbird.android.SendBirdException;
-import com.sendbird.android.User;
 import com.sendbird.android.sample.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,12 +40,13 @@ public class MemberListActivity extends AppCompatActivity{
 
         mChannelUrl = getIntent().getStringExtra(GroupChatFragment.EXTRA_CHANNEL_URL);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_member_list);
-        mListAdapter = new UserListAdapter(this);
+        mListAdapter = new UserListAdapter(this, true);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_member_list);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
 
         setUpRecyclerView();

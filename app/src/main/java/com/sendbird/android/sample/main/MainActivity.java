@@ -1,14 +1,13 @@
 package com.sendbird.android.sample.main;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -20,7 +19,6 @@ import com.sendbird.android.sample.utils.PreferenceUtils;
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
-    private NavigationView mNavView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,29 +28,27 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(mToolbar);
 
-        mNavView = (NavigationView) findViewById(R.id.nav_view_main);
-        mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        findViewById(R.id.linear_layout_group_channels).setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GroupChannelActivity.class);
+                startActivity(intent);
+            }
+        });
 
-                if (id == R.id.nav_item_open_channels) {
-                    Intent intent = new Intent(MainActivity.this, OpenChannelActivity.class);
-                    startActivity(intent);
-                    return true;
+        findViewById(R.id.linear_layout_open_channels).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, OpenChannelActivity.class);
+                startActivity(intent);
+            }
+        });
 
-                } else if (id == R.id.nav_item_group_channels) {
-                    Intent intent = new Intent(MainActivity.this, GroupChannelActivity.class);
-                    startActivity(intent);
-                    return true;
-
-                } else if (id == R.id.nav_item_disconnect) {
-                    // Unregister push tokens and disconnect
-                    disconnect();
-                    return true;
-                }
-
-                return false;
+        findViewById(R.id.button_disconnect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Unregister push tokens and disconnect
+                disconnect();
             }
         });
 
@@ -76,8 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // Don't return because we still need to disconnect.
                 } else {
-                    Toast.makeText(MainActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT)
-                            .show();
+//                    Toast.makeText(MainActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT).show();
                 }
 
                 SendBird.disconnect(new SendBird.DisconnectHandler() {
@@ -91,5 +86,22 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_main:
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+        }
+        return false;
     }
 }

@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.sendbird.android.sample.R;
-import com.sendbird.android.sample.openchannel.OpenChannelListFragment;
 
 
 public class GroupChannelActivity extends AppCompatActivity{
@@ -23,6 +22,7 @@ public class GroupChannelActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
 
         if (savedInstanceState == null) {
@@ -47,6 +47,23 @@ public class GroupChannelActivity extends AppCompatActivity{
                     .addToBackStack(null)
                     .commit();
         }
+    }
+
+    interface onBackPressedListener {
+        boolean onBack();
+    }
+    private onBackPressedListener mOnBackPressedListener;
+
+    public void setOnBackPressedListener(onBackPressedListener listener) {
+        mOnBackPressedListener = listener;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mOnBackPressedListener != null && mOnBackPressedListener.onBack()) {
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override

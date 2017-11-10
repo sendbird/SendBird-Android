@@ -7,13 +7,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    tools:context=".main.LoginActivity">
-
+    tools:context=".main.LoginActivity"
+    android:background="#ffffff">
 
     <TextView
         android:id="@+id/text_login_versions"
         android:text="@string/all_app_version"
-        android:textColor="#8e8e8e"
+        android:textColor="#a0a0a0"
         android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,14 +27,16 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
         <ImageView
             android:id="@+id/image_login_logo"
-            android:src="@drawable/login_logo"
-            android:layout_width="144dp"
-            android:layout_height="144dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_width="127dp"
+            android:layout_height="127dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/logo_square"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -49,9 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -66,9 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/button_login_connect"
@@ -77,9 +75,10 @@
             app:theme="@style/AppTheme.ButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="44dp">
+            android:layout_marginTop="44dp"
+            android:stateListAnimator="@null"
+            android:background="@drawable/btn_purple">
         </android.support.v7.widget.AppCompatButton>
-
 
     </LinearLayout>
 
@@ -90,6 +89,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="invisible" />
-
 
 </android.support.design.widget.CoordinatorLayout>

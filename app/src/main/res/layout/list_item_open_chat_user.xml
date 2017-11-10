@@ -54,6 +54,16 @@
         android:layout_below="@id/text_open_chat_nickname"
         android:layout_alignLeft="@id/text_open_chat_nickname" />
 
+    <TextView
+        android:id="@+id/text_open_chat_edited"
+        android:text="(edited)"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#828282"
+        android:layout_below="@id/text_open_chat_message"
+        android:layout_alignLeft="@id/text_open_chat_message"
+        android:visibility="gone"/>
 
     <TextView
         android:text="11:36"

@@ -14,6 +14,7 @@ import android.widget.Button;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
     private Button mNextButton, mCreateButton;
 
     private List<String> mSelectedIds;
-    private boolean mIsDistinct;
-    private String mChannelName;
+    private boolean mIsDistinct = true;
 
     private int mCurrentState;
 
@@ -77,17 +77,20 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         mCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCurrentState == STATE_SELECT_DISTINCT) {
+                if (mCurrentState == STATE_SELECT_USERS) {
+//                if (mCurrentState == STATE_SELECT_DISTINCT) {
+                    mIsDistinct = PreferenceUtils.getGroupChannelDistinct(CreateGroupChannelActivity.this);
                     createGroupChannel(mSelectedIds, mIsDistinct);
                 }
-
             }
         });
+        mCreateButton.setEnabled(false);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_create_group_channel);
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
 
     }
@@ -107,8 +110,10 @@ public class CreateGroupChannelActivity extends AppCompatActivity
     void setState(int state) {
         if (state == STATE_SELECT_USERS) {
             mCurrentState = STATE_SELECT_USERS;
-            mCreateButton.setVisibility(View.GONE);
-            mNextButton.setVisibility(View.VISIBLE);
+            mCreateButton.setVisibility(View.VISIBLE);
+            mNextButton.setVisibility(View.GONE);
+//            mCreateButton.setVisibility(View.GONE);
+//            mNextButton.setVisibility(View.VISIBLE);
         } else if (state == STATE_SELECT_DISTINCT){
             mCurrentState = STATE_SELECT_DISTINCT;
             mCreateButton.setVisibility(View.VISIBLE);
@@ -125,9 +130,11 @@ public class CreateGroupChannelActivity extends AppCompatActivity
         }
 
         if (mSelectedIds.size() > 0) {
-            mNextButton.setEnabled(true);
+            mCreateButton.setEnabled(true);
+//            mNextButton.setEnabled(true);
         } else {
-            mNextButton.setEnabled(false);
+            mCreateButton.setEnabled(false);
+//            mNextButton.setEnabled(false);
         }
     }
 

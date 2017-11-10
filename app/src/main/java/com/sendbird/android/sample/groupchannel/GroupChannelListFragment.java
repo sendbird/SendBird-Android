@@ -17,7 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sendbird.android.*;
+import com.sendbird.android.BaseChannel;
+import com.sendbird.android.BaseMessage;
+import com.sendbird.android.GroupChannel;
+import com.sendbird.android.GroupChannelListQuery;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
 import com.sendbird.android.sample.R;
 
 import java.util.List;
@@ -39,8 +44,20 @@ public class GroupChannelListFragment extends Fragment {
 
     public static GroupChannelListFragment newInstance() {
         GroupChannelListFragment fragment = new GroupChannelListFragment();
-
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mChannelListAdapter = new GroupChannelListAdapter(getActivity());
+        mChannelListAdapter.load();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mChannelListAdapter.save();
     }
 
     @Nullable
@@ -57,9 +74,7 @@ public class GroupChannelListFragment extends Fragment {
         ((GroupChannelActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_group_channels));
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_group_channel_list);
-        mChannelListAdapter = new GroupChannelListAdapter(getActivity());
         mCreateChannelFab = (FloatingActionButton) rootView.findViewById(R.id.fab_group_channel_list);
-
         mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout_group_channel_list);
 
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -80,20 +95,7 @@ public class GroupChannelListFragment extends Fragment {
 
         setUpRecyclerView();
         setUpChannelListAdapter();
-
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mChannelListAdapter.load();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mChannelListAdapter.save();
     }
 
     @Override
@@ -105,6 +107,7 @@ public class GroupChannelListFragment extends Fragment {
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
             public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+                mChannelListAdapter.clearMap();
                 mChannelListAdapter.updateOrInsert(baseChannel);
             }
 
@@ -289,6 +292,7 @@ public class GroupChannelListFragment extends Fragment {
                     return;
                 }
 
+                mChannelListAdapter.clearMap();
                 mChannelListAdapter.setGroupChannelList(list);
             }
         });
@@ -333,10 +337,8 @@ public class GroupChannelListFragment extends Fragment {
                 }
 
                 // Re-query message list
-                refreshChannelList(30);
+                refreshChannelList(15);
             }
         });
     }
-
-
 }

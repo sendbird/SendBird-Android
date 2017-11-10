@@ -20,8 +20,8 @@ Build and run the Sample UI project to play around with Open Channels and Group 
 
 ### Notes
 
-* This sample currently uses `v25.3.0` of the Android Support Libraries.
-* If you encounter a `Failed to resolve: com.google.firebase:firebase-messaging:9.6.1` error message while building, please install or upgrade to the latest Google Repository from the SDK Manager.
+* This sample currently uses `v25.4.0` of the Android Support Libraries.
+* If you encounter a `Failed to resolve: com.google.firebase:firebase-messaging:11.6.0` error message while building, please install or upgrade to the latest Google Repository from the SDK Manager.
 * The current minimum SDK version is `14`. This is due to the Google Play Services and Firebase dropping support for `<14` versions beginning from Google Play Services `v10.2.0`.
 
     However, the SendBird SDK is compatible with all Android versions from Gingerbread(SDK version 10), and if you wish to run the sample on an older device, you can simply downgrade the Firebase version.

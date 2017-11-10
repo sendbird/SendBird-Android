@@ -16,7 +16,6 @@ import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 import com.sendbird.android.sample.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,9 +30,6 @@ public class SelectUserFragment extends Fragment{
 
     private UserListQuery mUserListQuery;
     private UsersSelectedListener mListener;
-
-    private List<String> mSelectedUserIds;
-
 
     // To pass selected user IDs to the parent Activity.
     interface UsersSelectedListener {
@@ -52,8 +48,7 @@ public class SelectUserFragment extends Fragment{
 
         View rootView = inflater.inflate(R.layout.fragment_select_user, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_select_user);
-        mListAdapter = new SelectableUserListAdapter(getActivity());
-        mSelectedUserIds = new ArrayList<>();
+        mListAdapter = new SelectableUserListAdapter(getActivity(), false, true);
 
         mListAdapter.setItemCheckedChangeListener(new SelectableUserListAdapter.OnItemCheckedChangeListener() {
             @Override
@@ -113,11 +108,6 @@ public class SelectUserFragment extends Fragment{
         });
     }
 
-    /**
-     * Loads users and adds them to current user list.
-     *
-     * A PreviousMessageListQuery must have been already initialized through {@link #loadInitialUserList(int)}
-     */
     private void loadNextUserList(int size) {
         mUserListQuery.setLimit(size);
 
@@ -135,6 +125,4 @@ public class SelectUserFragment extends Fragment{
             }
         });
     }
-
-
 }

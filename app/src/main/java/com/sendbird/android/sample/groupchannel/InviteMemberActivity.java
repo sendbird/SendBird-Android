@@ -48,7 +48,7 @@ public class InviteMemberActivity extends AppCompatActivity{
         mSelectedUserIds = new ArrayList<>();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_invite_member);
-        mListAdapter = new SelectableUserListAdapter(this);
+        mListAdapter = new SelectableUserListAdapter(this, false, true);
         mListAdapter.setItemCheckedChangeListener(new SelectableUserListAdapter.OnItemCheckedChangeListener() {
             @Override
             public void OnItemChecked(User user, boolean checked) {
@@ -71,6 +71,7 @@ public class InviteMemberActivity extends AppCompatActivity{
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
 
         mChannelUrl = getIntent().getStringExtra(GroupChatFragment.EXTRA_CHANNEL_URL);

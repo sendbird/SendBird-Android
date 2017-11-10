@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
@@ -70,5 +69,19 @@
         android:layout_alignRight="@id/text_group_chat_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <com.dinuscxj.progressbar.CircleProgressBar
+        android:id="@+id/circle_progress"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_above="@id/text_group_chat_time"
+        android:layout_alignRight="@id/text_group_chat_time"
+        android:visibility="gone"
+        app:draw_progress_text="false"
+        app:progress_stroke_width="3.5dp"
+        app:progress_start_color="#875eff"
+        app:progress_end_color="#875eff"
+        app:progress_background_color="#c1c1c1"
+        app:progress_stroke_cap="butt"/>
 
 </RelativeLayout>

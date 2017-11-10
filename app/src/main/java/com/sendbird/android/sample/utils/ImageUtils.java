@@ -2,14 +2,15 @@ package com.sendbird.android.sample.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 
@@ -24,11 +25,14 @@ public class ImageUtils {
      * Crops image into a circle that fits within the ImageView.
      */
     public static void displayRoundImageFromUrl(final Context context, final String url, final ImageView imageView) {
-        Glide.with(context)
-                .load(url)
-                .asBitmap()
+        RequestOptions myOptions = new RequestOptions()
                 .centerCrop()
-                .dontAnimate()
+                .dontAnimate();
+
+        Glide.with(context)
+                .asBitmap()
+                .apply(myOptions)
+                .load(url)
                 .into(new BitmapImageViewTarget(imageView) {
                     @Override
                     protected void setResource(Bitmap resource) {
@@ -41,28 +45,75 @@ public class ImageUtils {
     }
 
     public static void displayImageFromUrl(final Context context, final String url,
-                                           final ImageView imageView) {
-        displayImageFromUrl(context, url, imageView, null);
+                                           final ImageView imageView, Drawable placeholderDrawable) {
+        displayImageFromUrl(context, url, imageView, placeholderDrawable, null);
     }
 
     /**
      * Displays an image from a URL in an ImageView.
      */
     public static void displayImageFromUrl(final Context context, final String url,
-                                           final ImageView imageView, RequestListener listener) {
+                                           final ImageView imageView, Drawable placeholderDrawable, RequestListener listener) {
+        RequestOptions myOptions = new RequestOptions()
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .placeholder(placeholderDrawable);
+
         if (listener != null) {
             Glide.with(context)
                     .load(url)
-                    .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .apply(myOptions)
                     .listener(listener)
                     .into(imageView);
         } else {
             Glide.with(context)
                     .load(url)
-                    .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .apply(myOptions)
+                    .listener(listener)
                     .into(imageView);
+        }
+    }
+
+    public static void displayRoundImageFromUrlWithoutCache(final Context context, final String url,
+                                                            final ImageView imageView) {
+        displayRoundImageFromUrlWithoutCache(context, url, imageView, null);
+    }
+
+    public static void displayRoundImageFromUrlWithoutCache(final Context context, final String url,
+                                           final ImageView imageView, RequestListener listener) {
+        RequestOptions myOptions = new RequestOptions()
+                .centerCrop()
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true);
+
+        if (listener != null) {
+            Glide.with(context)
+                    .asBitmap()
+                    .load(url)
+                    .apply(myOptions)
+                    .listener(listener)
+                    .into(new BitmapImageViewTarget(imageView) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            imageView.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+        } else {
+            Glide.with(context)
+                    .asBitmap()
+                    .load(url)
+                    .apply(myOptions)
+                    .into(new BitmapImageViewTarget(imageView) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            imageView.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
         }
     }
 
@@ -73,32 +124,39 @@ public class ImageUtils {
     public static void displayImageFromUrlWithPlaceHolder(final Context context, final String url,
                                                           final ImageView imageView,
                                                           int placeholderResId) {
+        RequestOptions myOptions = new RequestOptions()
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .placeholder(placeholderResId);
+
         Glide.with(context)
                 .load(url)
-                .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .placeholder(placeholderResId)
+                .apply(myOptions)
                 .into(imageView);
     }
 
     /**
      * Displays an image from a URL in an ImageView.
      */
-    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, RequestListener listener) {
+    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, Drawable placeholderDrawable, RequestListener listener) {
+        RequestOptions myOptions = new RequestOptions()
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .dontAnimate()
+                .placeholder(placeholderDrawable);
+
         if (listener != null) {
             Glide.with(context)
-                    .load(url)
                     .asGif()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
+                    .load(url)
+                    .apply(myOptions)
                     .listener(listener)
                     .into(imageView);
         } else {
             Glide.with(context)
-                    .load(url)
                     .asGif()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
+                    .load(url)
+                    .apply(myOptions)
                     .into(imageView);
         }
     }
@@ -106,22 +164,25 @@ public class ImageUtils {
     /**
      * Displays an GIF image from a URL in an ImageView.
      */
-    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, String thumbnailUrl) {
+    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, String thumbnailUrl, Drawable placeholderDrawable) {
+        RequestOptions myOptions = new RequestOptions()
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .dontAnimate()
+                .placeholder(placeholderDrawable);
 
         if (thumbnailUrl != null) {
             Glide.with(context)
-                    .load(url)
                     .asGif()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
-                    .thumbnail(Glide.with(context).load(thumbnailUrl).asGif())
+                    .load(url)
+                    .apply(myOptions)
+                    .thumbnail(Glide.with(context).asGif().load(thumbnailUrl))
                     .into(imageView);
         } else {
             Glide.with(context)
-                    .load(url)
                     .asGif()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
+                    .load(url)
+                    .apply(myOptions)
                     .into(imageView);
         }
     }

@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.sendbird.android.sample.R;
@@ -28,29 +30,29 @@ public class PhotoViewerActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         if (type != null && type.toLowerCase().contains("gif")) {
-            ImageUtils.displayGifImageFromUrl(this, url, imageView, new RequestListener() {
+            ImageUtils.displayGifImageFromUrl(this, url, imageView, null, new RequestListener() {
                 @Override
-                public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
                     progressBar.setVisibility(View.GONE);
                     return false;
                 }
 
                 @Override
-                public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
                     progressBar.setVisibility(View.GONE);
                     return false;
                 }
             });
         } else {
-            ImageUtils.displayImageFromUrl(this, url, imageView, new RequestListener() {
+            ImageUtils.displayImageFromUrl(this, url, imageView, null, new RequestListener() {
                 @Override
-                public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
                     progressBar.setVisibility(View.GONE);
                     return false;
                 }
 
                 @Override
-                public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
                     progressBar.setVisibility(View.GONE);
                     return false;
                 }

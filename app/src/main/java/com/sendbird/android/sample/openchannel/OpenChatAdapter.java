@@ -2,7 +2,6 @@ package com.sendbird.android.sample.openchannel;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +17,10 @@ import com.sendbird.android.FileMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
-import com.sendbird.android.sample.utils.FileUtils;
-import com.sendbird.android.sample.utils.ImageUtils;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.DateUtils;
+import com.sendbird.android.sample.utils.FileUtils;
+import com.sendbird.android.sample.utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +95,18 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    void update(BaseMessage message) {
+        BaseMessage baseMessage;
+        for (int index = 0; index < mMessageList.size(); index++) {
+            baseMessage = mMessageList.get(index);
+            if(message.getMessageId() == baseMessage.getMessageId()) {
+                mMessageList.remove(index);
+                mMessageList.add(index, message);
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -177,9 +188,8 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return mMessageList.size();
     }
 
-
-    private static class UserMessageHolder extends RecyclerView.ViewHolder {
-        TextView nicknameText, messageText, timeText, dateText;
+    private class UserMessageHolder extends RecyclerView.ViewHolder {
+        TextView nicknameText, messageText, editedText, timeText, dateText;
         ImageView profileImage;
 
         UserMessageHolder(View itemView) {
@@ -187,6 +197,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             nicknameText = (TextView) itemView.findViewById(R.id.text_open_chat_nickname);
             messageText = (TextView) itemView.findViewById(R.id.text_open_chat_message);
+            editedText = (TextView) itemView.findViewById(R.id.text_open_chat_edited);
             timeText = (TextView) itemView.findViewById(R.id.text_open_chat_time);
             profileImage = (ImageView) itemView.findViewById(R.id.image_open_chat_profile);
             dateText = (TextView) itemView.findViewById(R.id.text_open_chat_date);
@@ -218,6 +229,12 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             messageText.setText(message.getMessage());
             timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
+            if (message.getUpdatedAt() > 0) {
+                editedText.setVisibility(View.VISIBLE);
+            } else {
+                editedText.setVisibility(View.GONE);
+            }
+
             // Get profile image and display it
             ImageUtils.displayRoundImageFromUrl(context, message.getSender().getProfileUrl(), profileImage);
 
@@ -242,7 +259,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    private static class AdminMessageHolder extends RecyclerView.ViewHolder {
+    private class AdminMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText, dateText;
 
         AdminMessageHolder(View itemView) {
@@ -272,7 +289,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    private static class FileMessageHolder extends RecyclerView.ViewHolder {
+    private class FileMessageHolder extends RecyclerView.ViewHolder {
         TextView nicknameText, timeText, fileNameText, fileSizeText, dateText;
         ImageView profileImage, fileThumbnail;
 
@@ -324,15 +341,15 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // If thumbnails exist, get smallest (first) thumbnail and display it in the message
                 if (thumbnails.size() > 0) {
                     if (message.getType().toLowerCase().contains("gif")) {
-                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnail, thumbnails.get(0).getUrl());
+                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnail, thumbnails.get(0).getUrl(), fileThumbnail.getDrawable());
                     } else {
-                        ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnail);
+                        ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnail, fileThumbnail.getDrawable());
                     }
                 } else {
                     if (message.getType().toLowerCase().contains("gif")) {
-                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnail, (String) null);
+                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnail, (String) null, fileThumbnail.getDrawable());
                     } else {
-                        ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnail);
+                        ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnail, fileThumbnail.getDrawable());
                     }
                 }
 

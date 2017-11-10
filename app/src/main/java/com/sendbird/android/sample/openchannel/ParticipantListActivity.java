@@ -39,12 +39,13 @@ public class ParticipantListActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_participant_list);
 
         mChannelUrl = getIntent().getStringExtra(OpenChatFragment.EXTRA_CHANNEL_URL);
-        mListAdapter = new UserListAdapter(this);
+        mListAdapter = new UserListAdapter(this, false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_participant_list);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
 
         setUpRecyclerView();

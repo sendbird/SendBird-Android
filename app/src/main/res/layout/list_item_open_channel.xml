@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="62dp"
     android:gravity="center_vertical"
     android:background="?attr/selectableItemBackground"
     android:clickable="true">
@@ -16,8 +16,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="24dp">
 
         <TextView
             android:id="@+id/text_open_channel_list_name"
@@ -30,6 +30,7 @@
         <TextView
             android:id="@+id/text_open_channel_list_participant_count"
             android:text="@string/open_channel_list_participant_count"
+            android:textSize="14sp"
             android:textColor="#8e8e8e"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

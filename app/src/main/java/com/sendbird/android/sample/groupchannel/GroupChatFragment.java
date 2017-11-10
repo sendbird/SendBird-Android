@@ -2,6 +2,7 @@ package com.sendbird.android.sample.groupchannel;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -33,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
@@ -56,14 +59,19 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
 
 public class GroupChatFragment extends Fragment {
+
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
 
     private static final String LOG_TAG = GroupChatFragment.class.getSimpleName();
+
+    private static final int STATE_NORMAL = 0;
+    private static final int STATE_EDIT = 1;
 
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
     private static final String STATE_CHANNEL_URL = "STATE_CHANNEL_URL";
@@ -71,13 +79,16 @@ public class GroupChatFragment extends Fragment {
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
     static final String EXTRA_CHANNEL_URL = "EXTRA_CHANNEL_URL";
 
+    private InputMethodManager mIMM;
+    private HashMap<BaseChannel.SendFileMessageWithProgressHandler, FileMessage> mFileProgressHandlerMap;
+
     private RelativeLayout mRootLayout;
     private RecyclerView mRecyclerView;
     private GroupChatAdapter mChatAdapter;
     private LinearLayoutManager mLayoutManager;
     private EditText mMessageEditText;
     private Button mMessageSendButton;
-    private ImageButton mFileUploadButton;
+    private ImageButton mUploadFileButton;
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
 
@@ -87,6 +98,8 @@ public class GroupChatFragment extends Fragment {
 
     private boolean mIsTyping;
 
+    private int mCurrentState = STATE_NORMAL;
+    private BaseMessage mEditingMessage = null;
 
     /**
      * To create an instance of this fragment, a Channel URL should be required.
@@ -104,6 +117,9 @@ public class GroupChatFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mIMM = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        mFileProgressHandlerMap = new HashMap<>();
 
         if (savedInstanceState != null) {
             // Get channel URL from saved state.
@@ -137,23 +153,50 @@ public class GroupChatFragment extends Fragment {
 
         mMessageEditText = (EditText) rootView.findViewById(R.id.edittext_group_chat_message);
         mMessageSendButton = (Button) rootView.findViewById(R.id.button_group_chat_send);
-        mFileUploadButton = (ImageButton) rootView.findViewById(R.id.button_group_chat_upload);
+        mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_group_chat_upload);
 
-        mMessageSendButton.setOnClickListener(new View.OnClickListener() {
+        mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                String userInput = mMessageEditText.getText().toString();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-                if (userInput == null || userInput.length() <= 0) {
-                    return;
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    mMessageSendButton.setEnabled(true);
+                } else {
+                    mMessageSendButton.setEnabled(false);
                 }
-
-                sendUserMessage(userInput);
-                mMessageEditText.setText("");
             }
         });
 
-        mFileUploadButton.setOnClickListener(new View.OnClickListener() {
+        mMessageSendButton.setEnabled(false);
+        mMessageSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCurrentState == STATE_EDIT) {
+                    String userInput = mMessageEditText.getText().toString();
+                    if (userInput.length() > 0) {
+                        if (mEditingMessage != null) {
+                            editMessage(mEditingMessage, userInput);
+                        }
+                    }
+                    setState(STATE_NORMAL, null, -1);
+                } else {
+                    String userInput = mMessageEditText.getText().toString();
+                    if (userInput.length() > 0) {
+                        sendUserMessage(userInput);
+                        mMessageEditText.setText("");
+                    }
+                }
+            }
+        });
+
+        mUploadFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requestMedia();
@@ -247,7 +290,6 @@ public class GroupChatFragment extends Fragment {
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
             public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
-
                 if (baseChannel.getUrl().equals(mChannelUrl)) {
                     mChatAdapter.markAllMessagesAsRead();
                     // Add new message to view
@@ -260,6 +302,14 @@ public class GroupChatFragment extends Fragment {
                 super.onMessageDeleted(baseChannel, msgId);
                 if (baseChannel.getUrl().equals(mChannelUrl)) {
                     mChatAdapter.delete(msgId);
+                }
+            }
+
+            @Override
+            public void onMessageUpdated(BaseChannel channel, BaseMessage message) {
+                super.onMessageUpdated(channel, message);
+                if (channel.getUrl().equals(mChannelUrl)) {
+                    mChatAdapter.update(message);
                 }
             }
 
@@ -445,6 +495,94 @@ public class GroupChatFragment extends Fragment {
 
 
                 onFileMessageClicked(message);
+            }
+        });
+
+        mChatAdapter.setItemLongClickListener(new GroupChatAdapter.OnItemLongClickListener() {
+            @Override
+            public void onUserMessageItemLongClick(UserMessage message, int position) {
+                showMessageOptionsDialog(message, position);
+            }
+
+            @Override
+            public void onFileMessageItemLongClick(FileMessage message) {
+            }
+
+            @Override
+            public void onAdminMessageItemLongClick(AdminMessage message) {
+            }
+        });
+    }
+
+    private void showMessageOptionsDialog(final BaseMessage message, final int position) {
+        String[] options = new String[] { "Edit message", "Delete message" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    setState(STATE_EDIT, message, position);
+                } else if (which == 1) {
+                    deleteMessage(message);
+                }
+            }
+        });
+        builder.create().show();
+    }
+
+    private void setState(int state, BaseMessage editingMessage, final int position) {
+        switch (state) {
+            case STATE_NORMAL:
+                mCurrentState = STATE_NORMAL;
+                mEditingMessage = null;
+
+                mUploadFileButton.setVisibility(View.VISIBLE);
+                mMessageSendButton.setText("SEND");
+                mMessageEditText.setText("");
+
+//                mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
+                break;
+
+            case STATE_EDIT:
+                mCurrentState = STATE_EDIT;
+                mEditingMessage = editingMessage;
+
+                mUploadFileButton.setVisibility(View.GONE);
+                mMessageSendButton.setText("SAVE");
+                String messageString = ((UserMessage)editingMessage).getMessage();
+                if (messageString == null) {
+                    messageString = "";
+                }
+                mMessageEditText.setText(messageString);
+                if (messageString.length() > 0) {
+                    mMessageEditText.setSelection(0, messageString.length());
+                }
+
+                mMessageEditText.requestFocus();
+                mIMM.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+                mRecyclerView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerView.scrollToPosition(position);
+                    }
+                }, 500);
+                break;
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((GroupChannelActivity)context).setOnBackPressedListener(new GroupChannelActivity.onBackPressedListener() {
+            @Override
+            public boolean onBack() {
+                if (mCurrentState == STATE_EDIT) {
+                    setState(STATE_NORMAL, null, -1);
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -722,8 +860,16 @@ public class GroupChatFragment extends Fragment {
         if (path.equals("")) {
             Toast.makeText(getActivity(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
         } else {
-            // Send image with thumbnails in the specified dimensions
-            FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, new BaseChannel.SendFileMessageHandler() {
+            BaseChannel.SendFileMessageWithProgressHandler progressHandler = new BaseChannel.SendFileMessageWithProgressHandler() {
+                @Override
+                public void onProgress(int bytesSent, int totalBytesSent, int totalBytesToSend) {
+                    FileMessage fileMessage = mFileProgressHandlerMap.get(this);
+                    if (fileMessage != null && totalBytesToSend > 0) {
+                        int percent = (totalBytesSent * 100) / totalBytesToSend;
+                        mChatAdapter.setFileProgressPercent(fileMessage, percent);
+                    }
+                }
+
                 @Override
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
                     if (e != null) {
@@ -734,10 +880,61 @@ public class GroupChatFragment extends Fragment {
 
                     mChatAdapter.markMessageSent(fileMessage);
                 }
-            });
+            };
+
+            // Send image with thumbnails in the specified dimensions
+            FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, progressHandler);
+
+            mFileProgressHandlerMap.put(progressHandler, tempFileMessage);
 
             mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
             mChatAdapter.addFirst(tempFileMessage);
         }
+    }
+
+    private void editMessage(final BaseMessage message, String editedMessage) {
+        mChannel.updateUserMessage(message.getMessageId(), editedMessage, null, null, new BaseChannel.UpdateUserMessageHandler() {
+            @Override
+            public void onUpdated(UserMessage userMessage, SendBirdException e) {
+                if (e != null) {
+                    // Error!
+                    Toast.makeText(getActivity(), "Error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                mChatAdapter.loadLatestMessages(30, new BaseChannel.GetMessagesHandler() {
+                    @Override
+                    public void onResult(List<BaseMessage> list, SendBirdException e) {
+                        mChatAdapter.markAllMessagesAsRead();
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Deletes a message within the channel.
+     * Note that users can only delete messages sent by oneself.
+     *
+     * @param message The message to delete.
+     */
+    private void deleteMessage(final BaseMessage message) {
+        mChannel.deleteMessage(message, new BaseChannel.DeleteMessageHandler() {
+            @Override
+            public void onResult(SendBirdException e) {
+                if (e != null) {
+                    // Error!
+                    Toast.makeText(getActivity(), "Error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                mChatAdapter.loadLatestMessages(30, new BaseChannel.GetMessagesHandler() {
+                    @Override
+                    public void onResult(List<BaseMessage> list, SendBirdException e) {
+                        mChatAdapter.markAllMessagesAsRead();
+                    }
+                });
+            }
+        });
     }
 }

@@ -12,12 +12,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.PreferenceUtils;
+import com.sendbird.android.sample.utils.PushUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -106,6 +106,8 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
+                PreferenceUtils.setNickname(LoginActivity.this, user.getNickname());
+                PreferenceUtils.setProfileUrl(LoginActivity.this, user.getProfileUrl());
                 PreferenceUtils.setConnected(LoginActivity.this, true);
 
                 // Update the user's nickname
@@ -124,27 +126,14 @@ public class LoginActivity extends AppCompatActivity {
      * Update the user's push token.
      */
     private void updateCurrentUserPushToken() {
-        // Register Firebase Token
-        SendBird.registerPushTokenForCurrentUser(FirebaseInstanceId.getInstance().getToken(),
-                new SendBird.RegisterPushTokenWithStatusHandler() {
-                    @Override
-                    public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
-                        if (e != null) {
-                            // Error!
-                            Toast.makeText(LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        Toast.makeText(LoginActivity.this, "Push token registered.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        PushUtils.registerPushTokenForCurrentUser(LoginActivity.this, null);
     }
 
     /**
      * Updates the user's nickname.
      * @param userNickname  The new nickname of the user.
      */
-    private void updateCurrentUserInfo(String userNickname) {
+    private void updateCurrentUserInfo(final String userNickname) {
         SendBird.updateCurrentUserInfo(userNickname, null, new SendBird.UserInfoUpdateHandler() {
             @Override
             public void onUpdated(SendBirdException e) {
@@ -161,6 +150,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
+                PreferenceUtils.setNickname(LoginActivity.this, userNickname);
             }
         });
     }

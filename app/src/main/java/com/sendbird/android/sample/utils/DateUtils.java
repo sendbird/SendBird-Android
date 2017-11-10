@@ -23,6 +23,21 @@ public class DateUtils {
         return dateFormat.format(timeInMillis);
     }
 
+    public static String formatTimeWithMarker(long timeInMillis) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
+        return dateFormat.format(timeInMillis);
+    }
+
+    public static int getHourOfDay(long timeInMillis) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("H", Locale.getDefault());
+        return Integer.valueOf(dateFormat.format(timeInMillis));
+    }
+
+    public static int getMinute(long timeInMillis) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("m", Locale.getDefault());
+        return Integer.valueOf(dateFormat.format(timeInMillis));
+    }
+
     /**
      * If the given time is of a different date, display the date.
      * If it is of the same date, display the time.

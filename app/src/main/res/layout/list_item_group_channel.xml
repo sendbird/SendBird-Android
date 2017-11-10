@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="84dp"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:layout_height="86.5dp"
+    android:paddingLeft="14dp"
+    android:paddingRight="14dp"
     android:background="?attr/selectableItemBackground"
     android:clickable="true">
 
-
-    <ImageView
+    <com.stfalcon.multiimageview.MultiImageView
         android:id="@+id/image_group_channel_list_cover"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:scaleType="centerCrop"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"/>
 
     <LinearLayout
         android:id="@+id/container_group_channel_list_topic"
@@ -51,7 +50,6 @@
             android:maxLines="1"
             android:text="3" />
 
-
     </LinearLayout>
 
     <LinearLayout
@@ -80,14 +78,14 @@
             android:maxLines="2"
             android:text="This sounded nonsense to Alice, so she said nothing, but set off at her being blah blah" />
 
-
     </LinearLayout>
-
 
     <TextView
         android:id="@+id/text_group_channel_list_date"
         android:layout_width="wrap_content"
-        android:layout_height="18dp"
+        android:layout_height="wrap_content"
+        android:textSize="11.5sp"
+        android:layout_marginTop="3dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/container_group_channel_list_topic"

@@ -88,7 +88,6 @@ public class OpenChannelListFragment extends Fragment {
 
         // Refresh once
         refreshChannelList(15);
-
     }
 
     void setUpRecyclerView() {
@@ -171,6 +170,4 @@ public class OpenChannelListFragment extends Fragment {
             }
         });
     }
-
-
 }

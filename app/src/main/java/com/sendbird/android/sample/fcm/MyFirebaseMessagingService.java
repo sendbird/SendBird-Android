@@ -30,6 +30,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.groupchannel.GroupChannelActivity;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,12 +102,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.mipmap.sendbird_ic_launcher)
                 .setContentTitle(context.getResources().getString(R.string.app_name))
-                .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setContentIntent(pendingIntent);
+
+        if (PreferenceUtils.getNotificationsShowPreviews(context)) {
+            notificationBuilder.setContentText(messageBody);
+        } else {
+            notificationBuilder.setContentText("Somebody sent you a message.");
+        }
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 

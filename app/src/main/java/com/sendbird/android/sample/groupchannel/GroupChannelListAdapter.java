@@ -1,10 +1,12 @@
 package com.sendbird.android.sample.groupchannel;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,24 +14,31 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
+import com.sendbird.android.Member;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.DateUtils;
 import com.sendbird.android.sample.utils.FileUtils;
-import com.sendbird.android.sample.utils.ImageUtils;
 import com.sendbird.android.sample.utils.TextUtils;
 import com.sendbird.android.sample.utils.TypingIndicator;
+import com.stfalcon.multiimageview.MultiImageView;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Displays a list of Group Channels within a SendBird application.
@@ -38,6 +47,13 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private List<GroupChannel> mChannelList;
     private Context mContext;
+    private ConcurrentHashMap<SimpleTarget<Bitmap>, Integer> mSimpleTargetIndexMap;
+    private ConcurrentHashMap<SimpleTarget<Bitmap>, GroupChannel> mSimpleTargetGroupChannelMap;
+    private ConcurrentHashMap<String, Integer> mChannelImageNumMap;
+    private ConcurrentHashMap<String, ImageView> mChannelImageViewMap;
+    private ConcurrentHashMap<String, SparseArray<Bitmap>> mChannelBitmapMap;
+
+    private boolean mIsCacheLoading = false;
 
     private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mItemLongClickListener;
@@ -51,8 +67,23 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     GroupChannelListAdapter(Context context) {
-        mChannelList = new ArrayList<>();
         mContext = context;
+
+        mSimpleTargetIndexMap = new ConcurrentHashMap<>();
+        mSimpleTargetGroupChannelMap = new ConcurrentHashMap<>();
+        mChannelImageNumMap = new ConcurrentHashMap<>();
+        mChannelImageViewMap = new ConcurrentHashMap<>();
+        mChannelBitmapMap = new ConcurrentHashMap<>();
+
+        mChannelList = new ArrayList<>();
+    }
+
+    void clearMap() {
+        mSimpleTargetIndexMap.clear();
+        mSimpleTargetGroupChannelMap.clear();
+        mChannelImageNumMap.clear();
+        mChannelImageViewMap.clear();
+        mChannelBitmapMap.clear();
     }
 
     public void load() {
@@ -70,6 +101,8 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             for(int i = 0; i < dataArray.length; i++) {
                 mChannelList.add((GroupChannel) BaseChannel.buildFromSerializedData(Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
             }
+
+            mIsCacheLoading = true;
 
             notifyDataSetChanged();
         } catch(Exception e) {
@@ -139,6 +172,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     void setGroupChannelList(List<GroupChannel> channelList) {
         mChannelList = channelList;
+        mIsCacheLoading = false;
         notifyDataSetChanged();
     }
 
@@ -182,20 +216,22 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     /**
      * A ViewHolder that contains UI to display information about a GroupChannel.
      */
-    private static class ChannelHolder extends RecyclerView.ViewHolder {
+    private class ChannelHolder extends RecyclerView.ViewHolder {
 
         TextView topicText, lastMessageText, unreadCountText, dateText, memberCountText;
-        ImageView coverImage;
+        MultiImageView coverImage;
         LinearLayout typingIndicatorContainer;
 
         ChannelHolder(View itemView) {
             super(itemView);
+
             topicText = (TextView) itemView.findViewById(R.id.text_group_channel_list_topic);
             lastMessageText = (TextView) itemView.findViewById(R.id.text_group_channel_list_message);
             unreadCountText = (TextView) itemView.findViewById(R.id.text_group_channel_list_unread_count);
             dateText = (TextView) itemView.findViewById(R.id.text_group_channel_list_date);
             memberCountText = (TextView) itemView.findViewById(R.id.text_group_channel_list_member_count);
-            coverImage = (ImageView) itemView.findViewById(R.id.image_group_channel_list_cover);
+            coverImage = (MultiImageView) itemView.findViewById(R.id.image_group_channel_list_cover);
+            coverImage.setShape(MultiImageView.Shape.CIRCLE);
 
             typingIndicatorContainer = (LinearLayout) itemView.findViewById(R.id.container_group_channel_list_typing_indicator);
         }
@@ -213,7 +249,9 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             topicText.setText(TextUtils.getGroupChannelTitle(channel));
             memberCountText.setText(String.valueOf(channel.getMemberCount()));
 
-            ImageUtils.displayRoundImageFromUrl(context, channel.getCoverUrl(), coverImage);
+            if (!mIsCacheLoading) {
+                setChannelImage(context, channel, coverImage);
+            }
 
             int unreadCount = channel.getUnreadMessageCount();
             // If there are no unread messages, hide the unread count badge.
@@ -293,6 +331,69 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         }
 
-    }
+        private void setChannelImage(Context context, GroupChannel channel, MultiImageView multiImageView) {
+            List<Member> members = channel.getMembers();
+            if (members != null) {
+                int size = members.size();
+                if (size >= 1) {
+                    int imageNum = size;
+                    if (size >= 4) {
+                        imageNum = 4;
+                    }
 
+                    if (!mChannelImageNumMap.containsKey(channel.getUrl())) {
+                        mChannelImageNumMap.put(channel.getUrl(), imageNum);
+                        mChannelImageViewMap.put(channel.getUrl(), multiImageView);
+
+                        multiImageView.clear();
+
+                        for (int index = 0; index < imageNum; index++) {
+                            SimpleTarget<Bitmap> simpleTarget = new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> glideAnimation) {
+                                    Integer index = mSimpleTargetIndexMap.get(this);
+                                    if (index != null) {
+                                        GroupChannel channel = mSimpleTargetGroupChannelMap.get(this);
+
+                                        SparseArray<Bitmap> array = mChannelBitmapMap.get(channel.getUrl());
+                                        if (array == null) {
+                                            array = new SparseArray<>();
+                                            mChannelBitmapMap.put(channel.getUrl(), array);
+                                        }
+                                        array.put(index, resource);
+
+                                        Integer num = mChannelImageNumMap.get(channel.getUrl());
+                                        if (num != null) {
+                                            if (array.size() == num) {
+                                                MultiImageView multiImageView = (MultiImageView) mChannelImageViewMap.get(channel.getUrl());
+
+                                                for (int i = 0; i < array.size(); i++) {
+                                                    multiImageView.addImage(array.get(i));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            };
+
+                            mSimpleTargetIndexMap.put(simpleTarget, index);
+                            mSimpleTargetGroupChannelMap.put(simpleTarget, channel);
+
+                            RequestOptions myOptions = new RequestOptions()
+                                    .dontAnimate()
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .skipMemoryCache(true)
+                                    .placeholder(null);
+
+                            Glide.with(context)
+                                    .asBitmap()
+                                    .load(members.get(index).getProfileUrl())
+                                    .apply(myOptions)
+                                    .into(simpleTarget);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.sendbird.android.sample.openchannel;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,10 +17,31 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.*;
-import android.widget.*;
-import com.sendbird.android.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.sendbird.android.AdminMessage;
+import com.sendbird.android.BaseChannel;
+import com.sendbird.android.BaseMessage;
+import com.sendbird.android.FileMessage;
+import com.sendbird.android.OpenChannel;
+import com.sendbird.android.PreviousMessageListQuery;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.UserMessage;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.MediaPlayerActivity;
@@ -35,6 +57,9 @@ public class OpenChatFragment extends Fragment {
 
     private static final String LOG_TAG = OpenChatFragment.class.getSimpleName();
 
+    private static final int STATE_NORMAL = 0;
+    private static final int STATE_EDIT = 1;
+
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_OPEN_CHAT";
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_OPEN_CHAT";
 
@@ -42,6 +67,8 @@ public class OpenChatFragment extends Fragment {
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
 
     static final String EXTRA_CHANNEL_URL = "CHANNEL_URL";
+
+    private InputMethodManager mIMM;
 
     private RecyclerView mRecyclerView;
     private OpenChatAdapter mChatAdapter;
@@ -57,6 +84,9 @@ public class OpenChatFragment extends Fragment {
     private String mChannelUrl;
     private PreviousMessageListQuery mPrevMessageListQuery;
 
+    private int mCurrentState = STATE_NORMAL;
+    private BaseMessage mEditingMessage = null;
+
     /**
      * To create an instance of this fragment, a Channel URL should be passed.
      */
@@ -68,6 +98,12 @@ public class OpenChatFragment extends Fragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mIMM = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     @Nullable
@@ -93,11 +129,44 @@ public class OpenChatFragment extends Fragment {
         mMessageSendButton = (Button) rootView.findViewById(R.id.button_open_channel_chat_send);
         mMessageEditText = (EditText) rootView.findViewById(R.id.edittext_chat_message);
 
+        mMessageEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    mMessageSendButton.setEnabled(true);
+                } else {
+                    mMessageSendButton.setEnabled(false);
+                }
+            }
+        });
+
+        mMessageSendButton.setEnabled(false);
         mMessageSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendUserMessage(mMessageEditText.getText().toString());
-                mMessageEditText.setText("");
+                if (mCurrentState == STATE_EDIT) {
+                    String userInput = mMessageEditText.getText().toString();
+                    if (userInput.length() > 0) {
+                        if (mEditingMessage != null) {
+                            editMessage(mEditingMessage, mMessageEditText.getText().toString());
+                        }
+                    }
+                    setState(STATE_NORMAL, null);
+                } else {
+                    String userInput = mMessageEditText.getText().toString();
+                    if (userInput.length() > 0) {
+                        sendUserMessage(userInput);
+                        mMessageEditText.setText("");
+                    }
+                }
             }
         });
 
@@ -195,6 +264,14 @@ public class OpenChatFragment extends Fragment {
                     mChatAdapter.delete(msgId);
                 }
             }
+
+            @Override
+            public void onMessageUpdated(BaseChannel channel, BaseMessage message) {
+                super.onMessageUpdated(channel, message);
+                if (channel.getUrl().equals(mChannelUrl)) {
+                    mChatAdapter.update(message);
+                }
+            }
         });
     }
 
@@ -262,17 +339,73 @@ public class OpenChatFragment extends Fragment {
         mChatAdapter.setOnItemLongClickListener(new OpenChatAdapter.OnItemLongClickListener() {
             @Override
             public void onBaseMessageLongClick(final BaseMessage message) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Delete message?")
-                        .setNegativeButton("Cancel", null)
-                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                deleteMessage(message);
-                            }
-                        })
-                        .create()
-                        .show();
+                showMessageOptionsDialog(message);
+            }
+        });
+    }
+
+    private void showMessageOptionsDialog(final BaseMessage message) {
+        String[] options = new String[] { "Edit message", "Delete message" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    setState(STATE_EDIT, message);
+                } else if (which == 1) {
+                    deleteMessage(message);
+                }
+            }
+        });
+        builder.create().show();
+    }
+
+    private void setState(int state, BaseMessage editingMessage) {
+        switch (state) {
+            case STATE_NORMAL:
+                mCurrentState = STATE_NORMAL;
+                mEditingMessage = null;
+
+                mUploadFileButton.setVisibility(View.VISIBLE);
+                mMessageSendButton.setText("SEND");
+                mMessageEditText.setText("");
+
+//                mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
+                break;
+
+            case STATE_EDIT:
+                mCurrentState = STATE_EDIT;
+                mEditingMessage = editingMessage;
+
+                mUploadFileButton.setVisibility(View.GONE);
+                mMessageSendButton.setText("SAVE");
+                String messageString = ((UserMessage)editingMessage).getMessage();
+                if (messageString == null) {
+                    messageString = "";
+                }
+                mMessageEditText.setText(messageString);
+                if (messageString.length() > 0) {
+                    mMessageEditText.setSelection(0, messageString.length());
+                }
+
+                mMessageEditText.requestFocus();
+                mIMM.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                break;
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((OpenChannelActivity)context).setOnBackPressedListener(new OpenChannelActivity.onBackPressedListener() {
+            @Override
+            public boolean onBack() {
+                if (mCurrentState == STATE_EDIT) {
+                    setState(STATE_NORMAL, null);
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -526,7 +659,6 @@ public class OpenChatFragment extends Fragment {
             throw new NullPointerException("Current query instance is null.");
         }
 
-
         mPrevMessageListQuery.load(numMessages, true, new PreviousMessageListQuery.MessageListQueryResult() {
             @Override
             public void onResult(List<BaseMessage> list, SendBirdException e) {
@@ -543,6 +675,21 @@ public class OpenChatFragment extends Fragment {
         });
     }
 
+    private void editMessage(final BaseMessage message, String editedMessage) {
+        mChannel.updateUserMessage(message.getMessageId(), editedMessage, null, null, new BaseChannel.UpdateUserMessageHandler() {
+            @Override
+            public void onUpdated(UserMessage userMessage, SendBirdException e) {
+                if (e != null) {
+                    // Error!
+                    Toast.makeText(getActivity(), "Error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                loadInitialMessageList(30);
+            }
+        });
+    }
+
     /**
      * Deletes a message within the channel.
      * Note that users can only delete messages sent by oneself.
@@ -555,10 +702,7 @@ public class OpenChatFragment extends Fragment {
             public void onResult(SendBirdException e) {
                 if (e != null) {
                     // Error!
-
-                    Toast.makeText(getActivity(),
-                            "Error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(getActivity(), "Error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
