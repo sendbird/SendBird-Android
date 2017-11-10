@@ -37,7 +37,7 @@ dependencies {
     })
 
     // SendBird
-    compile 'com.sendbird.sdk:sendbird-android-sdk:3.0.40'
+    compile 'com.sendbird.sdk:sendbird-android-sdk:3.0.41'
 
     // Android support libraries
     compile 'com.android.support:appcompat-v7:25.4.0'
