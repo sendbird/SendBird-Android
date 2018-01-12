@@ -104,7 +104,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             mIsCacheLoading = true;
 
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
         } catch(Exception e) {
             // Nothing to load.
         }
@@ -156,7 +156,6 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_group_channel, parent, false);
-
         return new ChannelHolder(view);
     }
 
@@ -381,9 +380,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                             RequestOptions myOptions = new RequestOptions()
                                     .dontAnimate()
-                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                    .skipMemoryCache(true)
-                                    .placeholder(null);
+                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
 
                             Glide.with(context)
                                     .asBitmap()

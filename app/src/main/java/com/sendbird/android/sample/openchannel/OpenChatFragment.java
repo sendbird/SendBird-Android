@@ -43,9 +43,11 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.main.ConnectionManager;
 import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.MediaPlayerActivity;
 import com.sendbird.android.sample.utils.PhotoViewerActivity;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,11 +59,12 @@ public class OpenChatFragment extends Fragment {
 
     private static final String LOG_TAG = OpenChatFragment.class.getSimpleName();
 
+    private static final int CHANNEL_LIST_LIMIT = 30;
+    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_OPEN_CHAT";
+    private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_OPEN_CHAT";
+
     private static final int STATE_NORMAL = 0;
     private static final int STATE_EDIT = 1;
-
-    private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_OPEN_CHAT";
-    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_OPEN_CHAT";
 
     private static final int INTENT_REQUEST_CHOOSE_IMAGE = 300;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
@@ -159,7 +162,7 @@ public class OpenChatFragment extends Fragment {
                             editMessage(mEditingMessage, mMessageEditText.getText().toString());
                         }
                     }
-                    setState(STATE_NORMAL, null);
+                    setState(STATE_NORMAL, null, -1);
                 } else {
                     String userInput = mMessageEditText.getText().toString();
                     if (userInput.length() > 0) {
@@ -178,10 +181,20 @@ public class OpenChatFragment extends Fragment {
             }
         });
 
-
         // Gets channel from URL user requested
         mChannelUrl = getArguments().getString(OpenChannelListFragment.EXTRA_OPEN_CHANNEL_URL);
-        enterChannel(mChannelUrl);
+
+        String userId = PreferenceUtils.getUserId(getActivity());
+        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+            @Override
+            public void onConnected(boolean reconnect) {
+                if (reconnect) {
+                    refresh();
+                } else {
+                    refreshFirst();
+                }
+            }
+        });
 
         return rootView;
     }
@@ -213,6 +226,12 @@ public class OpenChatFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // Set this as true to restart auto-background detection.
+        // This means that you will be automatically disconnected from SendBird when your
+        // app enters the background.
+        SendBird.setAutoBackgroundDetection(true);
+
         if (requestCode == INTENT_REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 Log.d(LOG_TAG, "data is null!");
@@ -225,28 +244,6 @@ public class OpenChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        // Set this as true to restart auto-background detection.
-        // This means that you will be automatically disconnected from SendBird when your
-        // app enters the background.
-        SendBird.setAutoBackgroundDetection(true);
-
-        SendBird.addConnectionHandler(CONNECTION_HANDLER_ID, new SendBird.ConnectionHandler() {
-            @Override
-            public void onReconnectStarted() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectStarted()");
-            }
-
-            @Override
-            public void onReconnectSucceeded() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectSucceeded()");
-            }
-
-            @Override
-            public void onReconnectFailed() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectFailed()");
-            }
-        });
 
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
@@ -276,26 +273,28 @@ public class OpenChatFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        mChannel.exit(new OpenChannel.OpenChannelExitHandler() {
-            @Override
-            public void onResult(SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    e.printStackTrace();
-                    return;
-                }
-            }
-        });
+    public void onPause() {
+        SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
+        super.onPause();
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroyView() {
+        if (mChannel != null) {
+            mChannel.exit(new OpenChannel.OpenChannelExitHandler() {
+                @Override
+                public void onResult(SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        e.printStackTrace();
+                        return;
+                    }
+                }
+            });
+        }
 
-        SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+        super.onDestroyView();
     }
 
     @Override
@@ -338,13 +337,13 @@ public class OpenChatFragment extends Fragment {
 
         mChatAdapter.setOnItemLongClickListener(new OpenChatAdapter.OnItemLongClickListener() {
             @Override
-            public void onBaseMessageLongClick(final BaseMessage message) {
-                showMessageOptionsDialog(message);
+            public void onBaseMessageLongClick(final BaseMessage message, int position) {
+                showMessageOptionsDialog(message, position);
             }
         });
     }
 
-    private void showMessageOptionsDialog(final BaseMessage message) {
+    private void showMessageOptionsDialog(final BaseMessage message, final int position) {
         String[] options = new String[] { "Edit message", "Delete message" };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -352,7 +351,7 @@ public class OpenChatFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
-                    setState(STATE_EDIT, message);
+                    setState(STATE_EDIT, message, position);
                 } else if (which == 1) {
                     deleteMessage(message);
                 }
@@ -361,7 +360,7 @@ public class OpenChatFragment extends Fragment {
         builder.create().show();
     }
 
-    private void setState(int state, BaseMessage editingMessage) {
+    private void setState(int state, BaseMessage editingMessage, final int position) {
         switch (state) {
             case STATE_NORMAL:
                 mCurrentState = STATE_NORMAL;
@@ -370,8 +369,6 @@ public class OpenChatFragment extends Fragment {
                 mUploadFileButton.setVisibility(View.VISIBLE);
                 mMessageSendButton.setText("SEND");
                 mMessageEditText.setText("");
-
-//                mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
                 break;
 
             case STATE_EDIT:
@@ -390,7 +387,19 @@ public class OpenChatFragment extends Fragment {
                 }
 
                 mMessageEditText.requestFocus();
-                mIMM.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                mMessageEditText.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIMM.showSoftInput(mMessageEditText, 0);
+
+                        mRecyclerView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRecyclerView.scrollToPosition(position);
+                            }
+                        }, 500);
+                    }
+                }, 100);
                 break;
         }
     }
@@ -402,9 +411,11 @@ public class OpenChatFragment extends Fragment {
             @Override
             public boolean onBack() {
                 if (mCurrentState == STATE_EDIT) {
-                    setState(STATE_NORMAL, null);
+                    setState(STATE_NORMAL, null, -1);
                     return true;
                 }
+
+                mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
                 return false;
             }
         });
@@ -422,7 +433,7 @@ public class OpenChatFragment extends Fragment {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
                 if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
-                    loadNextMessageList(30);
+                    loadNextMessageList(CHANNEL_LIST_LIMIT);
                 }
                 Log.v(LOG_TAG, "onScrollStateChanged");
             }
@@ -531,6 +542,10 @@ public class OpenChatFragment extends Fragment {
         }
     }
 
+    private void refreshFirst() {
+        enterChannel(mChannelUrl);
+    }
+
     /**
      * Enters an Open Channel.
      * <p>
@@ -560,10 +575,11 @@ public class OpenChatFragment extends Fragment {
                         }
 
                         mChannel = openChannel;
-                        loadInitialMessageList(30);
 
                         // Set action bar title to name of channel
                         ((OpenChannelActivity) getActivity()).setActionBarTitle(mChannel.getName());
+
+                        refresh();
                     }
                 });
             }
@@ -620,6 +636,10 @@ public class OpenChatFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void refresh() {
+        loadInitialMessageList(CHANNEL_LIST_LIMIT);
     }
 
     /**
@@ -685,7 +705,7 @@ public class OpenChatFragment extends Fragment {
                     return;
                 }
 
-                loadInitialMessageList(30);
+                refresh();
             }
         });
     }
@@ -706,7 +726,7 @@ public class OpenChatFragment extends Fragment {
                     return;
                 }
 
-                loadInitialMessageList(30);
+                refresh();
             }
         });
     }

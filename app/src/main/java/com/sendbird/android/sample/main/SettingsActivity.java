@@ -140,7 +140,7 @@ public class SettingsActivity extends AppCompatActivity {
         //+ ProfileUrl
         String profileUrl = PreferenceUtils.getProfileUrl(SettingsActivity.this);
         if (profileUrl.length() > 0) {
-            ImageUtils.displayRoundImageFromUrlWithoutCache(SettingsActivity.this, profileUrl, mImageViewProfile);
+            ImageUtils.displayRoundImageFromUrl(SettingsActivity.this, profileUrl, mImageViewProfile);
         }
         mImageViewProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,7 +195,12 @@ public class SettingsActivity extends AppCompatActivity {
                         mEditTextNickname.setSelection(0, mEditTextNickname.getText().length());
                     }
                     mEditTextNickname.requestFocus();
-                    mIMM.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    mEditTextNickname.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mIMM.showSoftInput(mEditTextNickname, 0);
+                        }
+                    }, 100);
                 }
             }
         });
@@ -600,7 +605,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 try {
                     PreferenceUtils.setProfileUrl(SettingsActivity.this, SendBird.getCurrentUser().getProfileUrl());
-                    ImageUtils.displayRoundImageFromUrlWithoutCache(SettingsActivity.this, Uri.fromFile(profileImage).toString(), imageView);
+                    ImageUtils.displayRoundImageFromUrl(SettingsActivity.this, Uri.fromFile(profileImage).toString(), imageView);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

@@ -17,6 +17,8 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.main.ConnectionManager;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 
 import java.util.List;
 
@@ -25,6 +27,9 @@ public class OpenChannelListFragment extends Fragment {
 
     public static final String EXTRA_OPEN_CHANNEL_URL = "OPEN_CHANNEL_URL";
     private static final String LOG_TAG = OpenChannelListFragment.class.getSimpleName();
+
+    private static final int CHANNEL_LIST_LIMIT = 15;
+    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_OPEN_CHANNEL_LIST";
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -36,18 +41,15 @@ public class OpenChannelListFragment extends Fragment {
 
     public static OpenChannelListFragment newInstance() {
         OpenChannelListFragment fragment = new OpenChannelListFragment();
-
         return fragment;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_open_channel_list, container, false);
 
         setRetainInstance(true);
-
         setHasOptionsMenu(true);
 
         ((OpenChannelActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.all_open_channels));
@@ -63,7 +65,7 @@ public class OpenChannelListFragment extends Fragment {
             @Override
             public void onRefresh() {
                 mSwipeRefresh.setRefreshing(true);
-                refreshChannelList(15);
+                refresh();
             }
         });
 
@@ -76,18 +78,24 @@ public class OpenChannelListFragment extends Fragment {
             }
         });
 
-        setUpAdapter();
         setUpRecyclerView();
+        setUpChannelListAdapter();
+
+        String userId = PreferenceUtils.getUserId(getActivity());
+        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+            @Override
+            public void onConnected(boolean reconnect) {
+                refresh();
+            }
+        });
 
         return rootView;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        // Refresh once
-        refreshChannelList(15);
+    public void onDestroyView() {
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+        super.onDestroyView();
     }
 
     void setUpRecyclerView() {
@@ -108,7 +116,7 @@ public class OpenChannelListFragment extends Fragment {
     }
 
     // Set touch listeners to RecyclerView items
-    private void setUpAdapter() {
+    private void setUpChannelListAdapter() {
         mChannelListAdapter.setOnItemClickListener(new OpenChannelListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(OpenChannel channel) {
@@ -128,6 +136,10 @@ public class OpenChannelListFragment extends Fragment {
         });
     }
 
+    private void refresh() {
+        refreshChannelList(CHANNEL_LIST_LIMIT);
+    }
+
     /**
      * Creates a new query to get the list of the user's Open Channels,
      * then replaces the existing dataset.
@@ -135,14 +147,16 @@ public class OpenChannelListFragment extends Fragment {
      * @param numChannels   The number of channels to load.
      */
     void refreshChannelList(int numChannels) {
-        mChannelListQuery= OpenChannel.createOpenChannelListQuery();
+        mChannelListQuery = OpenChannel.createOpenChannelListQuery();
         mChannelListQuery.setLimit(numChannels);
         mChannelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
             @Override
             public void onResult(List<OpenChannel> list, SendBirdException e) {
                 if (e != null) {
-
+                    e.printStackTrace();
+                    return;
                 }
+
                 mChannelListAdapter.setOpenChannelList(list);
 
                 if (mSwipeRefresh.isRefreshing()) {
@@ -156,18 +170,20 @@ public class OpenChannelListFragment extends Fragment {
      * Loads the next channels from the current query instance.
      */
     void loadNextChannelList() {
-        mChannelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
-            @Override
-            public void onResult(List<OpenChannel> list, SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    return;
-                }
+        if (mChannelListQuery != null) {
+            mChannelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                @Override
+                public void onResult(List<OpenChannel> list, SendBirdException e) {
+                    if (e != null) {
+                        e.printStackTrace();
+                        return;
+                    }
 
-                for (OpenChannel channel : list) {
-                    mChannelListAdapter.addLast(channel);
+                    for (OpenChannel channel : list) {
+                        mChannelListAdapter.addLast(channel);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }

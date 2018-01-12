@@ -44,9 +44,9 @@ import com.sendbird.android.Member;
 import com.sendbird.android.PreviousMessageListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
-import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.main.ConnectionManager;
 import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.MediaPlayerActivity;
 import com.sendbird.android.sample.utils.PhotoViewerActivity;
@@ -66,14 +66,15 @@ import java.util.List;
 
 public class GroupChatFragment extends Fragment {
 
-    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
-
     private static final String LOG_TAG = GroupChatFragment.class.getSimpleName();
+
+    private static final int CHANNEL_LIST_LIMIT = 30;
+    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
+    private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
 
     private static final int STATE_NORMAL = 0;
     private static final int STATE_EDIT = 1;
 
-    private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
     private static final String STATE_CHANNEL_URL = "STATE_CHANNEL_URL";
     private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
@@ -227,8 +228,15 @@ public class GroupChatFragment extends Fragment {
         });
 
         setUpRecyclerView();
-
         setHasOptionsMenu(true);
+
+        String userId = PreferenceUtils.getUserId(getActivity());
+        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+            @Override
+            public void onConnected(boolean reconnect) {
+                refresh();
+            }
+        });
 
         return rootView;
     }
@@ -246,7 +254,7 @@ public class GroupChatFragment extends Fragment {
 
                     mChannel = groupChannel;
                     mChatAdapter.setChannel(mChannel);
-                    mChatAdapter.loadLatestMessages(30, new BaseChannel.GetMessagesHandler() {
+                    mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {
                         @Override
                         public void onResult(List<BaseMessage> list, SendBirdException e) {
                             mChatAdapter.markAllMessagesAsRead();
@@ -265,7 +273,7 @@ public class GroupChatFragment extends Fragment {
                         return;
                     }
 
-                    mChatAdapter.loadLatestMessages(30, new BaseChannel.GetMessagesHandler() {
+                    mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {
                         @Override
                         public void onResult(List<BaseMessage> list, SendBirdException e) {
                             mChatAdapter.markAllMessagesAsRead();
@@ -329,47 +337,6 @@ public class GroupChatFragment extends Fragment {
             }
 
         });
-
-        SendBird.addConnectionHandler(CONNECTION_HANDLER_ID, new SendBird.ConnectionHandler() {
-            @Override
-            public void onReconnectStarted() {
-            }
-
-            @Override
-            public void onReconnectSucceeded() {
-                refresh();
-            }
-
-            @Override
-            public void onReconnectFailed() {
-            }
-        });
-
-        if (SendBird.getConnectionState() == SendBird.ConnectionState.OPEN) {
-            refresh();
-        } else {
-            if (SendBird.reconnect()) {
-                // Will call onReconnectSucceeded()
-            } else {
-                String userId = PreferenceUtils.getUserId(getActivity());
-                if (userId == null) {
-                    Toast.makeText(getActivity(), "Require user ID to connect to SendBird.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                SendBird.connect(userId, new SendBird.ConnectHandler() {
-                    @Override
-                    public void onConnected(User user, SendBirdException e) {
-                        if (e != null) {
-                            e.printStackTrace();
-                            return;
-                        }
-
-                        refresh();
-                    }
-                });
-            }
-        }
     }
 
     @Override
@@ -377,15 +344,19 @@ public class GroupChatFragment extends Fragment {
         setTypingStatus(false);
 
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
-        SendBird.removeConnectionHandler(CONNECTION_HANDLER_ID);
         super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+        super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
         // Save messages to cache.
         mChatAdapter.save();
-
         super.onDestroy();
     }
 
@@ -424,6 +395,10 @@ public class GroupChatFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // Set this as true to restore background connection management.
+        SendBird.setAutoBackgroundDetection(true);
+
         if (requestCode == INTENT_REQUEST_CHOOSE_MEDIA && resultCode == Activity.RESULT_OK) {
             // If user has successfully chosen the image, show a dialog to confirm upload.
             if (data == null) {
@@ -433,9 +408,6 @@ public class GroupChatFragment extends Fragment {
 
             sendFileWithThumbnail(data.getData());
         }
-
-        // Set this as true to restore background connection management.
-        SendBird.setAutoBackgroundDetection(true);
     }
 
     private void setUpRecyclerView() {
@@ -447,7 +419,7 @@ public class GroupChatFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
-                    mChatAdapter.loadPreviousMessages(30, null);
+                    mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
                 }
             }
         });
@@ -540,8 +512,6 @@ public class GroupChatFragment extends Fragment {
                 mUploadFileButton.setVisibility(View.VISIBLE);
                 mMessageSendButton.setText("SEND");
                 mMessageEditText.setText("");
-
-//                mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
                 break;
 
             case STATE_EDIT:
@@ -560,14 +530,19 @@ public class GroupChatFragment extends Fragment {
                 }
 
                 mMessageEditText.requestFocus();
-                mIMM.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-
-                mRecyclerView.postDelayed(new Runnable() {
+                mMessageEditText.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRecyclerView.scrollToPosition(position);
+                        mIMM.showSoftInput(mMessageEditText, 0);
+
+                        mRecyclerView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRecyclerView.scrollToPosition(position);
+                            }
+                        }, 500);
                     }
-                }, 500);
+                }, 100);
                 break;
         }
     }
@@ -582,6 +557,8 @@ public class GroupChatFragment extends Fragment {
                     setState(STATE_NORMAL, null, -1);
                     return true;
                 }
+
+                mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
                 return false;
             }
         });
@@ -902,7 +879,7 @@ public class GroupChatFragment extends Fragment {
                     return;
                 }
 
-                mChatAdapter.loadLatestMessages(30, new BaseChannel.GetMessagesHandler() {
+                mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {
                     @Override
                     public void onResult(List<BaseMessage> list, SendBirdException e) {
                         mChatAdapter.markAllMessagesAsRead();
@@ -928,7 +905,7 @@ public class GroupChatFragment extends Fragment {
                     return;
                 }
 
-                mChatAdapter.loadLatestMessages(30, new BaseChannel.GetMessagesHandler() {
+                mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT, new BaseChannel.GetMessagesHandler() {
                     @Override
                     public void onResult(List<BaseMessage> list, SendBirdException e) {
                         mChatAdapter.markAllMessagesAsRead();

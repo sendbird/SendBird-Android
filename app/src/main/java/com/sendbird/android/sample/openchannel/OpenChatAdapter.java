@@ -53,7 +53,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     interface OnItemLongClickListener {
-        void onBaseMessageLongClick(BaseMessage message);
+        void onBaseMessageLongClick(BaseMessage message, int position);
     }
 
 
@@ -168,7 +168,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_USER_MESSAGE:
                 ((UserMessageHolder) holder).bind(mContext, (UserMessage) message, isNewDay,
-                        mItemClickListener, mItemLongClickListener);
+                        mItemClickListener, mItemLongClickListener, position);
                 break;
             case VIEW_TYPE_ADMIN_MESSAGE:
                 ((AdminMessageHolder) holder).bind((AdminMessage) message, isNewDay,
@@ -176,7 +176,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;
             case VIEW_TYPE_FILE_MESSAGE:
                 ((FileMessageHolder) holder).bind(mContext, (FileMessage) message, isNewDay,
-                        mItemClickListener, mItemLongClickListener);
+                        mItemClickListener, mItemLongClickListener, position);
                 break;
             default:
                 break;
@@ -206,7 +206,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         // Binds message details to ViewHolder item
         void bind(Context context, final UserMessage message, boolean isNewDay,
                   @Nullable final OnItemClickListener clickListener,
-                  @Nullable final OnItemLongClickListener longClickListener) {
+                  @Nullable final OnItemLongClickListener longClickListener, final int postion) {
 
             User sender = message.getSender();
 
@@ -251,7 +251,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        longClickListener.onBaseMessageLongClick(message);
+                        longClickListener.onBaseMessageLongClick(message, postion);
                         return true;
                     }
                 });
@@ -308,7 +308,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         // Binds message details to ViewHolder item
         void bind(final Context context, final FileMessage message, boolean isNewDay,
                   @Nullable final OnItemClickListener clickListener,
-                  @Nullable final OnItemLongClickListener longClickListener) {
+                  @Nullable final OnItemLongClickListener longClickListener, final int position) {
             User sender = message.getSender();
 
             // If current user sent the message, display name in different color
@@ -382,7 +382,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        longClickListener.onBaseMessageLongClick(message);
+                        longClickListener.onBaseMessageLongClick(message, position);
                         return true;
                     }
                 });

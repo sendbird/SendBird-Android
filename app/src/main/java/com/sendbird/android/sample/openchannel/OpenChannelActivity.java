@@ -25,15 +25,17 @@ public class OpenChannelActivity extends AppCompatActivity{
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
 
-        // Load list of Open Channels
-        Fragment fragment = OpenChannelListFragment.newInstance();
+        if (savedInstanceState == null) {
+            // Load list of Open Channels
+            Fragment fragment = OpenChannelListFragment.newInstance();
 
-        FragmentManager manager = getSupportFragmentManager();
-        manager.popBackStack();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.popBackStack();
 
-        manager.beginTransaction()
-                .replace(R.id.container_open_channel, fragment)
-                .commit();
+            manager.beginTransaction()
+                    .replace(R.id.container_open_channel, fragment)
+                    .commit();
+        }
     }
 
     interface onBackPressedListener {

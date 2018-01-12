@@ -13,7 +13,7 @@ public class TextUtils {
     public static String getGroupChannelTitle(GroupChannel channel) {
         List<Member> members = channel.getMembers();
 
-        if (members.size() < 2) {
+        if (members.size() < 2 || SendBird.getCurrentUser() == null) {
             return "No Members";
         } else if (members.size() == 2) {
             StringBuffer names = new StringBuffer();

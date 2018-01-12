@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * An adapter that displays a list of Open Channels in an RecyclerView.
  */
-class OpenChannelListAdapter extends RecyclerView.Adapter<OpenChannelListAdapter.ChannelHolder> {
+class OpenChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<OpenChannel> mChannelList;
     private Context mContext;
@@ -47,8 +47,8 @@ class OpenChannelListAdapter extends RecyclerView.Adapter<OpenChannelListAdapter
     }
 
     @Override
-    public void onBindViewHolder(ChannelHolder holder, int position) {
-        holder.bind(mContext, mChannelList.get(position), position, mItemClickListener, mItemLongClickListener);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ((ChannelHolder)holder).bind(mContext, mChannelList.get(position), position, mItemClickListener, mItemLongClickListener);
     }
 
     @Override
@@ -74,7 +74,7 @@ class OpenChannelListAdapter extends RecyclerView.Adapter<OpenChannelListAdapter
         mItemClickListener = listener;
     }
 
-    static class ChannelHolder extends RecyclerView.ViewHolder {
+    private class ChannelHolder extends RecyclerView.ViewHolder {
         // A list of colors for decorating each list item.
         private String[] colorList = { "#ff2de3e1", "#ff35a3fb", "#ff805aff", "#ffcf47fb", "#ffe248c3" };
 

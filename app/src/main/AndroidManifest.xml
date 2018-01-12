@@ -38,7 +38,8 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".openchannel.CreateOpenChannelActivity"
-            android:label="@string/create_open_channel" />
+            android:label="@string/create_open_channel"
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".groupchannel.InviteMemberActivity"
             android:label="@string/invite_member" />
@@ -51,8 +52,10 @@
         <activity
             android:name=".openchannel.ParticipantListActivity"
             android:label="@string/participant_list" />
-        <activity android:name=".openchannel.OpenChannelActivity" />
-        <activity android:name=".groupchannel.GroupChannelActivity" />
+        <activity android:name=".openchannel.OpenChannelActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".groupchannel.GroupChannelActivity"
+            android:windowSoftInputMode="stateHidden" />
 
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>

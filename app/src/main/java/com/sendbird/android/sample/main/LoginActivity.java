@@ -59,6 +59,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        mUserIdConnectEditText.setSelectAllOnFocus(true);
+        mUserNicknameEditText.setSelectAllOnFocus(true);
+
         // A loading indicator
         mProgressBar = (ContentLoadingProgressBar) findViewById(R.id.progress_bar_login);
 
@@ -86,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         showProgressBar(true);
         mConnectButton.setEnabled(false);
 
-        SendBird.connect(userId, new SendBird.ConnectHandler() {
+        ConnectionManager.login(userId, new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
                 // Callback received; hide the progress bar.

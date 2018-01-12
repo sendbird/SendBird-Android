@@ -1,6 +1,5 @@
 package com.sendbird.android.sample.openchannel;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -10,7 +9,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import com.sendbird.android.OpenChannel;
@@ -24,8 +22,6 @@ import com.sendbird.android.sample.R;
 
 public class CreateOpenChannelActivity extends AppCompatActivity {
 
-    private InputMethodManager mIMM;
-
     private TextInputEditText mNameEditText;
     private boolean enableCreate = false;
     private Button mCreateButton;
@@ -34,8 +30,6 @@ public class CreateOpenChannelActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_open_channel);
-
-        mIMM = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_create_open_channel);
         setSupportActionBar(toolbar);
@@ -83,15 +77,6 @@ public class CreateOpenChannelActivity extends AppCompatActivity {
 
             }
         });
-
-        mNameEditText.requestFocus();
-        mIMM.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mIMM.hideSoftInputFromWindow(mNameEditText.getWindowToken(), 0);
     }
 
     @Override

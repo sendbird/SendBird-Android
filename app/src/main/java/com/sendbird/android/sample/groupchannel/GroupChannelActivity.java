@@ -26,7 +26,7 @@ public class GroupChannelActivity extends AppCompatActivity{
         }
 
         if (savedInstanceState == null) {
-            // If started from launcher, load list of Open Channels
+            // Load list of Group Channels
             Fragment fragment = GroupChannelListFragment.newInstance();
 
             FragmentManager manager = getSupportFragmentManager();

@@ -24,6 +24,8 @@ import com.sendbird.android.GroupChannelListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.main.ConnectionManager;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 
 import java.util.List;
 
@@ -31,9 +33,12 @@ import static android.app.Activity.RESULT_OK;
 
 public class GroupChannelListFragment extends Fragment {
 
-    private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";
     public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
     public static final int INTENT_REQUEST_NEW_GROUP_CHANNEL = 302;
+
+    private static final int CHANNEL_LIST_LIMIT = 15;
+    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHANNEL_LIST";
+    private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -45,19 +50,6 @@ public class GroupChannelListFragment extends Fragment {
     public static GroupChannelListFragment newInstance() {
         GroupChannelListFragment fragment = new GroupChannelListFragment();
         return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mChannelListAdapter = new GroupChannelListAdapter(getActivity());
-        mChannelListAdapter.load();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mChannelListAdapter.save();
     }
 
     @Nullable
@@ -81,7 +73,7 @@ public class GroupChannelListFragment extends Fragment {
             @Override
             public void onRefresh() {
                 mSwipeRefresh.setRefreshing(true);
-                refreshChannelList(15);
+                refresh();
             }
         });
 
@@ -93,16 +85,26 @@ public class GroupChannelListFragment extends Fragment {
             }
         });
 
+        mChannelListAdapter = new GroupChannelListAdapter(getActivity());
+        mChannelListAdapter.load();
+
         setUpRecyclerView();
         setUpChannelListAdapter();
+
+        String userId = PreferenceUtils.getUserId(getActivity());
+        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+            @Override
+            public void onConnected(boolean reconnect) {
+                refresh();
+            }
+        });
+
         return rootView;
     }
 
     @Override
     public void onResume() {
         Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
-
-        refreshChannelList(15);
 
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
@@ -122,6 +124,8 @@ public class GroupChannelListFragment extends Fragment {
 
     @Override
     public void onPause() {
+        mChannelListAdapter.save();
+
         Log.d("LIFECYCLE", "GroupChannelListFragment onPause()");
 
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
@@ -129,9 +133,9 @@ public class GroupChannelListFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        Log.d("LIFECYCLE", "GroupChannelListFragment onDetach()");
-        super.onDetach();
+    public void onDestroyView() {
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+        super.onDestroyView();
     }
 
     @Override
@@ -273,6 +277,10 @@ public class GroupChannelListFragment extends Fragment {
                 .commit();
     }
 
+    private void refresh() {
+        refreshChannelList(CHANNEL_LIST_LIMIT);
+    }
+
     /**
      * Creates a new query to get the list of the user's Group Channels,
      * then replaces the existing dataset.
@@ -337,7 +345,7 @@ public class GroupChannelListFragment extends Fragment {
                 }
 
                 // Re-query message list
-                refreshChannelList(15);
+                refresh();
             }
         });
     }
