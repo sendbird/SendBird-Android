@@ -34,7 +34,7 @@ import static android.app.Activity.RESULT_OK;
 public class GroupChannelListFragment extends Fragment {
 
     public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
-    public static final int INTENT_REQUEST_NEW_GROUP_CHANNEL = 302;
+    private static final int INTENT_REQUEST_NEW_GROUP_CHANNEL = 302;
 
     private static final int CHANNEL_LIST_LIMIT = 15;
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHANNEL_LIST";

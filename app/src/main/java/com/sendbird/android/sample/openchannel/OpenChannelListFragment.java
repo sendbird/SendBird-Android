@@ -22,11 +22,13 @@ import com.sendbird.android.sample.utils.PreferenceUtils;
 
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class OpenChannelListFragment extends Fragment {
 
     public static final String EXTRA_OPEN_CHANNEL_URL = "OPEN_CHANNEL_URL";
-    private static final String LOG_TAG = OpenChannelListFragment.class.getSimpleName();
+    private static final int INTENT_REQUEST_NEW_OPEN_CHANNEL = 402;
 
     private static final int CHANNEL_LIST_LIMIT = 15;
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_OPEN_CHANNEL_LIST";
@@ -74,7 +76,7 @@ public class OpenChannelListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CreateOpenChannelActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, INTENT_REQUEST_NEW_OPEN_CHANNEL);
             }
         });
 
@@ -96,6 +98,15 @@ public class OpenChannelListFragment extends Fragment {
     public void onDestroyView() {
         ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
         super.onDestroyView();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == INTENT_REQUEST_NEW_OPEN_CHANNEL) {
+            if (resultCode == RESULT_OK) {
+                refresh();
+            }
+        }
     }
 
     void setUpRecyclerView() {
