@@ -263,6 +263,9 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             BaseMessage lastMessage = channel.getLastMessage();
             if (lastMessage != null) {
+                dateText.setVisibility(View.VISIBLE);
+                lastMessageText.setVisibility(View.VISIBLE);
+
                 // Display information about the most recently sent message in the channel.
                 dateText.setText(String.valueOf(DateUtils.formatDateTime(lastMessage.getCreatedAt())));
 
@@ -278,6 +281,9 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             ((FileMessage) lastMessage).getSender().getNickname());
                     lastMessageText.setText(lastMessageString);
                 }
+            } else {
+                dateText.setVisibility(View.INVISIBLE);
+                lastMessageText.setVisibility(View.INVISIBLE);
             }
 
             /*
