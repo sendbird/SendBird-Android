@@ -230,14 +230,6 @@ public class GroupChatFragment extends Fragment {
         setUpRecyclerView();
         setHasOptionsMenu(true);
 
-        String userId = PreferenceUtils.getUserId(getActivity());
-        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
-            @Override
-            public void onConnected(boolean reconnect) {
-                refresh();
-            }
-        });
-
         return rootView;
     }
 
@@ -288,6 +280,14 @@ public class GroupChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        String userId = PreferenceUtils.getUserId(getActivity());
+        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+            @Override
+            public void onConnected(boolean reconnect) {
+                refresh();
+            }
+        });
 
         mChatAdapter.setContext(getActivity()); // Glide bug fix (java.lang.IllegalArgumentException: You cannot start a load for a destroyed activity)
 
@@ -343,14 +343,9 @@ public class GroupChatFragment extends Fragment {
     public void onPause() {
         setTypingStatus(false);
 
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
-        super.onDestroyView();
     }
 
     @Override

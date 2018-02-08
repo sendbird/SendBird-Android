@@ -4,7 +4,7 @@
     android:layout_height="51dp"
     android:orientation="horizontal"
     android:paddingLeft="20dp"
-    android:paddingRight="12dp"
+    android:paddingRight="10dp"
     android:background="?selectableItemBackground"
     android:clickable="true">
 
@@ -38,12 +38,30 @@
         android:textSize="14sp"
         android:textColor="#000000"/>
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/switch_block"
+    <RelativeLayout
+        android:id="@+id/relative_layout_blocked_by_me"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:layout_weight="0"
-        android:gravity="center_vertical" />
+        android:layout_weight="0">
+
+        <TextView
+            android:id="@+id/text_view_blocked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textSize="11.5sp"
+            android:textColor="#bcbfc7"
+            android:text="Blocked"
+            android:layout_marginLeft="10dp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/text_view_blocked"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_arrow_right_gray_24_dp"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

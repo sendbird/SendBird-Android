@@ -47,6 +47,9 @@
             android:name=".groupchannel.MemberListActivity"
             android:label="@string/member_list" />
         <activity
+            android:name=".groupchannel.MemberInfoActivity"
+            android:label="@string/member_info" />
+        <activity
             android:name=".groupchannel.CreateGroupChannelActivity"
             android:label="@string/create_group_channel" />
         <activity

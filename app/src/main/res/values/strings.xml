@@ -36,6 +36,8 @@
     <string name="member_list">Members</string>
     <string name="invite_member">Invite members</string>
 
+    <string name="member_info"></string>
+
     <!-- Content descriptions -->
     <string name="open_channel_chat_content_desc_profile">Profile image</string>
 

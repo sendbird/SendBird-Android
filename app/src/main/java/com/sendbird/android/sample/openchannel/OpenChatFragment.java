@@ -184,18 +184,6 @@ public class OpenChatFragment extends Fragment {
         // Gets channel from URL user requested
         mChannelUrl = getArguments().getString(OpenChannelListFragment.EXTRA_OPEN_CHANNEL_URL);
 
-        String userId = PreferenceUtils.getUserId(getActivity());
-        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
-            @Override
-            public void onConnected(boolean reconnect) {
-                if (reconnect) {
-                    refresh();
-                } else {
-                    refreshFirst();
-                }
-            }
-        });
-
         return rootView;
     }
 
@@ -245,6 +233,18 @@ public class OpenChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        String userId = PreferenceUtils.getUserId(getActivity());
+        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+            @Override
+            public void onConnected(boolean reconnect) {
+                if (reconnect) {
+                    refresh();
+                } else {
+                    refreshFirst();
+                }
+            }
+        });
+
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
             public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
@@ -272,8 +272,11 @@ public class OpenChatFragment extends Fragment {
         });
     }
 
+
+
     @Override
     public void onPause() {
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
         super.onPause();
     }
@@ -293,7 +296,6 @@ public class OpenChatFragment extends Fragment {
             });
         }
 
-        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
         super.onDestroyView();
     }
 

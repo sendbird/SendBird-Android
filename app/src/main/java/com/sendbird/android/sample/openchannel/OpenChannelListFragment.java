@@ -83,6 +83,13 @@ public class OpenChannelListFragment extends Fragment {
         setUpRecyclerView();
         setUpChannelListAdapter();
 
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         String userId = PreferenceUtils.getUserId(getActivity());
         ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
             @Override
@@ -90,14 +97,12 @@ public class OpenChannelListFragment extends Fragment {
                 refresh();
             }
         });
-
-        return rootView;
     }
 
     @Override
-    public void onDestroyView() {
+    public void onPause() {
+        super.onPause();
         ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
-        super.onDestroyView();
     }
 
     @Override

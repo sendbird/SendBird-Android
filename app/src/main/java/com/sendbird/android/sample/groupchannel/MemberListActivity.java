@@ -11,20 +11,30 @@ import android.view.MenuItem;
 
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.Member;
+import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.main.ConnectionManager;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MemberListActivity extends AppCompatActivity{
+
+    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_MEMBER_LIST";
+    static final String EXTRA_CHANNEL_URL = "EXTRA_CHANNEL_URL";
+    static final String EXTRA_USER_ID = "EXTRA_USER_ID";
+    static final String EXTRA_USER_PROFILE_URL = "EXTRA_USER_PROFILE_URL";
+    static final String EXTRA_USER_NICKNAME = "EXTRA_USER_NICKNAME";
+    static final String EXTRA_USER_BLOCKED_BY_ME = "EXTRA_USER_BLOCKED_BY_ME";
 
     private UserListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private String mChannelUrl;
     private GroupChannel mChannel;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,16 +43,10 @@ public class MemberListActivity extends AppCompatActivity{
         setContentView(R.layout.activity_member_list);
 
         mChannelUrl = getIntent().getStringExtra(GroupChatFragment.EXTRA_CHANNEL_URL);
-        if (mChannelUrl == null) {
-            // Theoretically shouldn't happen
-            finish();
-        }
+        mRecyclerView = findViewById(R.id.recycler_member_list);
+        mListAdapter = new UserListAdapter(this, mChannelUrl, true);
 
-        mChannelUrl = getIntent().getStringExtra(GroupChatFragment.EXTRA_CHANNEL_URL);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_member_list);
-        mListAdapter = new UserListAdapter(this, true);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_member_list);
+        Toolbar toolbar = findViewById(R.id.toolbar_member_list);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,8 +54,26 @@ public class MemberListActivity extends AppCompatActivity{
         }
 
         setUpRecyclerView();
+    }
 
-        getChannelFromUrl(mChannelUrl);
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        String userId = PreferenceUtils.getUserId(this);
+        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+            @Override
+            public void onConnected(boolean reconnect) {
+                getChannelFromUrl(mChannelUrl);
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
     }
 
     private void setUpRecyclerView() {
@@ -98,13 +120,26 @@ public class MemberListActivity extends AppCompatActivity{
                     return;
                 }
 
-                setUserList(mChannel.getMembers());
+                setMemberList(mChannel.getMembers());
             }
         });
     }
 
-    private void setUserList(List<Member> userList) {
-        mListAdapter.setUserList(userList);
-    }
+    private void setMemberList(List<Member> memberList) {
+        List<Member> sortedUserList = new ArrayList<>();
+        for (Member me : memberList) {
+            if (me.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                sortedUserList.add(me);
+                break;
+            }
+        }
+        for (Member other : memberList) {
+            if (other.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                continue;
+            }
+            sortedUserList.add(other);
+        }
 
+        mListAdapter.setUserList(sortedUserList);
+    }
 }

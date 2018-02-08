@@ -9,13 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.sendbird.android.Member;
 import com.sendbird.android.OpenChannel;
+import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.groupchannel.UserListAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,18 +33,17 @@ public class ParticipantListActivity extends AppCompatActivity {
     private String mChannelUrl;
     private OpenChannel mChannel;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_participant_list);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_participant_list);
+        mRecyclerView = findViewById(R.id.recycler_participant_list);
 
         mChannelUrl = getIntent().getStringExtra(OpenChatFragment.EXTRA_CHANNEL_URL);
-        mListAdapter = new UserListAdapter(this, false);
+        mListAdapter = new UserListAdapter(this, mChannelUrl, false);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_participant_list);
+        Toolbar toolbar = findViewById(R.id.toolbar_participant_list);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,7 +52,7 @@ public class ParticipantListActivity extends AppCompatActivity {
 
         setUpRecyclerView();
 
-        getChannelFromUrl();
+        getChannelFromUrl(mChannelUrl);
     }
 
     @Override
@@ -72,13 +74,15 @@ public class ParticipantListActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
-    /**
-     * Gets the channel instance with the channel URL.
-     */
-    private void getChannelFromUrl() {
-        OpenChannel.getChannel(mChannelUrl, new OpenChannel.OpenChannelGetHandler() {
+    private void getChannelFromUrl(String url) {
+        OpenChannel.getChannel(url, new OpenChannel.OpenChannelGetHandler() {
             @Override
             public void onResult(OpenChannel openChannel, SendBirdException e) {
+                if (e != null) {
+                    // Error!
+                    return;
+                }
+
                 mChannel = openChannel;
 
                 getUserList();
@@ -96,10 +100,26 @@ public class ParticipantListActivity extends AppCompatActivity {
                     return;
                 }
 
-                mListAdapter.setUserList(list);
+                setUserList(list);
             }
         });
     }
 
+    private void setUserList(List<User> userList) {
+        List<User> sortedUserList = new ArrayList<>();
+        for (User me : userList) {
+            if (me.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                sortedUserList.add(me);
+                break;
+            }
+        }
+        for (User other : userList) {
+            if (other.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                continue;
+            }
+            sortedUserList.add(other);
+        }
 
+        mListAdapter.setUserList(sortedUserList);
+    }
 }

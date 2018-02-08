@@ -91,6 +91,13 @@ public class GroupChannelListFragment extends Fragment {
         setUpRecyclerView();
         setUpChannelListAdapter();
 
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
+
         String userId = PreferenceUtils.getUserId(getActivity());
         ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
             @Override
@@ -98,13 +105,6 @@ public class GroupChannelListFragment extends Fragment {
                 refresh();
             }
         });
-
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
 
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
@@ -132,14 +132,9 @@ public class GroupChannelListFragment extends Fragment {
 
         Log.d("LIFECYCLE", "GroupChannelListFragment onPause()");
 
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
-        super.onDestroyView();
     }
 
     @Override
