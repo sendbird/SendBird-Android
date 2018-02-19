@@ -1,8 +1,11 @@
 package com.sendbird.android.sample.main;
 
+import android.content.Context;
+
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 
 public class ConnectionManager {
 
@@ -28,7 +31,7 @@ public class ConnectionManager {
         });
     }
 
-    public static void addConnectionManagementHandler(String userId, String handlerId, final ConnectionManagementHandler handler) {
+    public static void addConnectionManagementHandler(String handlerId, final ConnectionManagementHandler handler) {
         SendBird.addConnectionHandler(handlerId, new SendBird.ConnectionHandler() {
             @Override
             public void onReconnectStarted() {
@@ -51,6 +54,7 @@ public class ConnectionManager {
                 handler.onConnected(false);
             }
         } else if (SendBird.getConnectionState() == SendBird.ConnectionState.CLOSED) { // push notification or system kill
+            String userId = PreferenceUtils.getUserId();
             SendBird.connect(userId, new SendBird.ConnectHandler() {
                 @Override
                 public void onConnected(User user, SendBirdException e) {

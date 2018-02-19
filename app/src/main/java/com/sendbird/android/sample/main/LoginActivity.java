@@ -38,8 +38,8 @@ public class LoginActivity extends AppCompatActivity {
         mUserIdConnectEditText = (TextInputEditText) findViewById(R.id.edittext_login_user_id);
         mUserNicknameEditText = (TextInputEditText) findViewById(R.id.edittext_login_user_nickname);
 
-        mUserIdConnectEditText.setText(PreferenceUtils.getUserId(this));
-        mUserNicknameEditText.setText(PreferenceUtils.getNickname(this));
+        mUserIdConnectEditText.setText(PreferenceUtils.getUserId());
+        mUserNicknameEditText.setText(PreferenceUtils.getNickname());
 
         mConnectButton = (Button) findViewById(R.id.button_login_connect);
         mConnectButton.setOnClickListener(new View.OnClickListener() {
@@ -51,8 +51,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 String userNickname = mUserNicknameEditText.getText().toString();
 
-                PreferenceUtils.setUserId(LoginActivity.this, userId);
-                PreferenceUtils.setNickname(LoginActivity.this, userNickname);
+                PreferenceUtils.setUserId(userId);
+                PreferenceUtils.setNickname(userNickname);
 
                 connectToSendBird(userId, userNickname);
 
@@ -74,8 +74,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(PreferenceUtils.getConnected(this)) {
-            connectToSendBird(PreferenceUtils.getUserId(this), PreferenceUtils.getNickname(this));
+        if(PreferenceUtils.getConnected()) {
+            connectToSendBird(PreferenceUtils.getUserId(), PreferenceUtils.getNickname());
         }
     }
 
@@ -105,13 +105,13 @@ public class LoginActivity extends AppCompatActivity {
                     // Show login failure snackbar
                     showSnackbar("Login to SendBird failed");
                     mConnectButton.setEnabled(true);
-                    PreferenceUtils.setConnected(LoginActivity.this, false);
+                    PreferenceUtils.setConnected(false);
                     return;
                 }
 
-                PreferenceUtils.setNickname(LoginActivity.this, user.getNickname());
-                PreferenceUtils.setProfileUrl(LoginActivity.this, user.getProfileUrl());
-                PreferenceUtils.setConnected(LoginActivity.this, true);
+                PreferenceUtils.setNickname(user.getNickname());
+                PreferenceUtils.setProfileUrl(user.getProfileUrl());
+                PreferenceUtils.setConnected(true);
 
                 // Update the user's nickname
                 updateCurrentUserInfo(userNickname);
@@ -153,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                PreferenceUtils.setNickname(LoginActivity.this, userNickname);
+                PreferenceUtils.setNickname(userNickname);
             }
         });
     }

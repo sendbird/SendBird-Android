@@ -108,7 +108,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setContentIntent(pendingIntent);
 
-        if (PreferenceUtils.getNotificationsShowPreviews(context)) {
+        if (PreferenceUtils.getNotificationsShowPreviews()) {
             notificationBuilder.setContentText(messageBody);
         } else {
             notificationBuilder.setContentText("Somebody sent you a message.");

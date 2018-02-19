@@ -79,7 +79,7 @@ public class CreateGroupChannelActivity extends AppCompatActivity
             public void onClick(View v) {
                 if (mCurrentState == STATE_SELECT_USERS) {
 //                if (mCurrentState == STATE_SELECT_DISTINCT) {
-                    mIsDistinct = PreferenceUtils.getGroupChannelDistinct(CreateGroupChannelActivity.this);
+                    mIsDistinct = PreferenceUtils.getGroupChannelDistinct();
                     createGroupChannel(mSelectedIds, mIsDistinct);
                 }
             }

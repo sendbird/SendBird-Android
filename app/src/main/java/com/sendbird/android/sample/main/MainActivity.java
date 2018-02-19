@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 ConnectionManager.logout(new SendBird.DisconnectHandler() {
                     @Override
                     public void onDisconnected() {
-                        PreferenceUtils.setConnected(MainActivity.this, false);
+                        PreferenceUtils.setConnected(false);
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
                         finish();

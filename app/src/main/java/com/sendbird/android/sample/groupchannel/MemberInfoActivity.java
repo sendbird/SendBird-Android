@@ -19,7 +19,6 @@ import com.sendbird.android.User;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.main.ConnectionManager;
 import com.sendbird.android.sample.utils.ImageUtils;
-import com.sendbird.android.sample.utils.PreferenceUtils;
 
 
 public class MemberInfoActivity extends AppCompatActivity{
@@ -100,8 +99,7 @@ public class MemberInfoActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
 
-        String userId = PreferenceUtils.getUserId(this);
-        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+        ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
             @Override
             public void onConnected(boolean reconnect) {
                 getUserFromUrl(mChannelUrl);

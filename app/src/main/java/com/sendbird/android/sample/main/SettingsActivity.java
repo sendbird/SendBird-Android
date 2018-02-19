@@ -138,7 +138,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         //+ ProfileUrl
-        String profileUrl = PreferenceUtils.getProfileUrl(SettingsActivity.this);
+        String profileUrl = PreferenceUtils.getProfileUrl();
         if (profileUrl.length() > 0) {
             ImageUtils.displayRoundImageFromUrl(SettingsActivity.this, profileUrl, mImageViewProfile);
         }
@@ -152,7 +152,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         //+ Nickname
         mEditTextNickname.setEnabled(false);
-        final String nickname = PreferenceUtils.getNickname(SettingsActivity.this);
+        final String nickname = PreferenceUtils.getNickname();
         if (nickname.length() > 0) {
             mEditTextNickname.setText(nickname);
         }
@@ -207,12 +207,12 @@ public class SettingsActivity extends AppCompatActivity {
         //- Nickname
 
         //+ Notifications
-        boolean notifications = PreferenceUtils.getNotifications(SettingsActivity.this);
+        boolean notifications = PreferenceUtils.getNotifications();
         mSwitchNotifications.setChecked(notifications);
-        mSwitchNotificationsShowPreviews.setChecked(PreferenceUtils.getNotificationsShowPreviews(SettingsActivity.this));
+        mSwitchNotificationsShowPreviews.setChecked(PreferenceUtils.getNotificationsShowPreviews());
         checkNotifications(notifications);
 
-        boolean doNotDisturb = PreferenceUtils.getNotificationsDoNotDisturb(SettingsActivity.this);
+        boolean doNotDisturb = PreferenceUtils.getNotificationsDoNotDisturb();
         mSwitchNotificationsDoNotDisturb.setChecked(doNotDisturb);
         checkDoNotDisturb(doNotDisturb);
 
@@ -229,7 +229,7 @@ public class SettingsActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            PreferenceUtils.setNotifications(SettingsActivity.this, isChecked);
+                            PreferenceUtils.setNotifications(isChecked);
                             checkNotifications(isChecked);
                         }
                     });
@@ -243,7 +243,7 @@ public class SettingsActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            PreferenceUtils.setNotifications(SettingsActivity.this, isChecked);
+                            PreferenceUtils.setNotifications(isChecked);
                             checkNotifications(isChecked);
                         }
                     });
@@ -254,7 +254,7 @@ public class SettingsActivity extends AppCompatActivity {
         mSwitchNotificationsShowPreviews.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PreferenceUtils.setNotificationsShowPreviews(SettingsActivity.this, isChecked);
+                PreferenceUtils.setNotificationsShowPreviews(isChecked);
             }
         });
 
@@ -289,7 +289,7 @@ public class SettingsActivity extends AppCompatActivity {
                 mCalendar.set(Calendar.MINUTE, startMin);
                 long fromMillis = mCalendar.getTimeInMillis();
 
-                PreferenceUtils.setNotificationsDoNotDisturbFrom(SettingsActivity.this, String.valueOf(fromMillis));
+                PreferenceUtils.setNotificationsDoNotDisturbFrom(String.valueOf(fromMillis));
                 mTextViewNotificationsDoNotDisturbTo.setText(DateUtils.formatTimeWithMarker(fromMillis));
 
                 mCalendar.clear();
@@ -297,7 +297,7 @@ public class SettingsActivity extends AppCompatActivity {
                 mCalendar.set(Calendar.MINUTE, endMin);
                 long toMillis = mCalendar.getTimeInMillis();
 
-                PreferenceUtils.setNotificationsDoNotDisturbTo(SettingsActivity.this, String.valueOf(toMillis));
+                PreferenceUtils.setNotificationsDoNotDisturbTo(String.valueOf(toMillis));
                 mTextViewNotificationsDoNotDisturbTo.setText(DateUtils.formatTimeWithMarker(toMillis));
 
                 mSwitchNotificationsDoNotDisturb.setChecked(isDoNotDisturbOn);
@@ -306,20 +306,20 @@ public class SettingsActivity extends AppCompatActivity {
         //- Notifications
 
         //+ Group Channel Distinct
-        mCheckBoxGroupChannelDistinct.setChecked(PreferenceUtils.getGroupChannelDistinct(SettingsActivity.this));
+        mCheckBoxGroupChannelDistinct.setChecked(PreferenceUtils.getGroupChannelDistinct());
 
         mCheckBoxGroupChannelDistinct.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PreferenceUtils.setGroupChannelDistinct(SettingsActivity.this, isChecked);
+                PreferenceUtils.setGroupChannelDistinct(isChecked);
             }
         });
         //- Group Channel Distinct
     }
 
     private void saveDoNotDisturb(final boolean doNotDisturb) {
-        String doNotDisturbFrom = PreferenceUtils.getNotificationsDoNotDisturbFrom(SettingsActivity.this);
-        String doNotDisturbTo = PreferenceUtils.getNotificationsDoNotDisturbTo(SettingsActivity.this);
+        String doNotDisturbFrom = PreferenceUtils.getNotificationsDoNotDisturbFrom();
+        String doNotDisturbTo = PreferenceUtils.getNotificationsDoNotDisturbTo();
         if (doNotDisturbFrom.length() > 0 && doNotDisturbTo.length() > 0) {
             int startHour = DateUtils.getHourOfDay(Long.valueOf(doNotDisturbFrom));
             int startMin = DateUtils.getMinute(Long.valueOf(doNotDisturbFrom));
@@ -334,7 +334,7 @@ public class SettingsActivity extends AppCompatActivity {
                         mSwitchNotificationsDoNotDisturb.setChecked(!doNotDisturb);
                         mSwitchNotificationsDoNotDisturb.setOnCheckedChangeListener(mCheckedChangeListener);
 
-                        PreferenceUtils.setNotificationsDoNotDisturb(SettingsActivity.this, !doNotDisturb);
+                        PreferenceUtils.setNotificationsDoNotDisturb(!doNotDisturb);
                         checkDoNotDisturb(!doNotDisturb);
                         return;
                     }
@@ -343,7 +343,7 @@ public class SettingsActivity extends AppCompatActivity {
                     mSwitchNotificationsDoNotDisturb.setChecked(doNotDisturb);
                     mSwitchNotificationsDoNotDisturb.setOnCheckedChangeListener(mCheckedChangeListener);
 
-                    PreferenceUtils.setNotificationsDoNotDisturb(SettingsActivity.this, doNotDisturb);
+                    PreferenceUtils.setNotificationsDoNotDisturb(doNotDisturb);
                     checkDoNotDisturb(doNotDisturb);
                 }
             });
@@ -353,12 +353,12 @@ public class SettingsActivity extends AppCompatActivity {
     private void setDoNotDisturbTime(final boolean from, final TextView textView) {
         long timeMillis = System.currentTimeMillis();
         if (from) {
-            String doNotDisturbFrom = PreferenceUtils.getNotificationsDoNotDisturbFrom(SettingsActivity.this);
+            String doNotDisturbFrom = PreferenceUtils.getNotificationsDoNotDisturbFrom();
             if (doNotDisturbFrom.length() > 0) {
                 timeMillis = Long.valueOf(doNotDisturbFrom);
             }
         } else {
-            String doNotDisturbTo = PreferenceUtils.getNotificationsDoNotDisturbTo(SettingsActivity.this);
+            String doNotDisturbTo = PreferenceUtils.getNotificationsDoNotDisturbTo();
             if (doNotDisturbTo.length() > 0) {
                 timeMillis = Long.valueOf(doNotDisturbTo);
             }
@@ -373,13 +373,13 @@ public class SettingsActivity extends AppCompatActivity {
                 long millis = mCalendar.getTimeInMillis();
 
                 if (from) {
-                    if (!String.valueOf(millis).equals(PreferenceUtils.getNotificationsDoNotDisturbFrom(SettingsActivity.this))) {
-                        PreferenceUtils.setNotificationsDoNotDisturbFrom(SettingsActivity.this, String.valueOf(millis));
+                    if (!String.valueOf(millis).equals(PreferenceUtils.getNotificationsDoNotDisturbFrom())) {
+                        PreferenceUtils.setNotificationsDoNotDisturbFrom(String.valueOf(millis));
                         saveDoNotDisturb(true);
                     }
                 } else {
-                    if (!String.valueOf(millis).equals(PreferenceUtils.getNotificationsDoNotDisturbTo(SettingsActivity.this))) {
-                        PreferenceUtils.setNotificationsDoNotDisturbTo(SettingsActivity.this, String.valueOf(millis));
+                    if (!String.valueOf(millis).equals(PreferenceUtils.getNotificationsDoNotDisturbTo())) {
+                        PreferenceUtils.setNotificationsDoNotDisturbTo(String.valueOf(millis));
                         saveDoNotDisturb(true);
                     }
                 }
@@ -391,7 +391,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void checkNotifications(boolean notifications) {
         if (notifications) {
             mLinearLayoutNotifications.setVisibility(View.VISIBLE);
-            boolean doNotDisturb = PreferenceUtils.getNotificationsDoNotDisturb(SettingsActivity.this);
+            boolean doNotDisturb = PreferenceUtils.getNotificationsDoNotDisturb();
             checkDoNotDisturb(doNotDisturb);
         } else {
             mLinearLayoutNotifications.setVisibility(View.GONE);
@@ -405,14 +405,14 @@ public class SettingsActivity extends AppCompatActivity {
             mLinearLayoutDoNotDisturb.setVisibility(View.GONE);
         }
 
-        String doNotDisturbFrom = PreferenceUtils.getNotificationsDoNotDisturbFrom(SettingsActivity.this);
+        String doNotDisturbFrom = PreferenceUtils.getNotificationsDoNotDisturbFrom();
         if (doNotDisturbFrom.length() > 0) {
             mTextViewNotificationsDoNotDisturbFrom.setText(DateUtils.formatTimeWithMarker(Long.valueOf(doNotDisturbFrom)));
         } else {
             mTextViewNotificationsDoNotDisturbFrom.setText("");
         }
 
-        String doNotDisturbTo = PreferenceUtils.getNotificationsDoNotDisturbTo(SettingsActivity.this);
+        String doNotDisturbTo = PreferenceUtils.getNotificationsDoNotDisturbTo();
         if (doNotDisturbTo.length() > 0) {
             mTextViewNotificationsDoNotDisturbTo.setText(DateUtils.formatTimeWithMarker(Long.valueOf(doNotDisturbTo)));
         } else {
@@ -590,7 +590,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void updateCurrentUserProfileImage(final File profileImage, final ImageView imageView) {
-        final String nickname = PreferenceUtils.getNickname(SettingsActivity.this);
+        final String nickname = PreferenceUtils.getNickname();
         SendBird.updateCurrentUserInfoWithProfileImage(nickname, profileImage, new SendBird.UserInfoUpdateHandler() {
             @Override
             public void onUpdated(SendBirdException e) {
@@ -604,7 +604,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
 
                 try {
-                    PreferenceUtils.setProfileUrl(SettingsActivity.this, SendBird.getCurrentUser().getProfileUrl());
+                    PreferenceUtils.setProfileUrl(SendBird.getCurrentUser().getProfileUrl());
                     ImageUtils.displayRoundImageFromUrl(SettingsActivity.this, Uri.fromFile(profileImage).toString(), imageView);
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -614,7 +614,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void updateCurrentUserInfo(final String userNickname) {
-        final String profileUrl = PreferenceUtils.getProfileUrl(SettingsActivity.this);
+        final String profileUrl = PreferenceUtils.getProfileUrl();
         SendBird.updateCurrentUserInfo(userNickname, profileUrl, new SendBird.UserInfoUpdateHandler() {
             @Override
             public void onUpdated(SendBirdException e) {
@@ -627,7 +627,7 @@ public class SettingsActivity extends AppCompatActivity {
                     return;
                 }
 
-                PreferenceUtils.setNickname(SettingsActivity.this, userNickname);
+                PreferenceUtils.setNickname(userNickname);
             }
         });
     }

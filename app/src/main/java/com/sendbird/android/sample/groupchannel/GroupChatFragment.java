@@ -50,7 +50,6 @@ import com.sendbird.android.sample.main.ConnectionManager;
 import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.MediaPlayerActivity;
 import com.sendbird.android.sample.utils.PhotoViewerActivity;
-import com.sendbird.android.sample.utils.PreferenceUtils;
 import com.sendbird.android.sample.utils.TextUtils;
 import com.sendbird.android.sample.utils.UrlPreviewInfo;
 import com.sendbird.android.sample.utils.WebUtils;
@@ -281,8 +280,7 @@ public class GroupChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        String userId = PreferenceUtils.getUserId(getActivity());
-        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+        ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
             @Override
             public void onConnected(boolean reconnect) {
                 refresh();

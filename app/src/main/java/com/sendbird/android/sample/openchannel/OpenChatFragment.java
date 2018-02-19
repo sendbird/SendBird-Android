@@ -47,7 +47,6 @@ import com.sendbird.android.sample.main.ConnectionManager;
 import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.MediaPlayerActivity;
 import com.sendbird.android.sample.utils.PhotoViewerActivity;
-import com.sendbird.android.sample.utils.PreferenceUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -233,8 +232,7 @@ public class OpenChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        String userId = PreferenceUtils.getUserId(getActivity());
-        ConnectionManager.addConnectionManagementHandler(userId, CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+        ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
             @Override
             public void onConnected(boolean reconnect) {
                 if (reconnect) {
@@ -578,8 +576,10 @@ public class OpenChatFragment extends Fragment {
 
                         mChannel = openChannel;
 
-                        // Set action bar title to name of channel
-                        ((OpenChannelActivity) getActivity()).setActionBarTitle(mChannel.getName());
+                        if (getActivity() != null) {
+                            // Set action bar title to name of channel
+                            ((OpenChannelActivity) getActivity()).setActionBarTitle(mChannel.getName());
+                        }
 
                         refresh();
                     }
