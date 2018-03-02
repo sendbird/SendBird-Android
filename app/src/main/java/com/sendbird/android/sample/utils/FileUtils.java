@@ -243,4 +243,10 @@ public class FileUtils {
         }
         return builder.toString();
     }
+
+    public static void deleteFile(File file) {
+        if (file != null && file.exists()) {
+            file.delete();
+        }
+    }
 }

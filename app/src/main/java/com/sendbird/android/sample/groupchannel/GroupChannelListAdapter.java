@@ -53,8 +53,6 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private ConcurrentHashMap<String, ImageView> mChannelImageViewMap;
     private ConcurrentHashMap<String, SparseArray<Bitmap>> mChannelBitmapMap;
 
-    private boolean mIsCacheLoading = false;
-
     private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mItemLongClickListener;
 
@@ -102,9 +100,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 mChannelList.add((GroupChannel) BaseChannel.buildFromSerializedData(Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
             }
 
-            mIsCacheLoading = true;
-
-//            notifyDataSetChanged();
+            notifyDataSetChanged();
         } catch(Exception e) {
             // Nothing to load.
         }
@@ -113,6 +109,14 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void save() {
         try {
             StringBuilder sb = new StringBuilder();
+
+            // Save the data into file.
+            File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
+            appDir.mkdirs();
+
+            File hashFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".hash");
+            File dataFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".data");
+
             if (mChannelList != null && mChannelList.size() > 0) {
                 // Convert current data into string.
                 GroupChannel channel = null;
@@ -127,13 +131,6 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 String data = sb.toString();
                 String md5 = TextUtils.generateMD5(data);
 
-                // Save the data into file.
-                File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
-                appDir.mkdirs();
-
-                File hashFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".hash");
-                File dataFile = new File(appDir, TextUtils.generateMD5(SendBird.getCurrentUser().getUserId() + "channel_list") + ".data");
-
                 try {
                     String content = FileUtils.loadFromFile(hashFile);
                     // If data has not been changed, do not save.
@@ -146,6 +143,9 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 FileUtils.saveToFile(dataFile, data);
                 FileUtils.saveToFile(hashFile, md5);
+            } else {
+                FileUtils.deleteFile(dataFile);
+                FileUtils.deleteFile(hashFile);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -171,7 +171,6 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     void setGroupChannelList(List<GroupChannel> channelList) {
         mChannelList = channelList;
-        mIsCacheLoading = false;
         notifyDataSetChanged();
     }
 
@@ -248,9 +247,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             topicText.setText(TextUtils.getGroupChannelTitle(channel));
             memberCountText.setText(String.valueOf(channel.getMemberCount()));
 
-            if (!mIsCacheLoading) {
-                setChannelImage(context, channel, coverImage);
-            }
+            setChannelImage(context, channel, coverImage);
 
             int unreadCount = channel.getUnreadMessageCount();
             // If there are no unread messages, hide the unread count badge.
