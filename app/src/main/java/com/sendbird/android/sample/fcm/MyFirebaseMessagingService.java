@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -71,17 +72,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
-        String channelUrl = null;
+        String channelUrl = null, channelName = "";
+        int notificationId = 0;
         try {
             JSONObject sendBird = new JSONObject(remoteMessage.getData().get("sendbird"));
             JSONObject channel = (JSONObject) sendBird.get("channel");
             channelUrl = (String) channel.get("channel_url");
+            channelName = (String) channel.get("name");
+            notificationId = new JSONObject(remoteMessage.getData().get("sendbird")).optInt("unread_message_count");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        sendNotification(this, remoteMessage.getData().get("message"), channelUrl);
+        if (!TextUtils.isEmpty(remoteMessage.getData().get("message")) &&
+                !TextUtils.isEmpty(channelUrl)) {
+            try {
+                sendNotification(this, remoteMessage.getData().get("message"), channelUrl, notificationId, channelName);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
     // [END receive_message]
 
@@ -90,12 +101,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    public static void sendNotification(Context context, String messageBody, String channelUrl) {
+    public static void sendNotification(Context context, String messageBody, String channelUrl, int notificationId, String channelName) {
         Intent intent = new Intent(context, GroupChannelActivity.class);
         intent.putExtra("groupChannelUrl", channelUrl);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationId /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -106,16 +117,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setSound(defaultSoundUri)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setDefaults(Notification.DEFAULT_ALL)
+                .setGroup(channelUrl)
                 .setContentIntent(pendingIntent);
 
         if (PreferenceUtils.getNotificationsShowPreviews()) {
-            notificationBuilder.setContentText(messageBody);
+            if (channelName.equalsIgnoreCase("group channel")) {
+                notificationBuilder.setContentText(messageBody);
+            } else {
+                String message = "";
+                int indexOfColon = messageBody.lastIndexOf(":");
+                message = message.concat(messageBody.substring(0, indexOfColon));
+                message = message.concat("@ " + channelName + messageBody.substring(indexOfColon));
+                notificationBuilder.setContentText(message);
+            }
         } else {
             notificationBuilder.setContentText("Somebody sent you a message.");
         }
-
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(notificationId/* ID of notification */, notificationBuilder.build());
     }
 }
