@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.sendbird.android.Member;
 import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -17,6 +16,7 @@ import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.groupchannel.UserListAdapter;
+import com.sendbird.android.sample.main.ConnectionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,8 @@ import java.util.List;
  */
 
 public class ParticipantListActivity extends AppCompatActivity {
+
+    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_PARTICIPANT_LIST";
 
     private UserListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
@@ -51,8 +53,25 @@ public class ParticipantListActivity extends AppCompatActivity {
         }
 
         setUpRecyclerView();
+    }
 
-        getChannelFromUrl(mChannelUrl);
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
+            @Override
+            public void onConnected(boolean reconnect) {
+                getChannelFromUrl(mChannelUrl);
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
     }
 
     @Override
