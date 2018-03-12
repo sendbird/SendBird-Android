@@ -142,7 +142,6 @@ public class ImageUtils {
         RequestOptions myOptions = new RequestOptions()
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .dontAnimate()
                 .placeholder(placeholderDrawable);
 
         if (listener != null) {
@@ -168,7 +167,6 @@ public class ImageUtils {
         RequestOptions myOptions = new RequestOptions()
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .dontAnimate()
                 .placeholder(placeholderDrawable);
 
         if (thumbnailUrl != null) {
