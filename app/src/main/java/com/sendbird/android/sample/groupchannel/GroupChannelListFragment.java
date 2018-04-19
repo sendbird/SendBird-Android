@@ -117,6 +117,7 @@ public class GroupChannelListFragment extends Fragment {
 
             @Override
             public void onTypingStatusUpdated(GroupChannel channel) {
+                mChannelListAdapter.clearMap();
                 mChannelListAdapter.notifyDataSetChanged();
             }
         });
