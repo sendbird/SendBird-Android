@@ -124,7 +124,7 @@ public class WebUtils {
                     }
                 }
 
-                if(!result.containsKey("site_name")) {
+                if(!result.containsKey("site_name") && result.get("title") != null) {
                     result.put("site_name", result.get("title"));
                 }
 
