@@ -58,7 +58,7 @@
                 android:textColor="@color/groupChatTextMe"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="288dp"
+                android:maxWidth="260dp"
                 />
 
             <TextView
@@ -79,19 +79,19 @@
 
             <LinearLayout
                 android:id="@+id/url_preview_container"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 >
                 <View
-                    android:maxWidth="264dp"
+                    android:maxWidth="260dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
                     android:background="@android:color/darker_gray"
                     android:layout_marginBottom="8dp"
-                />
+                    />
                 <TextView
                     android:id="@+id/text_url_preview_site_name"
                     android:paddingLeft="12dp"
@@ -103,7 +103,7 @@
                     android:textColor="@color/groupChatTextMe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxWidth="288dp"
+                    android:maxWidth="260dp"
                     />
                 <TextView
                     android:id="@+id/text_url_preview_title"
@@ -116,7 +116,7 @@
                     android:textColor="@color/groupChatTextMe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxWidth="288dp"
+                    android:maxWidth="260dp"
                     />
                 <TextView
                     android:id="@+id/text_url_preview_description"
@@ -130,11 +130,11 @@
                     android:textColor="@color/groupChatTextMe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxWidth="288dp"
+                    android:maxWidth="260dp"
                     />
                 <ImageView
                     android:id="@+id/image_url_preview_main"
-                    android:maxWidth="288dp"
+                    android:maxWidth="260dp"
                     android:layout_width="match_parent"
                     android:layout_height="148dp"
                     android:scaleType="centerCrop"
