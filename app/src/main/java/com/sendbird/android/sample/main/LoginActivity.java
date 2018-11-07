@@ -109,8 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                PreferenceUtils.setNickname(user.getNickname());
-                PreferenceUtils.setProfileUrl(user.getProfileUrl());
                 PreferenceUtils.setConnected(true);
 
                 // Update the user's nickname

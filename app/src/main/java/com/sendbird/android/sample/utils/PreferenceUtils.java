@@ -7,7 +7,6 @@ public class PreferenceUtils {
 
     private static final String PREFERENCE_KEY_USER_ID = "userId";
     private static final String PREFERENCE_KEY_NICKNAME = "nickname";
-    private static final String PREFERENCE_KEY_PROFILE_URL = "profileUrl";
     private static final String PREFERENCE_KEY_CONNECTED = "connected";
 
     private static final String PREFERENCE_KEY_NOTIFICATIONS = "notifications";
@@ -47,15 +46,6 @@ public class PreferenceUtils {
 
     public static String getNickname() {
         return getSharedPreferences().getString(PREFERENCE_KEY_NICKNAME, "");
-    }
-
-    public static void setProfileUrl(String profileUrl) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putString(PREFERENCE_KEY_PROFILE_URL, profileUrl).apply();
-    }
-
-    public static String getProfileUrl() {
-        return getSharedPreferences().getString(PREFERENCE_KEY_PROFILE_URL, "");
     }
 
     public static void setConnected(boolean tf) {

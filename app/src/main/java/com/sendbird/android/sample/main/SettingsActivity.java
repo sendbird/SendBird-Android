@@ -138,7 +138,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         //+ ProfileUrl
-        String profileUrl = PreferenceUtils.getProfileUrl();
+        String profileUrl = SendBird.getCurrentUser() != null ? SendBird.getCurrentUser().getProfileUrl() : "";
         if (profileUrl.length() > 0) {
             ImageUtils.displayRoundImageFromUrl(SettingsActivity.this, profileUrl, mImageViewProfile);
         }
@@ -604,7 +604,6 @@ public class SettingsActivity extends AppCompatActivity {
                 }
 
                 try {
-                    PreferenceUtils.setProfileUrl(SendBird.getCurrentUser().getProfileUrl());
                     ImageUtils.displayRoundImageFromUrl(SettingsActivity.this, Uri.fromFile(profileImage).toString(), imageView);
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -614,7 +613,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void updateCurrentUserInfo(final String userNickname) {
-        final String profileUrl = PreferenceUtils.getProfileUrl();
+        final String profileUrl = SendBird.getCurrentUser() != null ? SendBird.getCurrentUser().getProfileUrl() : "";
         SendBird.updateCurrentUserInfo(userNickname, profileUrl, new SendBird.UserInfoUpdateHandler() {
             @Override
             public void onUpdated(SendBirdException e) {
