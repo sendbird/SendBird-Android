@@ -152,7 +152,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         //+ Nickname
         mEditTextNickname.setEnabled(false);
-        final String nickname = PreferenceUtils.getNickname();
+        final String nickname = SendBird.getCurrentUser() != null ? SendBird.getCurrentUser().getNickname() : "";
         if (nickname.length() > 0) {
             mEditTextNickname.setText(nickname);
         }
@@ -590,7 +590,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void updateCurrentUserProfileImage(final File profileImage, final ImageView imageView) {
-        final String nickname = PreferenceUtils.getNickname();
+        final String nickname = SendBird.getCurrentUser() != null ? SendBird.getCurrentUser().getNickname() : "";
         SendBird.updateCurrentUserInfoWithProfileImage(nickname, profileImage, new SendBird.UserInfoUpdateHandler() {
             @Override
             public void onUpdated(SendBirdException e) {
