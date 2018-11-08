@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.sendbird.android.ApplicationUserListQuery;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -33,7 +34,7 @@ public class InviteMemberActivity extends AppCompatActivity{
     private SelectableUserListAdapter mListAdapter;
     private Toolbar mToolbar;
 
-    private UserListQuery mUserListQuery;
+    private ApplicationUserListQuery mUserListQuery;
     private String mChannelUrl;
     private Button mInviteButton;
 
@@ -152,7 +153,7 @@ public class InviteMemberActivity extends AppCompatActivity{
      * Should be used only on initial load.
      */
     private void loadInitialUserList(int size) {
-        mUserListQuery = SendBird.createUserListQuery();
+        mUserListQuery = SendBird.createApplicationUserListQuery();
 
         mUserListQuery.setLimit(size);
         mUserListQuery.next(new UserListQuery.UserListQueryResultHandler() {

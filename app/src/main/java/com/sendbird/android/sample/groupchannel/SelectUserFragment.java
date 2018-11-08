@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.sendbird.android.ApplicationUserListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
@@ -28,7 +29,7 @@ public class SelectUserFragment extends Fragment{
     private RecyclerView mRecyclerView;
     private SelectableUserListAdapter mListAdapter;
 
-    private UserListQuery mUserListQuery;
+    private ApplicationUserListQuery mUserListQuery;
     private UsersSelectedListener mListener;
 
     // To pass selected user IDs to the parent Activity.
@@ -92,7 +93,7 @@ public class SelectUserFragment extends Fragment{
      * Should be used only on initial load.
      */
     private void loadInitialUserList(int size) {
-        mUserListQuery = SendBird.createUserListQuery();
+        mUserListQuery = SendBird.createApplicationUserListQuery();
 
         mUserListQuery.setLimit(size);
         mUserListQuery.next(new UserListQuery.UserListQueryResultHandler() {
