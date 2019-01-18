@@ -474,6 +474,10 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * @param handler
      */
     public void loadPreviousMessages(int limit, final BaseChannel.GetMessagesHandler handler) {
+        if (mChannel == null) {
+            return;
+        }
+
         if(isMessageListLoading()) {
             return;
         }
@@ -511,6 +515,10 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * Should be used only on initial load or refresh.
      */
     public void loadLatestMessages(int limit, final BaseChannel.GetMessagesHandler handler) {
+        if (mChannel == null) {
+            return;
+        }
+
         if(isMessageListLoading()) {
             return;
         }

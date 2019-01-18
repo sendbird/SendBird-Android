@@ -714,9 +714,17 @@ public class GroupChatFragment extends Fragment {
     }
 
     private void sendUserMessageWithUrl(final String text, String url) {
+        if (mChannel == null) {
+            return;
+        }
+
         new WebUtils.UrlPreviewAsyncTask() {
             @Override
             protected void onPostExecute(UrlPreviewInfo info) {
+                if (mChannel == null) {
+                    return;
+                }
+
                 UserMessage tempUserMessage = null;
                 BaseChannel.SendUserMessageHandler handler = new BaseChannel.SendUserMessageHandler() {
                     @Override
@@ -754,6 +762,10 @@ public class GroupChatFragment extends Fragment {
     }
 
     private void sendUserMessage(String text) {
+        if (mChannel == null) {
+            return;
+        }
+
         List<String> urls = WebUtils.extractUrls(text);
         if (urls.size() > 0) {
             sendUserMessageWithUrl(text, urls.get(0));
@@ -809,6 +821,10 @@ public class GroupChatFragment extends Fragment {
      * @param uri The URI of the image, which in this case is received through an Intent request.
      */
     private void sendFileWithThumbnail(Uri uri) {
+        if (mChannel == null) {
+            return;
+        }
+
         // Specify two dimensions of thumbnails to generate
         List<FileMessage.ThumbnailSize> thumbnailSizes = new ArrayList<>();
         thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
@@ -863,6 +879,10 @@ public class GroupChatFragment extends Fragment {
     }
 
     private void editMessage(final BaseMessage message, String editedMessage) {
+        if (mChannel == null) {
+            return;
+        }
+
         mChannel.updateUserMessage(message.getMessageId(), editedMessage, null, null, new BaseChannel.UpdateUserMessageHandler() {
             @Override
             public void onUpdated(UserMessage userMessage, SendBirdException e) {
@@ -889,6 +909,10 @@ public class GroupChatFragment extends Fragment {
      * @param message The message to delete.
      */
     private void deleteMessage(final BaseMessage message) {
+        if (mChannel == null) {
+            return;
+        }
+
         mChannel.deleteMessage(message, new BaseChannel.DeleteMessageHandler() {
             @Override
             public void onResult(SendBirdException e) {
