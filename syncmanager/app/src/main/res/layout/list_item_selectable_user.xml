@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="51dp"
+    android:orientation="horizontal"
+    android:paddingLeft="22dp"
+    android:paddingRight="22dp"
+    android:background="?selectableItemBackground">
+
+    <CheckBox
+        android:id="@+id/checkbox_selectable_user_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="15dp"
+        android:layout_gravity="center_vertical"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"/>
+
+    <RelativeLayout
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_weight="0"
+        android:layout_marginRight="15dp"
+        android:layout_gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/image_selectable_user_list_profile"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center_vertical"/>
+
+        <ImageView
+            android:id="@+id/image_user_list_blocked"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/icon_block_38_dp"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/text_selectable_user_list_nickname"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:textSize="14sp"
+        android:textColor="#000000"/>
+
+</LinearLayout>
