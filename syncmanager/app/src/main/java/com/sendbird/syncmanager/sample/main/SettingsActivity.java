@@ -49,6 +49,7 @@ import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 import com.sendbird.syncmanager.sample.utils.PushUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -58,11 +59,23 @@ import java.util.TimeZone;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private static final int INTENT_REQUEST_CHOOSE_MEDIA = 0xf0;
-    private static final int INTENT_REQUEST_CAMERA = 0xf1;
+    private static final int INTENT_REQUEST_CHOOSE_MEDIA                = 0xf0;
+    private static final int INTENT_REQUEST_CAMERA                      = 0xf1;
+    private static final int INTENT_REQUEST_CAMERA_WITH_FILE_PROVIDER   = 0xf2;
 
-    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE_UPLOAD = 0xf0;
-    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE_CAMERA = 0xf1;
+
+    private static final int MEDIA_REQUEST_PERMISSIONS_REQUEST_CODE     = 1;
+    private static final int CAMERA_REQUEST_PERMISSIONS_REQUEST_CODE    = 2;
+
+    private static final String[] MEDIA_MANDATORY_PERMISSIONS = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    private static final String[] CAMERA_MANDATORY_PERMISSIONS = {
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    };
+
 
     private InputMethodManager mIMM;
     private Calendar mCalendar;
@@ -439,9 +452,9 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
-                            requestMedia();
+                            checkPermissions(MEDIA_MANDATORY_PERMISSIONS, MEDIA_REQUEST_PERMISSIONS_REQUEST_CODE);
                         } else if (which == 1) {
-                            requestCamera();
+                            checkPermissions(CAMERA_MANDATORY_PERMISSIONS, CAMERA_REQUEST_PERMISSIONS_REQUEST_CODE);
                         }
                     }
                 });
@@ -452,140 +465,154 @@ public class SettingsActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == INTENT_REQUEST_CHOOSE_MEDIA && resultCode == Activity.RESULT_OK) {
-            // If user has successfully chosen the image, show a dialog to confirm upload.
-            if (data == null) {
-                return;
-            }
-
-            Uri uri = data.getData();
-            Hashtable<String, Object> info = FileUtils.getFileInfo(SettingsActivity.this, uri);
-            if (info != null) {
-                String path = (String)info.get("path");
-                if (path != null) {
-                    File profileImage = new File(path);
-                    updateCurrentUserProfileImage(profileImage, mImageViewProfile);
-                }
-            }
-        } else if (requestCode == INTENT_REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
-            if (!mRequestingCamera) {
-                return;
-            }
-
-            File profileImage = new File(mTempPhotoUri.getPath());
-            updateCurrentUserProfileImage(profileImage, mImageViewProfile);
-            mRequestingCamera = false;
-        }
-
-        // Set this as true to restore background connection management.
-        SendBird.setAutoBackgroundDetection(true);
-    }
-
-    private void requestMedia() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestStoragePermissions(PERMISSION_WRITE_EXTERNAL_STORAGE_UPLOAD);
-        } else {
-            Intent intent = new Intent();
-            // Show only images, no videos or anything else
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_PICK);
-            // Always show the chooser (if there are multiple options available)
-            startActivityForResult(Intent.createChooser(intent, "Select Image"), INTENT_REQUEST_CHOOSE_MEDIA);
-
-            // Set this as false to maintain connection
-            // even when an external Activity is started.
-            SendBird.setAutoBackgroundDetection(false);
-        }
-    }
-
-    private void requestCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestStoragePermissions(PERMISSION_WRITE_EXTERNAL_STORAGE_CAMERA);
-        } else {
-            mRequestingCamera = true;
-            mTempPhotoUri = getTempFileUri(false);
-
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mTempPhotoUri);
-
-            List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-            for (ResolveInfo resolveInfo : resInfoList) {
-                String packageName = resolveInfo.activityInfo.packageName;
-                grantUriPermission(packageName, mTempPhotoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            }
-            startActivityForResult(intent, INTENT_REQUEST_CAMERA);
-
-            SendBird.setAutoBackgroundDetection(false);
-        }
-    }
-
-    private Uri getTempFileUri(boolean doNotUseFileProvider) {
-        Uri uri = null;
         try {
-            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            File tempFile = File.createTempFile("SendBird_" + System.currentTimeMillis(), ".jpg", path);
+            if (requestCode == INTENT_REQUEST_CHOOSE_MEDIA && resultCode == Activity.RESULT_OK) {
+                // If user has successfully chosen the image, show a dialog to confirm upload.
+                if (data == null) {
+                    return;
+                }
 
-            if (Build.VERSION.SDK_INT >= 24 && !doNotUseFileProvider) {
-                uri = FileProvider.getUriForFile(this, "com.sendbird.android.sample.provider", tempFile);
-            } else {
-                uri = Uri.fromFile(tempFile);
+                Uri uri = data.getData();
+                Hashtable<String, Object> info = FileUtils.getFileInfo(SettingsActivity.this, uri);
+                if (info != null) {
+                    String path = (String)info.get("path");
+                    if (path != null) {
+                        File profileImage = new File(path);
+                        if (profileImage.exists()) {
+                            updateCurrentUserProfileImage(profileImage, mImageViewProfile);
+                        }
+                    }
+                }
+            } else if (requestCode == INTENT_REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+                if (!mRequestingCamera) {
+                    return;
+                }
+
+                File profileImage = new File(mTempPhotoUri.getPath());
+                if (profileImage.exists()) {
+                    updateCurrentUserProfileImage(profileImage, mImageViewProfile);
+                    mRequestingCamera = false;
+                }
+            } else if (requestCode == INTENT_REQUEST_CAMERA_WITH_FILE_PROVIDER && resultCode == Activity.RESULT_OK) {
+                if (!mRequestingCamera) {
+                    return;
+                }
+
+                File imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                String fileName = mTempPhotoUri.getPathSegments().get(1);
+                File profileImage = new File(imagePath, fileName);
+                if (profileImage.exists()) {
+                    updateCurrentUserProfileImage(profileImage, mImageViewProfile);
+                    mRequestingCamera = false;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            // Set this as true to restore background connection management.
+            SendBird.setAutoBackgroundDetection(true);
         }
-        return uri;
+
+    }
+
+    private void checkPermissions(String[] permissions, int requestCode) {
+        ArrayList<String> deniedPermissions = new ArrayList<>();
+        for (String permission : permissions) {
+            if (checkCallingOrSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                deniedPermissions.add(permission);
+            }
+        }
+
+        if (deniedPermissions.size() > 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                SendBird.setAutoBackgroundDetection(false);
+                requestPermissions(deniedPermissions.toArray(new String[0]), requestCode);
+            } else {
+                permissionDenied();
+            }
+        } else {
+            if (requestCode == MEDIA_REQUEST_PERMISSIONS_REQUEST_CODE) {
+                requestMedia();
+            } else if (requestCode == CAMERA_REQUEST_PERMISSIONS_REQUEST_CODE) {
+                requestCamera();
+            }
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        SendBird.setAutoBackgroundDetection(true);
+        boolean allowed = true;
 
-        switch (requestCode) {
-            case PERMISSION_WRITE_EXTERNAL_STORAGE_UPLOAD:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    requestMedia();
-                }
-                break;
+        for (int result : grantResults) {
+            allowed = allowed && (result == PackageManager.PERMISSION_GRANTED);
+        }
 
-            case PERMISSION_WRITE_EXTERNAL_STORAGE_CAMERA:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    requestCamera();
-                }
-                break;
+        if (requestCode == MEDIA_REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (allowed) {
+                requestMedia();
+            } else {
+                permissionDenied();
+            }
+        } else if (requestCode == CAMERA_REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (allowed) {
+                requestCamera();
+            } else {
+                permissionDenied();
+            }
         }
     }
 
-    private void requestStoragePermissions(final int code) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Provide an additional rationale to the user if the permission was not granted
-            // and the user would benefit from additional context for the use of the permission.
-            // For example if the user has previously denied the permission.
-            Snackbar.make(mSettingsLayout, "Storage access permissions are required to upload/download files.", Snackbar.LENGTH_LONG)
-                    .setAction("OK", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Maintains connection.
-                            SendBird.setAutoBackgroundDetection(false);
-                            ActivityCompat.requestPermissions(
-                                    SettingsActivity.this,
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    code
-                            );
-                        }
-                    })
-                    .show();
-        } else {
-            // Maintains connection.
-            SendBird.setAutoBackgroundDetection(false);
-            // Permission has not been granted yet. Request it directly.
-            ActivityCompat.requestPermissions(
-                    SettingsActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    code
-            );
+    private void permissionDenied() {
+        Snackbar.make(mSettingsLayout, "Permission denied.", Snackbar.LENGTH_LONG).show();
+    }
+
+    private void requestMedia() {
+        Intent intent = new Intent();
+        // Show only images, no videos or anything else
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_PICK);
+        // Always show the chooser (if there are multiple options available)
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), INTENT_REQUEST_CHOOSE_MEDIA);
+
+        // Set this as false to maintain connection
+        // even when an external Activity is started.
+        SendBird.setAutoBackgroundDetection(false);
+    }
+
+    private void requestCamera() {
+        mRequestingCamera = true;
+
+        try {
+            File imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File tempFile = File.createTempFile("SendBird_" + System.currentTimeMillis(), ".jpg", imagePath);
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                mTempPhotoUri = FileProvider.getUriForFile(this, "com.sendbird.android.sample.fileprovider", tempFile);
+
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo resolveInfo : resInfoList) {
+                    String packageName = resolveInfo.activityInfo.packageName;
+                    grantUriPermission(packageName, mTempPhotoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mTempPhotoUri);
+                intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivityForResult(intent, INTENT_REQUEST_CAMERA_WITH_FILE_PROVIDER);
+
+                SendBird.setAutoBackgroundDetection(false);
+            } else {
+                mTempPhotoUri = Uri.fromFile(tempFile);
+
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mTempPhotoUri);
+                startActivityForResult(intent, INTENT_REQUEST_CAMERA);
+
+                SendBird.setAutoBackgroundDetection(false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

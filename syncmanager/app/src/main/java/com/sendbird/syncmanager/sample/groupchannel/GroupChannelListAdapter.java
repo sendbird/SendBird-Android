@@ -2,6 +2,7 @@ package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -95,7 +96,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ChannelHolder) holder).bind(mContext, mChannelList.get(position), mItemClickListener, mItemLongClickListener);
+        ((ChannelHolder) holder).bind(mContext, position, mChannelList.get(position), mItemClickListener, mItemLongClickListener);
     }
 
     @Override
@@ -217,13 +218,13 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
          * @param clickListener A listener that handles simple clicks.
          * @param longClickListener A listener that handles long clicks.
          */
-        void bind(final Context context, final GroupChannel channel,
+        void bind(final Context context, int position, final GroupChannel channel,
                   @Nullable final OnItemClickListener clickListener,
                   @Nullable final OnItemLongClickListener longClickListener) {
             topicText.setText(TextUtils.getGroupChannelTitle(channel));
             memberCountText.setText(String.valueOf(channel.getMemberCount()));
 
-            setChannelImage(context, channel, coverImage);
+            setChannelImage(context, position, channel, coverImage);
 
             int unreadCount = channel.getUnreadMessageCount();
             // If there are no unread messages, hide the unread count badge.
@@ -309,63 +310,71 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         }
 
-        private void setChannelImage(Context context, GroupChannel channel, MultiImageView multiImageView) {
+        private void setChannelImage(Context context, int position, GroupChannel channel, MultiImageView multiImageView) {
             List<Member> members = channel.getMembers();
-            if (members != null) {
-                int size = members.size();
-                if (size >= 1) {
-                    int imageNum = size;
-                    if (size >= 4) {
-                        imageNum = 4;
-                    }
+            int size = members.size();
+            if (size >= 1) {
+                int imageNum = size;
+                if (size >= 4) {
+                    imageNum = 4;
+                }
 
-                    if (!mChannelImageNumMap.containsKey(channel.getUrl())) {
-                        mChannelImageNumMap.put(channel.getUrl(), imageNum);
-                        mChannelImageViewMap.put(channel.getUrl(), multiImageView);
+                if (!mChannelImageNumMap.containsKey(channel.getUrl())) {
+                    mChannelImageNumMap.put(channel.getUrl(), imageNum);
+                    mChannelImageViewMap.put(channel.getUrl(), multiImageView);
 
-                        multiImageView.clear();
+                    multiImageView.clear();
 
-                        for (int index = 0; index < imageNum; index++) {
-                            SimpleTarget<Bitmap> simpleTarget = new SimpleTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> glideAnimation) {
-                                    Integer index = mSimpleTargetIndexMap.get(this);
-                                    if (index != null) {
-                                        GroupChannel channel = mSimpleTargetGroupChannelMap.get(this);
+                    for (int index = 0; index < imageNum; index++) {
+                        SimpleTarget<Bitmap> simpleTarget = new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap bitmap, Transition<? super Bitmap> glideAnimation) {
+                                GroupChannel channel = mSimpleTargetGroupChannelMap.get(this);
+                                Integer index = mSimpleTargetIndexMap.get(this);
+                                if (channel != null && index != null) {
+                                    SparseArray<Bitmap> bitmapSparseArray = mChannelBitmapMap.get(channel.getUrl());
+                                    if (bitmapSparseArray == null) {
+                                        bitmapSparseArray = new SparseArray<>();
+                                        mChannelBitmapMap.put(channel.getUrl(), bitmapSparseArray);
+                                    }
+                                    bitmapSparseArray.put(index, bitmap);
 
-                                        SparseArray<Bitmap> array = mChannelBitmapMap.get(channel.getUrl());
-                                        if (array == null) {
-                                            array = new SparseArray<>();
-                                            mChannelBitmapMap.put(channel.getUrl(), array);
-                                        }
-                                        array.put(index, resource);
-
-                                        Integer num = mChannelImageNumMap.get(channel.getUrl());
-                                        if (num != null) {
-                                            if (array.size() == num) {
-                                                MultiImageView multiImageView = (MultiImageView) mChannelImageViewMap.get(channel.getUrl());
-
-                                                for (int i = 0; i < array.size(); i++) {
-                                                    multiImageView.addImage(array.get(i));
-                                                }
+                                    Integer num = mChannelImageNumMap.get(channel.getUrl());
+                                    if (num != null && num == bitmapSparseArray.size()) {
+                                        MultiImageView multiImageView = (MultiImageView) mChannelImageViewMap.get(channel.getUrl());
+                                        if (multiImageView != null) {
+                                            for (int i = 0; i < bitmapSparseArray.size(); i++) {
+                                                multiImageView.addImage(bitmapSparseArray.get(i));
                                             }
                                         }
                                     }
                                 }
-                            };
+                            }
+                        };
 
-                            mSimpleTargetIndexMap.put(simpleTarget, index);
-                            mSimpleTargetGroupChannelMap.put(simpleTarget, channel);
+                        mSimpleTargetIndexMap.put(simpleTarget, index);
+                        mSimpleTargetGroupChannelMap.put(simpleTarget, channel);
 
-                            RequestOptions myOptions = new RequestOptions()
-                                    .dontAnimate()
-                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
+                        RequestOptions myOptions = new RequestOptions()
+                                .dontAnimate()
+                                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
 
-                            Glide.with(context)
-                                    .asBitmap()
-                                    .load(members.get(index).getProfileUrl())
-                                    .apply(myOptions)
-                                    .into(simpleTarget);
+                        Glide.with(context)
+                                .asBitmap()
+                                .load(members.get(index).getProfileUrl())
+                                .apply(myOptions)
+                                .into(simpleTarget);
+                    }
+                } else {
+                    SparseArray<Bitmap> bitmapSparseArray = mChannelBitmapMap.get(channel.getUrl());
+                    if (bitmapSparseArray != null) {
+                        Integer num = mChannelImageNumMap.get(channel.getUrl());
+                        if (num != null && num == bitmapSparseArray.size()) {
+                            multiImageView.clear();
+
+                            for (int i = 0; i < bitmapSparseArray.size(); i++) {
+                                multiImageView.addImage(bitmapSparseArray.get(i));
+                            }
                         }
                     }
                 }
