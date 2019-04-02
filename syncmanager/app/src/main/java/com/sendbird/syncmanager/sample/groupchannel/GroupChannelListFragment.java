@@ -23,6 +23,7 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.syncmanager.SendBirdSyncManager;
 import com.sendbird.syncmanager.sample.R;
+import com.sendbird.syncmanager.sample.main.BaseApplication;
 import com.sendbird.syncmanager.sample.main.ConnectionManager;
 import com.sendbird.syncmanager.ChannelCollection;
 import com.sendbird.syncmanager.ChannelEventAction;
@@ -109,6 +110,7 @@ public class GroupChannelListFragment extends Fragment {
                     return;
                 }
 
+                ((BaseApplication)getActivity().getApplication()).setSyncManagerSetup(true);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

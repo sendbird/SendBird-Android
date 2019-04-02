@@ -82,7 +82,10 @@ public class MainActivity extends AppCompatActivity {
 
                         String userId = PreferenceUtils.getUserId();
                         // if you want to clear cache of specific user when logout, you can do like this.
-                        SendBirdSyncManager.getInstance().clearCache(userId);
+
+                        if (((BaseApplication)getApplication()).isSyncManagerSetup()) {
+                            SendBirdSyncManager.getInstance().clearCache(userId);
+                        }
 
                         PreferenceUtils.setConnected(false);
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);

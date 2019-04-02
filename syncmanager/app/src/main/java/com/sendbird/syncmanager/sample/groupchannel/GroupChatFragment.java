@@ -52,6 +52,7 @@ import com.sendbird.syncmanager.handler.CompletionHandler;
 import com.sendbird.syncmanager.handler.MessageCollectionCreateHandler;
 import com.sendbird.syncmanager.handler.MessageCollectionHandler;
 import com.sendbird.syncmanager.sample.R;
+import com.sendbird.syncmanager.sample.main.BaseApplication;
 import com.sendbird.syncmanager.sample.main.ConnectionManager;
 import com.sendbird.syncmanager.sample.utils.FileUtils;
 import com.sendbird.syncmanager.sample.utils.MediaPlayerActivity;
@@ -348,6 +349,7 @@ public class GroupChatFragment extends Fragment {
                     return;
                 }
 
+                ((BaseApplication)getActivity().getApplication()).setSyncManagerSetup(true);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

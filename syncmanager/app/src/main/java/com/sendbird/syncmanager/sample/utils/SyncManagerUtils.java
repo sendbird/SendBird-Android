@@ -22,19 +22,15 @@ public class SyncManagerUtils {
             return 0;
         }
 
-        if (compareTo(targetChannel, channels.get(0), order) == -1) {
-            return 0;
-        }
-
         int index = channels.size();
-        for (int i = 0; i < channels.size() - 1; i++) {
-            GroupChannel c1 = channels.get(i);
-            GroupChannel c2 = channels.get(i + 1);
-            int compare1 = compareTo(c1, targetChannel, order);
-            int compare2 = compareTo(targetChannel, c2, order);
+        for (int i = 0; i < channels.size(); i++) {
+            GroupChannel c = channels.get(i);
+            if (c.getUrl().equals(targetChannel.getUrl())) {
+                return i;
+            }
 
-            if (compare1 == -1 && compare2 == -1) {
-                return i + 1;
+            if (compareTo(targetChannel, c, order) < 0) {
+                return i;
             }
         }
 
