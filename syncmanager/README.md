@@ -1,4 +1,4 @@
-SendBird SyncManager Android Sample UI
+SendBird SyncManager Android Sample
 ===========
 SendBird SyncManager Android Sample is based on [basic](https://github.com/smilefam/SendBird-Android/tree/master/basic) sample. And SyncManager is integrated to support local caching.
 
