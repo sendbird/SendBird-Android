@@ -1,6 +1,6 @@
 SendBird SyncManager Android Sample
 ===========
-SendBird SyncManager Android Sample is based on [basic](https://github.com/smilefam/SendBird-Android/tree/master/basic) sample. And SyncManager is integrated to support local caching.
+SendBird SyncManager Android Sample is based on [basic](https://github.com/smilefam/SendBird-Android/tree/master/basic) sample and SyncManager is integrated to support local caching.
 
 ## SyncManager
 [SyncManager SDK](https://github.com/smilefam/sendbird-syncmanager-android) is a support add-on for [SendBird SDK](https://github.com/smilefam/SendBird-SDK-Android). Major benefits of `SyncManager` are,  
