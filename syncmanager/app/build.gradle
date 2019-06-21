@@ -23,8 +23,8 @@ android {
 }
 
 repositories {
-    maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
-    maven { url "https://raw.githubusercontent.com/smilefam/sendbird-syncmanager-android/master/" }
+    maven { url "https://raw.githubusercontent.com/sendbird/SendBird-SDK-Android/master/" }
+    maven { url "https://raw.githubusercontent.com/sendbird/sendbird-syncmanager-android/master/" }
     jcenter()
     google()
 }
@@ -39,7 +39,7 @@ dependencies {
     })
 
     // SendBird
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.96'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.97'
 
     // SendBird SyncManager
     implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.1'
