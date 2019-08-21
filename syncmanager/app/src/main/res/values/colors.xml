@@ -11,11 +11,6 @@
     <!-- Login -->
     <color name="colorButton">#774df2</color>
 
-    <!-- Open Chat -->
-    <color name="openChatText">#47505d</color>
-    <color name="openChatNicknameOther">#3a414d</color>
-    <color name="openChatNicknameMe">#00BCD4</color>
-
     <!-- Group Chat -->
     <color name="groupChatBubbleMe">#774df2</color>
     <color name="groupChatTextMe">#ffffff</color>

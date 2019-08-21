@@ -65,36 +65,6 @@
                 android:layout_weight="0"
                 android:background="#e0e0e0"/>
 
-            <LinearLayout
-                android:id="@+id/linear_layout_open_channels"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/open_icon_40_dp"
-                    android:layout_marginLeft="19.5dp"
-                    android:layout_marginRight="14dp"
-                    android:layout_gravity="center_vertical"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Open Channels"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="#000000"
-                    android:textSize="16sp"/>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="0"
-                android:background="#e0e0e0"/>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

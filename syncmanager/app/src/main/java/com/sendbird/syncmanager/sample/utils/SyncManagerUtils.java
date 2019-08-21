@@ -1,19 +1,28 @@
 package com.sendbird.syncmanager.sample.utils;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.sendbird.android.AdminMessage;
-import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
 import com.sendbird.android.UserMessage;
+import com.sendbird.syncmanager.SendBirdSyncManager;
+import com.sendbird.syncmanager.handler.CompletionHandler;
 
 import java.util.List;
 
 public class SyncManagerUtils {
+    public static void setup(Context context, String userId, CompletionHandler handler) {
+        SendBirdSyncManager.Options options = new SendBirdSyncManager.Options.Builder()
+                .setMessageResendPolicy(SendBirdSyncManager.MessageResendPolicy.AUTOMATIC)
+                .setAutomaticMessageResendRetryCount(5)
+                .build();
+        SendBirdSyncManager.setup(context, userId, options, handler);
+    }
+
     /**
      *  It returns the index that targetChannel should be inserted to the given channel list.
      */

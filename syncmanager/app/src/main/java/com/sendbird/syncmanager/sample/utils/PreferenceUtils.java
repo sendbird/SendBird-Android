@@ -15,6 +15,7 @@ public class PreferenceUtils {
     private static final String PREFERENCE_KEY_NOTIFICATIONS_DO_NOT_DISTURB_FROM = "notificationsDoNotDisturbFrom";
     private static final String PREFERENCE_KEY_NOTIFICATIONS_DO_NOT_DISTURB_TO = "notificationsDoNotDisturbTo";
     private static final String PREFERENCE_KEY_GROUP_CHANNEL_DISTINCT = "channelDistinct";
+    private static final String PREFERENCE_KEY_GROUP_CHANNEL_LAST_READ = "last_read";
 
     private static Context mAppContext;
 
@@ -113,5 +114,14 @@ public class PreferenceUtils {
 
     public static boolean getGroupChannelDistinct() {
         return getSharedPreferences().getBoolean(PREFERENCE_KEY_GROUP_CHANNEL_DISTINCT, true);
+    }
+
+    public static void setLastRead(String groupChannelUrl, long ts) {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.putLong(PREFERENCE_KEY_GROUP_CHANNEL_LAST_READ + groupChannelUrl, ts).apply();
+    }
+
+    public static long getLastRead(String groupChannelUrl) {
+        return getSharedPreferences().getLong(PREFERENCE_KEY_GROUP_CHANNEL_LAST_READ + groupChannelUrl, Long.MAX_VALUE);
     }
 }

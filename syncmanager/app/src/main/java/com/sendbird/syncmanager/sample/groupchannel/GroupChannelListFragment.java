@@ -21,7 +21,6 @@ import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
-import com.sendbird.syncmanager.SendBirdSyncManager;
 import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.main.BaseApplication;
 import com.sendbird.syncmanager.sample.main.ConnectionManager;
@@ -30,6 +29,7 @@ import com.sendbird.syncmanager.ChannelEventAction;
 import com.sendbird.syncmanager.handler.ChannelCollectionHandler;
 import com.sendbird.syncmanager.handler.CompletionHandler;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
+import com.sendbird.syncmanager.sample.utils.SyncManagerUtils;
 
 import java.util.List;
 
@@ -102,8 +102,7 @@ public class GroupChannelListFragment extends Fragment {
         Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
 
         String userId = PreferenceUtils.getUserId();
-
-        SendBirdSyncManager.setup(getActivity().getApplicationContext(), userId, new CompletionHandler() {
+        SyncManagerUtils.setup(getContext(), userId, new CompletionHandler() {
             @Override
             public void onCompleted(SendBirdException e) {
                 if (getActivity() == null) {

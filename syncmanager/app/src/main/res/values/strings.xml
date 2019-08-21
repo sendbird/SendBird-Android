@@ -8,7 +8,6 @@
     <string name="all_invite">Invite</string>
 
     <string name="all_group_channels">Group Channels</string>
-    <string name="all_open_channels">Open Channels</string>
 
     <!-- main -->
     <string name="main_drawer_open">Open navigation drawer</string>
@@ -23,12 +22,6 @@
     <string name="login_connect">Connect</string>
     <string name="login_disconnect">Disconnect</string>
 
-    <!-- Open Channel List -->
-    <string name="open_channel_list_participant_count">%1$d participants</string>
-
-    <string name="create_open_channel">Create Open Channel</string>
-    <string name="participant_list">Participants</string>
-
     <!-- Group Channel List -->
     <string name="group_channel_list_file_message_text">%1$s has uploaded a file.</string>
 
@@ -37,9 +30,6 @@
     <string name="invite_member">Invite members</string>
 
     <string name="member_info"></string>
-
-    <!-- Content descriptions -->
-    <string name="open_channel_chat_content_desc_profile">Profile image</string>
 
     <!-- Menu actions -->
     <string name="action_create_channel">Create channel</string>

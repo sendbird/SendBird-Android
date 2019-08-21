@@ -8,11 +8,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.sendbird.android.BaseChannel;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.Member;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
 import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.main.ConnectionManager;
 
@@ -20,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MemberListActivity extends AppCompatActivity{
+public class MemberListActivity extends AppCompatActivity {
 
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_MEMBER_LIST";
     static final String EXTRA_CHANNEL_URL = "EXTRA_CHANNEL_URL";
@@ -32,18 +35,26 @@ public class MemberListActivity extends AppCompatActivity{
     private UserListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private String mChannelUrl;
     private GroupChannel mChannel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_member_list);
 
-        mChannelUrl = getIntent().getStringExtra(GroupChatFragment.EXTRA_CHANNEL_URL);
+        if (getIntent().hasExtra(GroupChatFragment.EXTRA_CHANNEL)) {
+           byte[] serializedChannelData = getIntent().getByteArrayExtra(GroupChatFragment.EXTRA_CHANNEL);
+           mChannel = (GroupChannel) BaseChannel.buildFromSerializedData(serializedChannelData);
+        }
+
+        if (mChannel == null) {
+            Toast.makeText(this, "Channel doesn't exists", Toast.LENGTH_SHORT).show();
+            onBackPressed();
+            finish();
+        }
+
         mRecyclerView = findViewById(R.id.recycler_member_list);
-        mListAdapter = new UserListAdapter(this, mChannelUrl, true);
+        mListAdapter = new UserListAdapter(this, mChannel.getUrl(), true);
 
         Toolbar toolbar = findViewById(R.id.toolbar_member_list);
         setSupportActionBar(toolbar);
@@ -52,6 +63,7 @@ public class MemberListActivity extends AppCompatActivity{
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
 
+        setMemberList(mChannel.getMembers());
         setUpRecyclerView();
     }
 
@@ -62,7 +74,7 @@ public class MemberListActivity extends AppCompatActivity{
         ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
             @Override
             public void onConnected(boolean reconnect) {
-                getChannelFromUrl(mChannelUrl);
+                getChannelFromUrl(mChannel.getUrl());
             }
         });
     }
@@ -84,7 +96,6 @@ public class MemberListActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == android.R.id.home) {
             onBackPressed();
             return true;
@@ -125,16 +136,21 @@ public class MemberListActivity extends AppCompatActivity{
 
     private void setMemberList(List<Member> memberList) {
         List<Member> sortedUserList = new ArrayList<>();
-        for (Member me : memberList) {
-            if (me.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
-                sortedUserList.add(me);
-                break;
+        User currentUser = SendBird.getCurrentUser();
+        if (currentUser != null) {
+            for (Member me : memberList) {
+                if (me.getUserId().equals(currentUser.getUserId())) {
+                    sortedUserList.add(me);
+                    break;
+                }
             }
         }
+
         for (Member other : memberList) {
-            if (other.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+            if (currentUser != null && other.getUserId().equals(currentUser.getUserId())) {
                 continue;
             }
+
             sortedUserList.add(other);
         }
 

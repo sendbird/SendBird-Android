@@ -8,11 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.sendbird.android.SendBirdException;
-import com.sendbird.syncmanager.SendBirdSyncManager;
-import com.sendbird.syncmanager.handler.CompletionHandler;
 import com.sendbird.syncmanager.sample.R;
-import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 
 
 public class GroupChannelActivity extends AppCompatActivity{

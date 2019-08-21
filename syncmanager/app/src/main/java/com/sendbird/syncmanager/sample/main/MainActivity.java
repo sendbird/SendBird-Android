@@ -13,7 +13,6 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.groupchannel.GroupChannelActivity;
-import com.sendbird.syncmanager.sample.openchannel.OpenChannelActivity;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 import com.sendbird.syncmanager.SendBirdSyncManager;
 
@@ -33,14 +32,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, GroupChannelActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        findViewById(R.id.linear_layout_open_channels).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, OpenChannelActivity.class);
                 startActivity(intent);
             }
         });

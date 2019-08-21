@@ -38,10 +38,6 @@
             android:name="com.sendbird.syncmanager.sample.utils.MediaPlayerActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name="com.sendbird.syncmanager.sample.openchannel.CreateOpenChannelActivity"
-            android:label="@string/create_open_channel"
-            android:windowSoftInputMode="stateVisible" />
-        <activity
             android:name="com.sendbird.syncmanager.sample.groupchannel.InviteMemberActivity"
             android:label="@string/invite_member" />
         <activity
@@ -53,11 +49,7 @@
         <activity
             android:name="com.sendbird.syncmanager.sample.groupchannel.CreateGroupChannelActivity"
             android:label="@string/create_group_channel" />
-        <activity
-            android:name="com.sendbird.syncmanager.sample.openchannel.ParticipantListActivity"
-            android:label="@string/participant_list" />
-        <activity android:name="com.sendbird.syncmanager.sample.openchannel.OpenChannelActivity"
-            android:windowSoftInputMode="stateHidden" />
+
         <activity android:name="com.sendbird.syncmanager.sample.groupchannel.GroupChannelActivity"
             android:windowSoftInputMode="stateHidden" />
 
@@ -73,7 +65,7 @@
         </service>
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.sendbird.android.sample.fileprovider"
+            android:authorities="com.sendbird.syncmanager.sample.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
