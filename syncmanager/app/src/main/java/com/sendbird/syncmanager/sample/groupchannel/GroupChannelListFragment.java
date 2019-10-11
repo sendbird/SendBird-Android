@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.sendbird.android.BaseChannel;
+import com.sendbird.android.BaseMessage;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
 import com.sendbird.android.SendBird;
@@ -128,6 +130,23 @@ public class GroupChannelListFragment extends Fragment {
             }
         });
 
+        SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
+            @Override
+            public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+            }
+
+            @Override
+            public void onChannelChanged(BaseChannel channel) {
+                mChannelListAdapter.clearMap();
+                mChannelListAdapter.updateOrInsert(channel);
+            }
+
+            @Override
+            public void onTypingStatusUpdated(GroupChannel channel) {
+                mChannelListAdapter.notifyDataSetChanged();
+            }
+        });
+
         super.onResume();
     }
 
@@ -143,6 +162,8 @@ public class GroupChannelListFragment extends Fragment {
             mChannelCollection.setCollectionHandler(null);
             mChannelCollection.remove();
         }
+
+        SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
 
         super.onPause();
     }
