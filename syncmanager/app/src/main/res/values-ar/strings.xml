@@ -39,7 +39,9 @@
     <string name="channel_not_exists">القناة غير موجودة</string>
     <string name="no_members">لا أعضاء</string>
     <string name="blocked">محجوب</string>
-
+    <string name="message_received">أرسل شخص ما إليك رسالة.</string>
+    <string name="register_push_token">الاتصال مطلوب لتسجيل رمز الإشعارات.</string>
+	
     <!-- main -->
     <string name="main_drawer_open">افتح القائمة الجانبية</string>
     <string name="main_drawer_close">أغلق القائمة الجانبية</string>
