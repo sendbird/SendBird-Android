@@ -9,7 +9,7 @@ import com.sendbird.syncmanager.SendBirdSyncManager;
 
 public class BaseApplication extends Application {
 
-    private static final String APP_ID = "9DA1B1F4-0BE6-4DA8-82C5-2E81DAB56F23"; // US-1 Demo
+    private static final String APP_ID = "24CF77F2-1083-4A23-8FD1-4C63C108EE8E";
     public static final String VERSION = "3.0.40";
     private boolean mIsSyncManagerSetup = false;
 

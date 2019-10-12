@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">SyncManager Sample</string>
+
+    <!-- all -->
+    <string name="all_app_version">UI v%1$s / SDK v%2$s / SyncManager v%3$s</string>
+
+    <string name="all_create">أنشئ</string>
+    <string name="all_invite">ادع</string>
+
+    <string name="all_group_channels">قنوات المجموعة</string>
+    <string name="login_failed">فشل تسجيل الدخول</string>
+    <string name="update_info_failed">فشل تحديث بيانات المستخدم</string>
+    <string name="update_nickname_failed">فشل تحديث اسم المستخدم</string>
+    <string name="upload_photo">ارفع صورة</string>
+    <string name="take_photo">التقط صورة</string>
+    <string name="set_profile_image">اضبط صورة الملف الشخصي</string>
+    <string name="permission_denied">رفضت الصلاحية.</string>
+    <string name="select_image">حدد صورة</string>
+    <string name="typing_indicator">شخص ما يكتب</string>
+    <string name="leave_channel">غادر القناة</string>
+    <string name="leave_channel_question">أتريد مغادرة القناة %s؟</string>
+    <string name="set_notification_on">شغّل الإشعارات</string>
+    <string name="set_notification_off">أطفئ الإشعارات</string>
+    <string name="channel_options">خيارات القناة</string>
+    <string name="all_leave">غادر</string>
+    <string name="notification_on">فُعلت الإشعارات</string>
+    <string name="notification_off">أُطفئت الإشعارات</string>
+    <string name="delete_message">احذف الرسالة</string>
+    <string name="edit_message">عدّل الرسالة</string>
+    <string name="get_channel_failed">فشل الحصول على القناة.</string>
+    <string name="typing">يكتب</string>
+    <string name="multiple_typing">عدة مستخدمين يكتبون</string>
+    <string name="storage_access">صلاحية الوصول إلى التخزين مطلوبة لتنزيل أو رفع الملفات.</string>
+    <string name="okay">حسناً</string>
+    <string name="download_file">أتريد تنزيل الملف؟</string>
+    <string name="send_failed">فشل الإرسال بالخطأ </string>
+    <string name="extracting_info_failed">فشل استخراج معلومات الملف.</string>
+    <string name="local_storage">يجب أن يكون الملف في التخزين المحلي.</string>
+    <string name="channel_not_exists">القناة غير موجودة</string>
+    <string name="no_members">لا أعضاء</string>
+    <string name="blocked">محجوب</string>
+
+    <!-- main -->
+    <string name="main_drawer_open">افتح القائمة الجانبية</string>
+    <string name="main_drawer_close">أغلق القائمة الجانبية</string>
+    <string name="select_channel_type">حدّد نوع القناة</string>
+    <string name="settings">الإعدادات</string>
+    <string name="blocked_members_list">الأعضاء المحظورين</string>
+
+    <!-- login -->
+    <string name="login_user_id">رقم تعريف المستخدم</string>
+    <string name="login_user_nickname">اسم المستخدم</string>
+    <string name="login_connect">اتصل</string>
+    <string name="login_disconnect">اقطع الاتصال</string>
+
+    <!-- Group Channel List -->
+    <string name="group_channel_list_file_message_text">%1$s رفع ملفاً.</string>
+    <string name="group_channel_notify">إشعارات قناة المجموعة</string>
+    <string name="show_previews">اعرض المعاينات</string>
+    <string name="dont_disturb">وضع عدم الإزعاج</string>
+    <string name="from">من</string>
+    <string name="to">إلى</string>
+    <string name="group_channel_distinct">فصل قناة المجموعة</string>
+    <string name="make_channel_distinct">اجعل القناة مفصولة</string>
+    <string name="make_channel_distinct_question">أتريد جعل القناة مفصولة؟</string>
+    <string name="enter_message">أدخل رسالة</string>
+    <string name="send">أرسل</string>
+    <string name="edited">(معدّلة)</string>
+
+    <string name="create_group_channel">أنشئ قناة مجموعة</string>
+    <string name="member_list">الأعضاء</string>
+    <string name="invite_member">ادع أعضاء</string>
+    <string name="view_member">اعرض الأعضاء</string>
+
+    <string name="member_info">معلومات الأعضاء</string>
+    <string name="block_member">احظر هذا العضو</string>
+    <string name="block_member_message">عند تفعيل "احظر هذا العضو"، سيمنع هذا العضو من الكتابة في جميع القنوات.</string>
+
+    <!-- Menu actions -->
+    <string name="action_create_channel">أنشئ قناة</string>
+
+    <string name="download">نزّل</string>
+    <string name="cancel">ألغ</string>
+    <string name="upload">ارفع</string>
+    <string name="resend_message">أعد الإرسال</string>
+    <string name="delete">احذف</string>
+    <string name="edit">عدّل</string>
+    <string name="unlock">فك القفل</string>
+    <string name="next">التالي</string>
+    <string name="save">احفظ</string>
+    <string name="error">خطأ</string>
+
+    <!-- Message Status -->
+    <string name="message_sending">جارٍ الإرسال</string>
+    <string name="message_failed">فشل</string>
+
+</resources>

@@ -52,7 +52,7 @@
             android:layout_centerVertical="true"
             android:textSize="11.5sp"
             android:textColor="#bcbfc7"
-            android:text="Blocked"
+            android:text="@string/blocked"
             android:layout_marginLeft="10dp"/>
 
         <ImageView

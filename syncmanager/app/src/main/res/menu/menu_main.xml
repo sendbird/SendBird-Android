@@ -5,7 +5,7 @@
         android:id="@+id/menu_main"
         android:icon="@drawable/ic_settings_white_24_dp"
         android:orderInCategory="0"
-        android:title="Settings"
+        android:title="@string/settings"
         app:showAsAction="always">
     </item>
 </menu>

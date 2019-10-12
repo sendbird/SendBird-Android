@@ -22,12 +22,12 @@
             android:background="?attr/selectableItemBackground"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:contentDescription="Upload file"
+            android:contentDescription="@string/upload"
             android:layout_gravity="bottom"/>
 
         <EditText
             android:id="@+id/edittext_group_chat_message"
-            android:hint="Enter message"
+            android:hint="@string/enter_message"
             android:background="@android:color/transparent"
             android:layout_gravity="center"
             android:layout_marginLeft="16dp"
@@ -39,7 +39,7 @@
 
         <Button
             android:id="@+id/button_group_chat_send"
-            android:text="SEND"
+            android:text="@string/send"
             android:textSize="14dp"
             android:textColor="@drawable/selector_btn_send"
             android:background="?attr/selectableItemBackground"

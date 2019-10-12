@@ -466,9 +466,10 @@ public class GroupChatFragment extends Fragment {
         String[] options;
 
         if (message.getMessageId() == 0) {
-            options = new String[] { "Delete message" };
+            options = new String[] { getResources().getString(R.string.delete_message) };
         } else {
-            options = new String[] { "Edit message", "Delete message" };
+            options = new String[] { getResources().getString(R.string.edit_message),
+                    getResources().getString(R.string.delete_message) };
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -558,7 +559,7 @@ public class GroupChatFragment extends Fragment {
                                     fetchInitialMessages();
                                 }
                             } else {
-                                Toast.makeText(getContext(), "Failed to get channel.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.get_channel_failed, Toast.LENGTH_SHORT).show();
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -663,7 +664,7 @@ public class GroupChatFragment extends Fragment {
                         }
                     }
                 })
-                .setNegativeButton(R.string.delete_message, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == DialogInterface.BUTTON_NEGATIVE) {
@@ -690,11 +691,12 @@ public class GroupChatFragment extends Fragment {
             String string;
 
             if (typingUsers.size() == 1) {
-                string = typingUsers.get(0).getNickname() + " is typing";
+                string = typingUsers.get(0).getNickname() + " " + getResources().getString(R.string.typing);
             } else if (typingUsers.size() == 2) {
-                string = typingUsers.get(0).getNickname() + " " + typingUsers.get(1).getNickname() + " is typing";
+                string = typingUsers.get(0).getNickname() + " " + typingUsers.get(1).getNickname() + " "
+                        + getResources().getString(R.string.typing);
             } else {
-                string = "Multiple users are typing";
+                string = getResources().getString(R.string.multiple_typing);
             }
             mCurrentEventText.setText(string);
         } else {
@@ -737,9 +739,9 @@ public class GroupChatFragment extends Fragment {
             // Provide an additional rationale to the user if the permission was not granted
             // and the user would benefit from additional context for the use of the permission.
             // For example if the user has previously denied the permission.
-            Snackbar.make(mRootLayout, "Storage access permissions are required to upload/download files.",
+            Snackbar.make(mRootLayout, R.string.storage_access,
                     Snackbar.LENGTH_LONG)
-                    .setAction("Okay", new View.OnClickListener() {
+                    .setAction(R.string.okay, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -778,7 +780,7 @@ public class GroupChatFragment extends Fragment {
             requestStoragePermissions();
         } else {
             new AlertDialog.Builder(getActivity())
-                    .setMessage("Download file?")
+                    .setMessage(R.string.download_file)
                     .setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -797,6 +799,7 @@ public class GroupChatFragment extends Fragment {
 
         if(mChannel != null) {
             title = TextUtils.getGroupChannelTitle(mChannel);
+            if(title.equals("No Members")) title = getResources().getString(R.string.no_members);
         }
 
         // Set action bar title to name of channel
@@ -827,7 +830,7 @@ public class GroupChatFragment extends Fragment {
                             Log.e(LOG_TAG, e.toString());
                             Toast.makeText(
                                     getActivity(),
-                                    "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
+                                    getResources().getString(R.string.send_failed) + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
                                     .show();
                         }
 
@@ -871,7 +874,7 @@ public class GroupChatFragment extends Fragment {
                 if (e != null) {
                     // Error!
                     Log.e(LOG_TAG, e.toString());
-                    Toast.makeText(getActivity(),"Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),getResources().getString(R.string.send_failed) + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -918,7 +921,7 @@ public class GroupChatFragment extends Fragment {
         Hashtable<String, Object> info = FileUtils.getFileInfo(getActivity(), uri);
 
         if (info == null) {
-            Toast.makeText(getActivity(), "Extracting file information failed.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.extracting_info_failed, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -929,7 +932,7 @@ public class GroupChatFragment extends Fragment {
         final int size = (Integer) info.get("size");
 
         if (path.equals("")) {
-            Toast.makeText(getActivity(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.local_storage, Toast.LENGTH_LONG).show();
         } else {
             BaseChannel.SendFileMessageWithProgressHandler progressHandler = new BaseChannel.SendFileMessageWithProgressHandler() {
                 @Override

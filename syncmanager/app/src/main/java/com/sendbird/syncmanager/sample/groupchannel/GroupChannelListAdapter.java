@@ -280,7 +280,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             // If someone in the channel is typing, display the typing indicator.
             if (channel.isTyping()) {
                 typingIndicatorContainer.setVisibility(View.VISIBLE);
-                lastMessageText.setText(("Someone is typing"));
+                lastMessageText.setText(R.string.typing_indicator);
             } else {
                 // Display typing indicator only when someone is typing
                 typingIndicatorContainer.setVisibility(View.GONE);

@@ -238,25 +238,27 @@ public class GroupChannelListFragment extends Fragment {
         final boolean pushCurrentlyEnabled = channel.isPushEnabled();
 
         options = pushCurrentlyEnabled
-                ? new String[]{"Leave channel", "Turn push notifications OFF"}
-                : new String[]{"Leave channel", "Turn push notifications ON"};
+                ? new String[]{getResources().getString(R.string.leave_channel),
+                getResources().getString(R.string.set_notification_off)}
+                : new String[]{getResources().getString(R.string.leave_channel),
+                getResources().getString(R.string.set_notification_on)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Channel options")
+        builder.setTitle(R.string.channel_options)
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
                             // Show a dialog to confirm that the user wants to leave the channel.
                             new AlertDialog.Builder(getActivity())
-                                    .setTitle("Leave channel " + channel.getName() + "?")
-                                    .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                                    .setTitle(String.format(getResources().getString(R.string.leave_channel_question) + " ", channel.getName()))
+                                    .setPositiveButton(R.string.all_leave, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             leaveChannel(channel);
                                         }
                                     })
-                                    .setNegativeButton("Cancel", null)
+                                    .setNegativeButton(R.string.cancel, null)
                                     .create().show();
                         } else if (which == 1) {
                             setChannelPushPreferences(channel, !pushCurrentlyEnabled);
@@ -278,14 +280,15 @@ public class GroupChannelListFragment extends Fragment {
             public void onResult(SendBirdException e) {
                 if (e != null) {
                     e.printStackTrace();
-                    Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT)
+                    Toast.makeText(getActivity(), getResources().getString(R.string.error)+ " " +
+                            e.getMessage(), Toast.LENGTH_SHORT)
                             .show();
                     return;
                 }
 
-                String toast = on
-                        ? "Push notifications have been turned ON"
-                        : "Push notifications have been turned OFF";
+                int toast = on
+                        ? R.string.notification_on
+                        : R.string.notification_off;
 
                 Toast.makeText(getActivity(), toast, Toast.LENGTH_SHORT)
                         .show();

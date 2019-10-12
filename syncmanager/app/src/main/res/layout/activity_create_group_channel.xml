@@ -26,7 +26,7 @@
 
             <Button
                 android:id="@+id/button_create_group_channel_create"
-                android:text="Create"
+                android:text="@string/all_create"
                 android:textColor="@drawable/selector_btn_menu"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
 
             <Button
                 android:id="@+id/button_create_group_channel_next"
-                android:text="Next"
+                android:text="@string/next"
                 android:textColor="@drawable/selector_btn_menu"
                 android:visibility="gone"
                 android:layout_width="wrap_content"

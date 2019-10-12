@@ -86,7 +86,7 @@
                                 android:layout_height="wrap_content"
                                 android:focusable="false"
                                 android:focusableInTouchMode="false"
-                                android:hint="Nickname"
+                                android:hint="@string/login_user_nickname"
                                 android:imeOptions="actionDone"
                                 android:inputType="text"
                                 android:textSize="15sp"/>
@@ -95,7 +95,7 @@
 
                         <Button
                             android:id="@+id/button_save_nickname"
-                            android:text="EDIT"
+                            android:text="@string/edit"
                             android:textSize="13sp"
                             android:textColor="#774df2"
                             android:layout_width="wrap_content"
@@ -124,7 +124,7 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         android:layout_marginRight="16dp"
-                        android:text="Group channel notifications"
+                        android:text="@string/group_channel_notify"
                         android:textColor="#1b1d1d"
                         android:textSize="14sp"
                         android:textStyle="bold"/>
@@ -162,7 +162,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
-                            android:text="Show previews"
+                            android:text="@string/show_previews"
                             android:textColor="#1b1d1d"
                             android:textSize="15sp"/>
 
@@ -198,7 +198,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
-                            android:text="Do not disturb"
+                            android:text="@string/dont_disturb"
                             android:textColor="#1b1d1d"
                             android:textSize="15sp"/>
 
@@ -237,7 +237,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="From"
+                                android:text="@string/from"
                                 android:textColor="#1b1d1d"
                                 android:textSize="14sp" />
 
@@ -271,7 +271,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="To"
+                                android:text="@string/to"
                                 android:textColor="#1b1d1d"
                                 android:textSize="14sp" />
 
@@ -305,7 +305,7 @@
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
-                        android:text="Group channel distinct"
+                        android:text="@string/group_channel_distinct"
                         android:textColor="#1b1d1d"
                         android:textSize="14sp"
                         android:textStyle="bold"/>
@@ -329,7 +329,7 @@
                         android:layout_marginRight="16dp"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
-                        android:text="Make channel distinct"
+                        android:text="@string/make_channel_distinct"
                         android:textColor="#1b1d1d"
                         android:textSize="15sp"/>
 
@@ -365,7 +365,7 @@
                         android:layout_marginRight="16dp"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
-                        android:text="Blocked members list"
+                        android:text="@string/blocked_members_list"
                         android:textColor="#1b1d1d"
                         android:textSize="14sp"
                         android:textStyle="bold"/>

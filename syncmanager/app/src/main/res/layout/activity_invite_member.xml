@@ -18,7 +18,7 @@
 
             <Button
                 android:id="@+id/button_invite_member"
-                android:text="Invite"
+                android:text="@string/all_invite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"

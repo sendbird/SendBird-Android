@@ -17,7 +17,7 @@
         />
 
     <TextView
-        android:text="User has enterered the chat"
+        android:text="User has entered the chat"
         android:id="@+id/text_group_chat_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

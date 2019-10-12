@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_create_group_channel"
-        android:title="CREATE"
+        android:title="@string/all_create"
         android:orderInCategory="10"
         app:showAsAction="always"/>
 

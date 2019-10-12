@@ -193,12 +193,12 @@ public class SettingsActivity extends AppCompatActivity {
                         updateCurrentUserInfo(mEditTextNickname.getText().toString());
                     }
 
-                    mButtonSaveNickName.setText("EDIT");
+                    mButtonSaveNickName.setText(R.string.edit);
                     mEditTextNickname.setEnabled(false);
                     mEditTextNickname.setFocusable(false);
                     mEditTextNickname.setFocusableInTouchMode(false);
                 } else {
-                    mButtonSaveNickName.setText("SAVE");
+                    mButtonSaveNickName.setText(R.string.save);
                     mEditTextNickname.setEnabled(true);
                     mEditTextNickname.setFocusable(true);
                     mEditTextNickname.setFocusableInTouchMode(true);
@@ -442,10 +442,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void showSetProfileOptionsDialog() {
-        String[] options = new String[] { "Upload a photo", "Take a photo" };
+        String[] options = new String[] { getResources().getString(R.string.upload_photo),
+                getResources().getString(R.string.take_photo) };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-        builder.setTitle("Set profile image")
+        builder.setTitle(R.string.set_profile_image)
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -561,7 +562,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void permissionDenied() {
-        Snackbar.make(mSettingsLayout, "Permission denied.", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mSettingsLayout, R.string.permission_denied, Snackbar.LENGTH_LONG).show();
     }
 
     private void requestMedia() {
@@ -570,7 +571,8 @@ public class SettingsActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_PICK);
         // Always show the chooser (if there are multiple options available)
-        startActivityForResult(Intent.createChooser(intent, "Select Image"), INTENT_REQUEST_CHOOSE_MEDIA);
+        startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_image)),
+                INTENT_REQUEST_CHOOSE_MEDIA);
 
         // Set this as false to maintain connection
         // even when an external Activity is started.
@@ -647,7 +649,7 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(SettingsActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     // Show update failed snackbar
-                    showSnackbar("Update user info failed");
+                    showSnackbar(getResources().getString(R.string.update_info_failed));
                     return;
                 }
 

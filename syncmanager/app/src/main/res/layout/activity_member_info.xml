@@ -86,7 +86,7 @@
                         android:layout_marginRight="15dp"
                         android:textSize="16.3sp"
                         android:textColor="#362d5d"
-                        android:text="Block this member"/>
+                        android:text="@string/block_member"/>
 
                     <android.support.v7.widget.SwitchCompat
                         android:id="@+id/switch_blocked_by_me"
@@ -102,7 +102,7 @@
                     android:layout_below="@id/linear_layout_switch"
                     android:textSize="12sp"
                     android:textColor="#8e8e8e"
-                    android:text="When Block this member is enabled, the member will be prohibited from chatting in all channels."/>
+                    android:text="@string/block_member_message"/>
 
             </RelativeLayout>
 
