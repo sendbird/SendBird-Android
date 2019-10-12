@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                             .show();
 
                     // Show login failure snackbar
-                    showSnackbar("Login to SendBird failed");
+                    showSnackbar(getResources().getString(R.string.login_failed));
                     mConnectButton.setEnabled(true);
                     PreferenceUtils.setConnected(false);
                     return;
@@ -147,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                             .show();
 
                     // Show update failed snackbar
-                    showSnackbar("Update user nickname failed");
+                    showSnackbar(getResources().getString(R.string.update_nickname_failed));
 
                     return;
                 }

@@ -5,7 +5,7 @@
         <item
             android:id="@+id/nav_item_group_channels"
             android:icon="@drawable/ic_group_channels"
-            android:title="Group Channels" />
+            android:title="@string/all_group_channels" />
     </group>
 
     <group android:id="@+id/nav_group_actions"
@@ -13,6 +13,6 @@
         <item
             android:id="@+id/nav_item_disconnect"
             android:icon="@drawable/ic_disconnect"
-            android:title="Disconnect" />
+            android:title="@string/login_disconnect" />
     </group>
 </menu>

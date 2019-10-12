@@ -48,7 +48,7 @@ public class MemberListActivity extends AppCompatActivity {
         }
 
         if (mChannel == null) {
-            Toast.makeText(this, "Channel doesn't exists", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.channel_not_exists, Toast.LENGTH_SHORT).show();
             onBackPressed();
             finish();
         }

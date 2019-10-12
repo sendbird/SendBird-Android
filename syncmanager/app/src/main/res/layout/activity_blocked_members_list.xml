@@ -22,7 +22,7 @@
 
                 <Button
                     android:id="@+id/button_edit"
-                    android:text="Edit"
+                    android:text="@string/edit"
                     android:textColor="@drawable/selector_btn_menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
 
                 <Button
                     android:id="@+id/button_unblock"
-                    android:text="Unblock"
+                    android:text="@string/unlock"
                     android:textColor="@drawable/selector_btn_menu"
                     android:visibility="gone"
                     android:layout_width="wrap_content"

@@ -53,16 +53,14 @@
         <activity android:name="com.sendbird.syncmanager.sample.groupchannel.GroupChannelActivity"
             android:windowSoftInputMode="stateHidden" />
 
-        <service android:name="com.sendbird.syncmanager.sample.fcm.MyFirebaseMessagingService">
+		<service
+            android:name="com.sendbird.syncmanager.sample.fcm.MyFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="com.sendbird.syncmanager.sample.fcm.MyFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
+		
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.sendbird.syncmanager.sample.fileprovider"
