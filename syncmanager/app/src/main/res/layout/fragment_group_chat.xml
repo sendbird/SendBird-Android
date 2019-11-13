@@ -57,9 +57,11 @@
         android:background="#DfDfDf"/>
 
     <LinearLayout
-        android:layout_above="@id/layout_group_chat_chatbox"
+        android:id="@+id/layout_group_chat_message_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/layout_group_chat_chatbox"
+
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
@@ -89,6 +91,19 @@
                 android:layout_gravity="center_vertical"/>
 
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/layout_group_chat_chatbox"
+            android:id="@+id/text_group_chat_new_message"
+            android:text="STRING"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

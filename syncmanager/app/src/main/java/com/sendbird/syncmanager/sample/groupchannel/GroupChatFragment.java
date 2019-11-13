@@ -103,6 +103,7 @@ public class GroupChatFragment extends Fragment {
     private ImageButton mUploadFileButton;
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
+    private TextView mNewMessageText;
 
     private GroupChannel mChannel;
     private String mChannelUrl;
@@ -164,6 +165,7 @@ public class GroupChatFragment extends Fragment {
         mMessageEditText = (EditText) rootView.findViewById(R.id.edittext_group_chat_message);
         mMessageSendButton = (Button) rootView.findViewById(R.id.button_group_chat_send);
         mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_group_chat_upload);
+        mNewMessageText = (TextView) rootView.findViewById(R.id.text_group_chat_new_message);
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -229,6 +231,15 @@ public class GroupChatFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+
+        mNewMessageText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNewMessageText.setVisibility(View.GONE);
+                mMessageCollection.resetViewpointTimestamp(Long.MAX_VALUE);
+                mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.PREVIOUS, null);
             }
         });
 
@@ -397,6 +408,10 @@ public class GroupChatFragment extends Fragment {
 
                     if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
                         mMessageCollection.fetch(MessageCollection.Direction.PREVIOUS, null);
+                    }
+
+                    if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
+                        mNewMessageText.setVisibility(View.GONE);
                     }
                 }
             }
@@ -1130,5 +1145,25 @@ public class GroupChatFragment extends Fragment {
                 }
             });
         }
+
+        @Override
+        public void onNewMessage(MessageCollection collection, BaseMessage message) {
+            Log.d("SyncManager", "onNewMessage: message = " + message);
+            //show when the scroll position is bottom ONLY.
+            if (mLayoutManager.findFirstVisibleItemPosition() != 0) {
+                if (message instanceof UserMessage) {
+                    if (!((UserMessage) message).getSender().getUserId().equals(PreferenceUtils.getUserId())) {
+                        mNewMessageText.setText("New Message = " + ((UserMessage) message).getSender().getNickname() + " : " + ((UserMessage) message).getMessage());
+                        mNewMessageText.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    if (!((FileMessage) message).getSender().getUserId().equals(PreferenceUtils.getUserId())) {
+                        mNewMessageText.setText("New Message = " + ((FileMessage) message).getSender().getNickname() + "Send a File");
+                        mNewMessageText.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        }
+
     };
 }
