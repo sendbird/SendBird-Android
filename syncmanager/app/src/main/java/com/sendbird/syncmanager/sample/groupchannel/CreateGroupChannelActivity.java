@@ -2,11 +2,11 @@ package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +15,7 @@ import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
+import com.sendbird.syncmanager.sample.view.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
  * then shows an option to create a Distinct channel.
  */
 
-public class CreateGroupChannelActivity extends AppCompatActivity
+public class CreateGroupChannelActivity extends BaseActivity
         implements SelectUserFragment.UsersSelectedListener, SelectDistinctFragment.DistinctSelectedListener {
 
     public static final String EXTRA_NEW_CHANNEL_URL = "EXTRA_NEW_CHANNEL_URL";
@@ -92,7 +93,6 @@ public class CreateGroupChannelActivity extends AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white_24_dp);
         }
-
     }
 
     @Override

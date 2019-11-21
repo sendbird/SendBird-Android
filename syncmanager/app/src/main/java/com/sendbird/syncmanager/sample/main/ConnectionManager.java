@@ -1,25 +1,59 @@
 package com.sendbird.syncmanager.sample.main;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
+import com.sendbird.syncmanager.sample.R;
+import com.sendbird.syncmanager.sample.model.ConnectionEvent;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
-import com.sendbird.syncmanager.SendBirdSyncManager;
+import com.sendbird.syncmanager.sample.utils.PushUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class ConnectionManager {
+    public static boolean isLogin() {
+        return PreferenceUtils.getConnected();
+    }
 
-    public static void login(String userId, final SendBird.ConnectHandler handler) {
+    public static void connect(final Context context, String userId, final String userNickname, final SendBird.ConnectHandler handler) {
         SendBird.connect(userId, new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
+                if (e != null) {
+                    Toast.makeText(context, context.getString(R.string.sendbird_error_with_code, e.getCode(), e.getMessage()), Toast.LENGTH_SHORT).show();
+
+                    if (handler != null) {
+                        handler.onConnected(user, e);
+                    } else {
+                        EventBus.getDefault().post(new ConnectionEvent(false));
+                    }
+                    return;
+                }
+
+                PushUtils.registerPushTokenForCurrentUser();
+                SendBird.updateCurrentUserInfo(userNickname, null, new SendBird.UserInfoUpdateHandler() {
+                    @Override
+                    public void onUpdated(SendBirdException e) {
+                        if (e != null) {
+                            Toast.makeText(context, context.getString(R.string.sendbird_error_with_code, e.getCode(), e.getMessage()), Toast.LENGTH_SHORT).show();
+                        }
+                        PreferenceUtils.setNickname(userNickname);
+                    }
+                });
+
                 if (handler != null) {
                     handler.onConnected(user, e);
+                } else {
+                    EventBus.getDefault().post(new ConnectionEvent(true));
                 }
             }
         });
     }
 
-    public static void logout(final SendBird.DisconnectHandler handler) {
+    public static void disconnect(final SendBird.DisconnectHandler handler) {
         SendBird.disconnect(new SendBird.DisconnectHandler() {
             @Override
             public void onDisconnected() {
@@ -28,60 +62,5 @@ public class ConnectionManager {
                 }
             }
         });
-    }
-
-    public static void addConnectionManagementHandler(String handlerId, final ConnectionManagementHandler handler) {
-        SendBird.addConnectionHandler(handlerId, new SendBird.ConnectionHandler() {
-            @Override
-            public void onReconnectStarted() {
-                SendBirdSyncManager.getInstance().pauseSync();
-            }
-
-            @Override
-            public void onReconnectSucceeded() {
-                SendBirdSyncManager.getInstance().resumeSync();
-                if (handler != null) {
-                    handler.onConnected(true);
-                }
-            }
-
-            @Override
-            public void onReconnectFailed() {
-            }
-        });
-
-        if (SendBird.getConnectionState() == SendBird.ConnectionState.OPEN) {
-            if (handler != null) {
-                handler.onConnected(false);
-            }
-        } else if (SendBird.getConnectionState() == SendBird.ConnectionState.CLOSED) { // push notification or system kill
-            String userId = PreferenceUtils.getUserId();
-            SendBird.connect(userId, new SendBird.ConnectHandler() {
-                @Override
-                public void onConnected(User user, SendBirdException e) {
-                    if (e != null) {
-                        return;
-                    }
-
-                    SendBirdSyncManager.getInstance().resumeSync();
-                    if (handler != null) {
-                        handler.onConnected(false);
-                    }
-                }
-            });
-        }
-    }
-
-    public static void removeConnectionManagementHandler(String handlerId) {
-        SendBird.removeConnectionHandler(handlerId);
-    }
-
-    public interface ConnectionManagementHandler {
-        /**
-         * A callback for when connected or reconnected to refresh.
-         *
-         * @param reconnect Set false if connected, true if reconnected.
-         */
-        void onConnected(boolean reconnect);
     }
 }

@@ -2,21 +2,19 @@ package com.sendbird.syncmanager.sample.utils;
 
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.Member;
-import com.sendbird.android.SendBird;
 import com.sendbird.android.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import static com.sendbird.syncmanager.sample.utils.SyncManagerUtils.getMyUserId;
+
 public class TextUtils {
     public static String getGroupChannelTitle(GroupChannel channel) {
         List<Member> members = channel.getMembers();
 
-        String myUserId = PreferenceUtils.getUserId();
-        if (SendBird.getCurrentUser() != null) {
-            myUserId = SendBird.getCurrentUser().getUserId();
-        }
+        String myUserId = getMyUserId();
 
         if (members.size() < 2 || myUserId == null) {
             return "No Members";

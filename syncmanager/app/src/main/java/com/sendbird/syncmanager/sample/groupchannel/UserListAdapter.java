@@ -2,7 +2,7 @@ package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +44,7 @@ public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((UserHolder) holder).bind(mContext, (UserHolder)holder, mUsers.get(position));
+        ((UserHolder) holder).bind(mContext, (UserHolder) holder, mUsers.get(position));
     }
 
     @Override
@@ -86,38 +86,34 @@ public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             nameText.setText(user.getNickname());
             ImageUtils.displayRoundImageFromUrl(context, user.getProfileUrl(), profileImage);
 
-            if (mIsGroupChannel) {
-                if (SendBird.getCurrentUser().getUserId().equals(user.getUserId())) {
-                    relativeLayoutBlock.setVisibility(View.GONE);
-                    textViewBlocked.setVisibility(View.GONE);
-                } else {
-                    relativeLayoutBlock.setVisibility(View.VISIBLE);
 
-                    holder.view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(context, MemberInfoActivity.class);
-                            intent.putExtra(MemberListActivity.EXTRA_CHANNEL_URL, mChannelUrl);
-                            intent.putExtra(MemberListActivity.EXTRA_USER_ID, user.getUserId());
-                            intent.putExtra(MemberListActivity.EXTRA_USER_PROFILE_URL, user.getProfileUrl());
-                            intent.putExtra(MemberListActivity.EXTRA_USER_NICKNAME, user.getNickname());
-                            intent.putExtra(MemberListActivity.EXTRA_USER_BLOCKED_BY_ME, ((Member)user).isBlockedByMe());
-                            context.startActivity(intent);
-                        }
-                    });
-                }
+            if (SendBird.getCurrentUser() != null && SendBird.getCurrentUser().getUserId().equals(user.getUserId())) {
+                relativeLayoutBlock.setVisibility(View.GONE);
+                textViewBlocked.setVisibility(View.GONE);
+            } else {
+                relativeLayoutBlock.setVisibility(View.VISIBLE);
 
-                final boolean isBlockedByMe = ((Member) user).isBlockedByMe();
-                if (isBlockedByMe) {
-                    blockedImage.setVisibility(View.VISIBLE);
-                    textViewBlocked.setVisibility(View.VISIBLE);
-                } else {
-                    blockedImage.setVisibility(View.GONE);
-                    textViewBlocked.setVisibility(View.GONE);
-                }
+                holder.view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, MemberInfoActivity.class);
+                        intent.putExtra(MemberListActivity.EXTRA_CHANNEL_URL, mChannelUrl);
+                        intent.putExtra(MemberListActivity.EXTRA_USER_ID, user.getUserId());
+                        intent.putExtra(MemberListActivity.EXTRA_USER_PROFILE_URL, user.getProfileUrl());
+                        intent.putExtra(MemberListActivity.EXTRA_USER_NICKNAME, user.getNickname());
+                        intent.putExtra(MemberListActivity.EXTRA_USER_BLOCKED_BY_ME, ((Member) user).isBlockedByMe());
+                        context.startActivity(intent);
+                    }
+                });
+            }
+
+            final boolean isBlockedByMe = ((Member) user).isBlockedByMe();
+            if (isBlockedByMe) {
+                blockedImage.setVisibility(View.VISIBLE);
+                textViewBlocked.setVisibility(View.VISIBLE);
             } else {
                 blockedImage.setVisibility(View.GONE);
-                relativeLayoutBlock.setVisibility(View.GONE);
+                textViewBlocked.setVisibility(View.GONE);
             }
         }
     }

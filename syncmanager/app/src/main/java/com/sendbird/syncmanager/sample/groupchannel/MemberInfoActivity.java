@@ -1,10 +1,11 @@
 package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,11 +18,12 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.syncmanager.sample.R;
-import com.sendbird.syncmanager.sample.main.ConnectionManager;
 import com.sendbird.syncmanager.sample.utils.ImageUtils;
+import com.sendbird.syncmanager.sample.view.BaseActivity;
 
+import static com.sendbird.syncmanager.sample.utils.SyncManagerUtils.getMyUserId;
 
-public class MemberInfoActivity extends AppCompatActivity{
+public class MemberInfoActivity extends BaseActivity {
 
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_MEMBER_INFO";
 
@@ -58,7 +60,7 @@ public class MemberInfoActivity extends AppCompatActivity{
         mTextViewNickname = findViewById(R.id.text_view_nickname);
 
         mRelativeLayoutBlockedByMe = findViewById(R.id.relative_layout_blocked_by_me);
-        if (mUserId != null && mUserId.equals(SendBird.getCurrentUser().getUserId())) {
+        if (mUserId != null && mUserId.equals(getMyUserId())) {
             mRelativeLayoutBlockedByMe.setVisibility(View.GONE);
         } else {
             mRelativeLayoutBlockedByMe.setVisibility(View.VISIBLE);
@@ -98,20 +100,7 @@ public class MemberInfoActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-
-        ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
-            @Override
-            public void onConnected(boolean reconnect) {
-                getUserFromUrl(mChannelUrl);
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+        getUserFromUrl(mChannelUrl);
     }
 
     @Override

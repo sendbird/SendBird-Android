@@ -1,12 +1,11 @@
 package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +17,8 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 import com.sendbird.syncmanager.sample.R;
+import com.sendbird.syncmanager.sample.utils.DialogUtils;
+import com.sendbird.syncmanager.sample.view.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
  * current channel.
  */
 
-public class InviteMemberActivity extends AppCompatActivity{
+public class InviteMemberActivity extends BaseActivity {
 
     private LinearLayoutManager mLayoutManager;
     private RecyclerView mRecyclerView;
@@ -88,9 +89,13 @@ public class InviteMemberActivity extends AppCompatActivity{
         });
         mInviteButton.setEnabled(false);
 
-        setUpRecyclerView();
+        if (SendBird.getConnectionState() == SendBird.ConnectionState.OPEN) {
+            setUpRecyclerView();
 
-        loadInitialUserList(15);
+            loadInitialUserList(15);
+        } else {
+            DialogUtils.showConnectionRequireDialog(InviteMemberActivity.this);
+        }
     }
 
     @Override

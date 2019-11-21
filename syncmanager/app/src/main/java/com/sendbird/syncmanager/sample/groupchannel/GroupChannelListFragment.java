@@ -3,14 +3,14 @@ package com.sendbird.syncmanager.sample.groupchannel;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,15 +23,12 @@ import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
-import com.sendbird.syncmanager.sample.R;
-import com.sendbird.syncmanager.sample.main.BaseApplication;
-import com.sendbird.syncmanager.sample.main.ConnectionManager;
 import com.sendbird.syncmanager.ChannelCollection;
 import com.sendbird.syncmanager.ChannelEventAction;
 import com.sendbird.syncmanager.handler.ChannelCollectionHandler;
 import com.sendbird.syncmanager.handler.CompletionHandler;
+import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
-import com.sendbird.syncmanager.sample.utils.SyncManagerUtils;
 
 import java.util.List;
 
@@ -41,10 +38,9 @@ public class GroupChannelListFragment extends Fragment {
 
     public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
     private static final int INTENT_REQUEST_NEW_GROUP_CHANNEL = 302;
+    private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";
 
     private static final int CHANNEL_LIST_LIMIT = 15;
-    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHANNEL_LIST";
-    private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -104,31 +100,8 @@ public class GroupChannelListFragment extends Fragment {
         Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
 
         String userId = PreferenceUtils.getUserId();
-        SyncManagerUtils.setup(getContext(), userId, new CompletionHandler() {
-            @Override
-            public void onCompleted(SendBirdException e) {
-                if (getActivity() == null) {
-                    return;
-                }
 
-                ((BaseApplication)getActivity().getApplication()).setSyncManagerSetup(true);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (SendBird.getConnectionState() != SendBird.ConnectionState.OPEN) {
-                            refresh();
-                        }
-
-                        ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
-                            @Override
-                            public void onConnected(boolean reconnect) {
-                                refresh();
-                            }
-                        });
-                    }
-                });
-            }
-        });
+        refresh();
 
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
@@ -153,11 +126,7 @@ public class GroupChannelListFragment extends Fragment {
     @Override
     public void onPause() {
         Log.d("LIFECYCLE", "GroupChannelListFragment onPause()");
-        if (SendBird.getConnectionState() != SendBird.ConnectionState.OPEN) {
 
-        }
-
-        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
         if (mChannelCollection != null) {
             mChannelCollection.setCollectionHandler(null);
             mChannelCollection.remove();
@@ -238,25 +207,25 @@ public class GroupChannelListFragment extends Fragment {
         final boolean pushCurrentlyEnabled = channel.isPushEnabled();
 
         options = pushCurrentlyEnabled
-                ? new String[]{"Leave channel", "Turn push notifications OFF"}
-                : new String[]{"Leave channel", "Turn push notifications ON"};
+                ? new String[]{getString(R.string.leave_channel), getString(R.string.set_push_off)}
+                : new String[]{getString(R.string.leave_channel), getString(R.string.set_push_on)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Channel options")
+        builder.setTitle(getString(R.string.channel_option))
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
                             // Show a dialog to confirm that the user wants to leave the channel.
                             new AlertDialog.Builder(getActivity())
-                                    .setTitle("Leave channel " + channel.getName() + "?")
-                                    .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                                    .setTitle(getString(R.string.request_leave_channel, channel.getName()))
+                                    .setPositiveButton(R.string.action_leave_channel, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             leaveChannel(channel);
                                         }
                                     })
-                                    .setNegativeButton("Cancel", null)
+                                    .setNegativeButton(getString(R.string.cancel), null)
                                     .create().show();
                         } else if (which == 1) {
                             setChannelPushPreferences(channel, !pushCurrentlyEnabled);
@@ -268,8 +237,9 @@ public class GroupChannelListFragment extends Fragment {
 
     /**
      * Turns push notifications on or off for a selected channel.
-     * @param channel   The channel for which push preferences should be changed.
-     * @param on    Whether to set push notifications on or off.
+     *
+     * @param channel The channel for which push preferences should be changed.
+     * @param on      Whether to set push notifications on or off.
      */
     private void setChannelPushPreferences(final GroupChannel channel, final boolean on) {
         // Change push preferences.
@@ -278,14 +248,14 @@ public class GroupChannelListFragment extends Fragment {
             public void onResult(SendBirdException e) {
                 if (e != null) {
                     e.printStackTrace();
-                    Toast.makeText(getActivity(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT)
+                    Toast.makeText(getActivity(), getString(R.string.sendbird_error, e.getMessage()), Toast.LENGTH_SHORT)
                             .show();
                     return;
                 }
 
                 String toast = on
-                        ? "Push notifications have been turned ON"
-                        : "Push notifications have been turned OFF";
+                        ? getString(R.string.text_push_on)
+                        : getString(R.string.text_push_off);
 
                 Toast.makeText(getActivity(), toast, Toast.LENGTH_SHORT)
                         .show();
@@ -318,17 +288,12 @@ public class GroupChannelListFragment extends Fragment {
                 .commit();
     }
 
-    private void refresh() {
-        refreshChannelList(CHANNEL_LIST_LIMIT);
-    }
-
     /**
      * Creates a new query to get the list of the user's Group Channels,
      * then replaces the existing dataset.
      *
-     * @param numChannels The number of channels to load.
      */
-    private void refreshChannelList(int numChannels) {
+    private void refresh() {
         if (mChannelCollection != null) {
             mChannelCollection.remove();
         }
@@ -336,7 +301,7 @@ public class GroupChannelListFragment extends Fragment {
         mChannelListAdapter.clearMap();
         mChannelListAdapter.clearChannelList();
         GroupChannelListQuery query = GroupChannel.createMyGroupChannelListQuery();
-        query.setLimit(numChannels);
+        query.setLimit(CHANNEL_LIST_LIMIT);
         mChannelCollection = new ChannelCollection(query);
         mChannelCollection.setCollectionHandler(mChannelCollectionHandler);
         mChannelCollection.fetch(new CompletionHandler() {

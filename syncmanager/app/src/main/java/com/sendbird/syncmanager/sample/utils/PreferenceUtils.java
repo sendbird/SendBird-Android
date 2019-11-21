@@ -49,15 +49,6 @@ public class PreferenceUtils {
         return getSharedPreferences().getString(PREFERENCE_KEY_NICKNAME, "");
     }
 
-    public static void setConnected(boolean tf) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putBoolean(PREFERENCE_KEY_CONNECTED, tf).apply();
-    }
-
-    public static boolean getConnected() {
-        return getSharedPreferences().getBoolean(PREFERENCE_KEY_CONNECTED, false);
-    }
-
     public static void clearAll() {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.clear().apply();
@@ -124,4 +115,15 @@ public class PreferenceUtils {
     public static long getLastRead(String groupChannelUrl) {
         return getSharedPreferences().getLong(PREFERENCE_KEY_GROUP_CHANNEL_LAST_READ + groupChannelUrl, Long.MAX_VALUE);
     }
+
+    public static void setConnected(boolean tf) {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.putBoolean(PREFERENCE_KEY_CONNECTED, tf).apply();
+    }
+
+    public static boolean getConnected() {
+        return getSharedPreferences().getBoolean(PREFERENCE_KEY_CONNECTED, false);
+    }
+
+
 }

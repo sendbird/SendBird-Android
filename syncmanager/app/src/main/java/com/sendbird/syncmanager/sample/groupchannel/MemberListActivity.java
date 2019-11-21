@@ -1,31 +1,28 @@
 package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.Member;
-import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
-import com.sendbird.android.User;
 import com.sendbird.syncmanager.sample.R;
-import com.sendbird.syncmanager.sample.main.ConnectionManager;
+import com.sendbird.syncmanager.sample.utils.SyncManagerUtils;
+import com.sendbird.syncmanager.sample.view.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MemberListActivity extends AppCompatActivity {
+public class MemberListActivity extends BaseActivity {
 
-    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_MEMBER_LIST";
     static final String EXTRA_CHANNEL_URL = "EXTRA_CHANNEL_URL";
     static final String EXTRA_USER_ID = "EXTRA_USER_ID";
     static final String EXTRA_USER_PROFILE_URL = "EXTRA_USER_PROFILE_URL";
@@ -48,7 +45,7 @@ public class MemberListActivity extends AppCompatActivity {
         }
 
         if (mChannel == null) {
-            Toast.makeText(this, "Channel doesn't exists", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_channel, Toast.LENGTH_SHORT).show();
             onBackPressed();
             finish();
         }
@@ -71,19 +68,7 @@ public class MemberListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        ConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER_ID, new ConnectionManager.ConnectionManagementHandler() {
-            @Override
-            public void onConnected(boolean reconnect) {
-                getChannelFromUrl(mChannel.getUrl());
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+        getChannelFromUrl(mChannel.getUrl());
     }
 
     private void setUpRecyclerView() {
@@ -136,22 +121,13 @@ public class MemberListActivity extends AppCompatActivity {
 
     private void setMemberList(List<Member> memberList) {
         List<Member> sortedUserList = new ArrayList<>();
-        User currentUser = SendBird.getCurrentUser();
-        if (currentUser != null) {
-            for (Member me : memberList) {
-                if (me.getUserId().equals(currentUser.getUserId())) {
-                    sortedUserList.add(me);
-                    break;
-                }
+        String myUserId = SyncManagerUtils.getMyUserId();
+        for (Member member : memberList) {
+            if (member.getUserId().equals(myUserId)) {
+                sortedUserList.add(0, member);
+            } else {
+                sortedUserList.add(member);
             }
-        }
-
-        for (Member other : memberList) {
-            if (currentUser != null && other.getUserId().equals(currentUser.getUserId())) {
-                continue;
-            }
-
-            sortedUserList.add(other);
         }
 
         mListAdapter.setUserList(sortedUserList);

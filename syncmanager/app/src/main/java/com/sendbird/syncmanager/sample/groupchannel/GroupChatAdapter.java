@@ -2,8 +2,8 @@ package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +15,11 @@ import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
-import com.sendbird.android.SendBird;
 import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.utils.DateUtils;
 import com.sendbird.syncmanager.sample.utils.ImageUtils;
-import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 import com.sendbird.syncmanager.sample.utils.SyncManagerUtils;
 import com.sendbird.syncmanager.sample.utils.UrlPreviewInfo;
 
@@ -35,6 +33,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+
+import static com.sendbird.syncmanager.sample.utils.SyncManagerUtils.getMyUserId;
 
 
 class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -215,10 +215,26 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
         BaseMessage message = getMessage(position);
+        boolean isMyMessage = false;
+
         if (message instanceof UserMessage) {
-            UserMessage userMessage = (UserMessage) message;
-            // If the sender is current user
-            if (userMessage.getSender().getUserId().equals(getMyUserId())) {
+            UserMessage.RequestState requestState = ((UserMessage) message).getRequestState();
+            if (requestState == UserMessage.RequestState.PENDING
+                || requestState == UserMessage.RequestState.FAILED
+                || ((UserMessage) message).getSender().getUserId().equals(getMyUserId())) {
+                isMyMessage = true;
+            }
+        } else if (message instanceof FileMessage) {
+            FileMessage.RequestState requestState = ((FileMessage) message).getRequestState();
+            if (requestState == FileMessage.RequestState.PENDING
+                || requestState == FileMessage.RequestState.FAILED
+                || ((FileMessage) message).getSender().getUserId().equals(getMyUserId())) {
+                isMyMessage = true;
+            }
+        }
+
+        if (message instanceof UserMessage) {
+            if (isMyMessage) {
                 return VIEW_TYPE_USER_MESSAGE_ME;
             } else {
                 return VIEW_TYPE_USER_MESSAGE_OTHER;
@@ -227,19 +243,19 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             FileMessage fileMessage = (FileMessage) message;
             if (fileMessage.getType().toLowerCase().startsWith("image")) {
                 // If the sender is current user
-                if (fileMessage.getSender().getUserId().equals(getMyUserId())) {
+                if (isMyMessage) {
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER;
                 }
             } else if (fileMessage.getType().toLowerCase().startsWith("video")) {
-                if (fileMessage.getSender().getUserId().equals(getMyUserId())) {
+                if (isMyMessage) {
                     return VIEW_TYPE_FILE_MESSAGE_VIDEO_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_VIDEO_OTHER;
                 }
             } else {
-                if (fileMessage.getSender().getUserId().equals(getMyUserId())) {
+                if (isMyMessage) {
                     return VIEW_TYPE_FILE_MESSAGE_ME;
                 } else {
                     return VIEW_TYPE_FILE_MESSAGE_OTHER;
@@ -482,19 +498,16 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             precedingUser = ((FileMessage) precedingMsg).getSender();
         }
 
-        // If admin message or
-        return !(currentUser == null || precedingUser == null)
-                && currentUser.getUserId().equals(precedingUser.getUserId());
-
-
-    }
-
-    private String getMyUserId() {
-        if (SendBird.getCurrentUser() == null) {
-            return PreferenceUtils.getUserId();
+        if (currentUser == null || precedingUser == null) {
+            return false;
         }
 
-        return SendBird.getCurrentUser().getUserId();
+        if (currentUser.getUserId() == null || precedingUser.getUserId() == null) {
+            return false;
+        }
+
+        // If admin message or
+        return currentUser.getUserId().equals(precedingUser.getUserId());
     }
 
     private class BaseViewHolder extends RecyclerView.ViewHolder {

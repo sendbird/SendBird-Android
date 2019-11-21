@@ -1,13 +1,14 @@
 package com.sendbird.syncmanager.sample.utils;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
+import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 import com.sendbird.syncmanager.SendBirdSyncManager;
 import com.sendbird.syncmanager.handler.CompletionHandler;
@@ -172,5 +173,13 @@ public class SyncManagerUtils {
         }
 
         return "";
+    }
+
+    public static String getMyUserId() {
+        if (SendBird.getCurrentUser() == null) {
+            return PreferenceUtils.getUserId();
+        }
+
+        return SendBird.getCurrentUser().getUserId();
     }
 }

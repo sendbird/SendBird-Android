@@ -12,19 +12,25 @@
 
     <application
         android:name="com.sendbird.syncmanager.sample.main.BaseApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/sendbird_ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name="com.sendbird.syncmanager.sample.main.LoginActivity">
+
+        tools:replace="android:allowBackup"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <activity android:name=".main.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.sendbird.syncmanager.sample.main.LoginActivity"
+            android:label="@string/login_connect">
+        </activity>
         <activity android:name="com.sendbird.syncmanager.sample.main.MainActivity"
+            android:launchMode="singleTask"
             android:label="@string/select_channel_type"/>
         <activity
             android:name="com.sendbird.syncmanager.sample.main.SettingsActivity"
@@ -58,13 +64,16 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="com.sendbird.syncmanager.sample.fcm.MyFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/img_notification" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.sendbird.syncmanager.sample.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

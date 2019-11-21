@@ -13,15 +13,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -45,6 +46,7 @@ import com.sendbird.syncmanager.sample.utils.FileUtils;
 import com.sendbird.syncmanager.sample.utils.ImageUtils;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 import com.sendbird.syncmanager.sample.utils.PushUtils;
+import com.sendbird.syncmanager.sample.view.BaseActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,8 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     private static final int INTENT_REQUEST_CHOOSE_MEDIA                = 0xf0;
     private static final int INTENT_REQUEST_CAMERA                      = 0xf1;
@@ -193,12 +194,12 @@ public class SettingsActivity extends AppCompatActivity {
                         updateCurrentUserInfo(mEditTextNickname.getText().toString());
                     }
 
-                    mButtonSaveNickName.setText("EDIT");
+                    mButtonSaveNickName.setText(getString(R.string.action_edit_nickname));
                     mEditTextNickname.setEnabled(false);
                     mEditTextNickname.setFocusable(false);
                     mEditTextNickname.setFocusableInTouchMode(false);
                 } else {
-                    mButtonSaveNickName.setText("SAVE");
+                    mButtonSaveNickName.setText(getString(R.string.action_save_nickname));
                     mEditTextNickname.setEnabled(true);
                     mEditTextNickname.setFocusable(true);
                     mEditTextNickname.setFocusableInTouchMode(true);
@@ -231,7 +232,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
                 if (isChecked) {
-                    PushUtils.registerPushTokenForCurrentUser(SettingsActivity.this, new SendBird.RegisterPushTokenWithStatusHandler() {
+                    PushUtils.registerPushTokenForCurrentUser(new SendBird.RegisterPushTokenWithStatusHandler() {
                         @Override
                         public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
                             if (e != null) {
@@ -245,7 +246,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    PushUtils.unregisterPushTokenForCurrentUser(SettingsActivity.this, new SendBird.UnregisterPushTokenHandler() {
+                    PushUtils.unregisterPushTokenForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
                         @Override
                         public void onUnregistered(SendBirdException e) {
                             if (e != null) {
@@ -442,10 +443,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void showSetProfileOptionsDialog() {
-        String[] options = new String[] { "Upload a photo", "Take a photo" };
+        String[] options = new String[] {getString(R.string.option_upload_photo), getString(R.string.option_take_photo) };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-        builder.setTitle("Set profile image")
+        builder.setTitle(getString(R.string.request_profile_image))
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -561,7 +562,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void permissionDenied() {
-        Snackbar.make(mSettingsLayout, "Permission denied.", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mSettingsLayout, getString(R.string.permission_denied), Snackbar.LENGTH_LONG).show();
     }
 
     private void requestMedia() {
@@ -621,10 +622,10 @@ public class SettingsActivity extends AppCompatActivity {
             public void onUpdated(SendBirdException e) {
                 if (e != null) {
                     // Error!
-                    Toast.makeText(SettingsActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingsActivity.this, getString(R.string.sendbird_error_with_code, e.getCode(), e.getMessage()), Toast.LENGTH_SHORT).show();
 
                     // Show update failed snackbar
-                    showSnackbar("Update user info failed");
+                    showSnackbar(getString(R.string.update_user_info_failed));
                     return;
                 }
 
@@ -644,10 +645,10 @@ public class SettingsActivity extends AppCompatActivity {
             public void onUpdated(SendBirdException e) {
                 if (e != null) {
                     // Error!
-                    Toast.makeText(SettingsActivity.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingsActivity.this, getString(R.string.sendbird_error_with_code, e.getCode(), e.getMessage()), Toast.LENGTH_SHORT).show();
 
                     // Show update failed snackbar
-                    showSnackbar("Update user info failed");
+                    showSnackbar(getString(R.string.update_user_info_failed));
                     return;
                 }
 
@@ -660,5 +661,4 @@ public class SettingsActivity extends AppCompatActivity {
         Snackbar snackbar = Snackbar.make(mSettingsLayout, text, Snackbar.LENGTH_SHORT);
         snackbar.show();
     }
-
 }

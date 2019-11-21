@@ -2,9 +2,9 @@ package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -280,7 +280,7 @@ class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             // If someone in the channel is typing, display the typing indicator.
             if (channel.isTyping()) {
                 typingIndicatorContainer.setVisibility(View.VISIBLE);
-                lastMessageText.setText(("Someone is typing"));
+                lastMessageText.setText(mContext.getString(R.string.typing_status));
             } else {
                 // Display typing indicator only when someone is typing
                 typingIndicatorContainer.setVisibility(View.GONE);

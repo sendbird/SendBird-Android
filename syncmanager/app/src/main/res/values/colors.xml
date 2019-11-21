@@ -38,4 +38,7 @@
     <color name="btn_send">#774df2</color>
     <color name="btn_send_disabled">#8e8e8e</color>
 
+    <color name="color_white">#ffffff</color>
+    <color name="color_black">#000000</color>
+
 </resources>

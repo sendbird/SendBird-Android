@@ -1,17 +1,17 @@
 package com.sendbird.syncmanager.sample.groupchannel;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.sendbird.syncmanager.sample.R;
+import com.sendbird.syncmanager.sample.main.MainActivity;
+import com.sendbird.syncmanager.sample.view.BaseActivity;
 
-
-public class GroupChannelActivity extends AppCompatActivity{
+public class GroupChannelActivity extends BaseActivity {
 
     @Override
     protected void onCreate(final @Nullable Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class GroupChannelActivity extends AppCompatActivity{
                     .commit();
         }
 
-        final String channelUrl = getIntent().getStringExtra("groupChannelUrl");
+        final String channelUrl = getIntent().getStringExtra(MainActivity.EXTRA_GROUP_CHANNEL_URL);
         if(channelUrl != null) {
             // If started from notification
             Fragment fragment = GroupChatFragment.newInstance(channelUrl);

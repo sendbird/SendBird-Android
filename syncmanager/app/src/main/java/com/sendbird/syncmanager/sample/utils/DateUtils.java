@@ -79,4 +79,9 @@ public class DateUtils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
         return dateFormat.format(millisFirst).equals(dateFormat.format(millisSecond));
     }
+
+    public static String formatLastSeenDate(long timeInMillis) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM HH:mm", Locale.getDefault());
+        return dateFormat.format(timeInMillis);
+    }
 }

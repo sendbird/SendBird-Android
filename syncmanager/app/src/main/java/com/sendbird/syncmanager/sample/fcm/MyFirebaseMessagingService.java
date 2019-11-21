@@ -27,21 +27,62 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
 import com.sendbird.syncmanager.sample.R;
-import com.sendbird.syncmanager.sample.groupchannel.GroupChannelActivity;
+import com.sendbird.syncmanager.sample.main.MainActivity;
+import com.sendbird.syncmanager.sample.main.SplashActivity;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
+    private static final AtomicReference<String> pushToken = new AtomicReference<>();
+
+    public interface ITokenResult {
+        void onPushTokenReceived(String pushToken);
+    }
+
+    @Override
+    public void onNewToken(String token) {
+        Log.i(TAG, "onNewToken(" + token + ")");
+
+        sendRegistrationToServer(token);
+    }
+
+    private void sendRegistrationToServer(final String token) {
+        SendBird.registerPushTokenForCurrentUser(token, new SendBird.RegisterPushTokenWithStatusHandler() {
+            @Override
+            public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
+                if (e != null) {
+                    Toast.makeText(MyFirebaseMessagingService.this, "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (pushTokenRegistrationStatus == SendBird.PushTokenRegistrationStatus.PENDING) {
+                    Toast.makeText(MyFirebaseMessagingService.this, "Connection required to register push token.", Toast.LENGTH_SHORT).show();
+                }
+                pushToken.set(token);
+            }
+        });
+    }
 
     /**
      * Called when message is received.
@@ -103,8 +144,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(mChannel);
         }
 
-        Intent intent = new Intent(context, GroupChannelActivity.class);
-        intent.putExtra("groupChannelUrl", channelUrl);
+        Intent intent = new Intent(context, SplashActivity.class);
+        intent.putExtra(MainActivity.EXTRA_GROUP_CHANNEL_URL, channelUrl);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -127,5 +168,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    public static void getPushToken(ITokenResult listner) {
+        String token = pushToken.get();
+        if (!TextUtils.isEmpty(token)) {
+            listner.onPushTokenReceived(token);
+            return;
+        }
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Log.w(TAG, "getInstanceId failed", task.getException());
+                    return;
+                }
+
+                // Get new Instance ID token
+                InstanceIdResult result = task.getResult();
+                if (result != null) {
+                    String token = result.getToken();
+                    Log.d(TAG, "FCM token : " + token);
+                    pushToken.set(token);
+                    listner.onPushTokenReceived(token);
+                }
+            }
+        });
     }
 }
