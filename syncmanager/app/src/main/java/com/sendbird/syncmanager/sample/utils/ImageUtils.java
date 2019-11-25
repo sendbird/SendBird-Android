@@ -45,6 +45,11 @@ public class ImageUtils {
     }
 
     public static void displayImageFromUrl(final Context context, final String url,
+                                           final ImageView imageView) {
+        displayImageFromUrl(context, url, imageView, null, null);
+    }
+
+    public static void displayImageFromUrl(final Context context, final String url,
                                            final ImageView imageView, Drawable placeholderDrawable) {
         displayImageFromUrl(context, url, imageView, placeholderDrawable, null);
     }
@@ -158,6 +163,10 @@ public class ImageUtils {
                     .apply(myOptions)
                     .into(imageView);
         }
+    }
+
+    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, String thumbnailUrl) {
+        displayGifImageFromUrl(context, url, imageView, thumbnailUrl, null);
     }
 
     /**

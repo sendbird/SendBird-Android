@@ -110,8 +110,6 @@ public class GroupChannelListFragment extends Fragment {
 
             @Override
             public void onChannelChanged(BaseChannel channel) {
-                mChannelListAdapter.clearMap();
-                mChannelListAdapter.updateOrInsert(channel);
             }
 
             @Override

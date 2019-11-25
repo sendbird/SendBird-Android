@@ -11,15 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -37,6 +28,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -75,6 +76,7 @@ public class GroupChatFragment extends Fragment {
 
     private static final String LOG_TAG = GroupChatFragment.class.getSimpleName();
 
+    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
 
     private static final int STATE_NORMAL = 0;
@@ -189,18 +191,20 @@ public class GroupChatFragment extends Fragment {
             public void onClick(View v) {
                 if (mCurrentState == STATE_EDIT) {
                     String userInput = mMessageEditText.getText().toString();
-                    if (userInput.length() > 0) {
-                        if (mEditingMessage != null) {
-                            editMessage(mEditingMessage, userInput);
-                        }
+                    if (userInput.length() > 0 && mEditingMessage != null) {
+                        editMessage(mEditingMessage, userInput);
                     }
                     setState(STATE_NORMAL, null, -1);
                 } else {
                     String userInput = mMessageEditText.getText().toString();
-                    if (userInput.length() > 0) {
-                        sendUserMessage(userInput);
-                        mMessageEditText.setText("");
+                    if (userInput.length() == 0) {
+                        return;
                     }
+
+                    sendUserMessage(userInput);
+                    mMessageEditText.setText("");
+
+                    mRecyclerView.scrollToPosition(0);
                 }
             }
         });
@@ -252,6 +256,21 @@ public class GroupChatFragment extends Fragment {
 
         mChatAdapter.setContext(getActivity()); // Glide bug fix (java.lang.IllegalArgumentException: You cannot start a load for a destroyed activity)`
 
+        SendBird.addConnectionHandler(CONNECTION_HANDLER_ID, new SendBird.ConnectionHandler() {
+            @Override
+            public void onReconnectStarted() {
+            }
+            @Override
+            public void onReconnectSucceeded() {
+                if (mMessageCollection != null) {
+                    mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, null);
+                }
+            }
+            @Override
+            public void onReconnectFailed() {
+            }
+        });
+
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
             public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
@@ -277,7 +296,9 @@ public class GroupChatFragment extends Fragment {
     @Override
     public void onPause() {
         setTypingStatus(false);
+        displayTyping(null);
 
+        SendBird.removeConnectionHandler(CONNECTION_HANDLER_ID);
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
         super.onPause();
     }
@@ -666,8 +687,7 @@ public class GroupChatFragment extends Fragment {
      * @param typingUsers The list of currently typing users.
      */
     private void displayTyping(List<Member> typingUsers) {
-
-        if (typingUsers.size() > 0) {
+        if (typingUsers != null && typingUsers.size() > 0) {
             mCurrentEventLayout.setVisibility(View.VISIBLE);
             String string;
 
@@ -1123,7 +1143,7 @@ public class GroupChatFragment extends Fragment {
                         mNewMessageText.setText("New Message = " + ((UserMessage) message).getSender().getNickname() + " : " + ((UserMessage) message).getMessage());
                         mNewMessageText.setVisibility(View.VISIBLE);
                     }
-                } else {
+                } else if (message instanceof FileMessage) {
                     if (!((FileMessage) message).getSender().getUserId().equals(PreferenceUtils.getUserId())) {
                         mNewMessageText.setText("New Message = " + ((FileMessage) message).getSender().getNickname() + "Send a File");
                         mNewMessageText.setVisibility(View.VISIBLE);

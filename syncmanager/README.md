@@ -20,10 +20,10 @@ repositories {
 }
 dependencies {
     // SyncManager
-    implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.8'
+    implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.11'
 
     // SendBird
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.107'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.108'
 }
 ``` 
  > Note : `SendBirdSyncManager` is dependent with `SendBird SDK`. It works on Android 4.0+ (API level 14), Java 7+ and [SendBird Android SDK](https://github.com/sendbird/SendBird-SDK-Android) 3.0.96+.

@@ -2,17 +2,16 @@ package com.sendbird.syncmanager.sample.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
 import com.sendbird.syncmanager.SendBirdSyncManager;
 import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.groupchannel.GroupChannelActivity;
@@ -22,7 +21,6 @@ import com.sendbird.syncmanager.sample.view.BaseActivity;
 public class MainActivity extends BaseActivity {
 
     public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
-    private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_MAIN_ACTIVITY";
 
     private Toolbar mToolbar;
 
@@ -57,29 +55,52 @@ public class MainActivity extends BaseActivity {
                 BaseApplication.VERSION, SendBird.getSDKVersion(), SendBirdSyncManager.getSDKVersion());
         ((TextView) findViewById(R.id.text_main_versions)).setText(sdkVersion);
 
-        registerConnectionHandler();
-        if (SendBird.getConnectionState() != SendBird.ConnectionState.OPEN) {
-            if (getIntent().hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
-                String extraChannelUrl = getIntent().getStringExtra(EXTRA_GROUP_CHANNEL_URL);
-                Intent intent = new Intent(MainActivity.this, GroupChannelActivity.class);
-                intent.putExtra(EXTRA_GROUP_CHANNEL_URL, extraChannelUrl);
-                startActivity(intent);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ConnectionManager.connect(MainActivity.this, PreferenceUtils.getUserId(), PreferenceUtils.getNickname(), null);
-                    }
-                },500);
-            } else {
-                ConnectionManager.connect(this, PreferenceUtils.getUserId(), PreferenceUtils.getNickname(), null);
-            }
-        }
+        connect();
+    }
+
+    @Override
+    protected String getConnectionHandlerId() {
+        return "CONNECTION_HANDLER_MAIN_ACTIVITY";
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        connect();
     }
 
     @Override
     protected void onDestroy() {
-        SendBird.removeConnectionHandler(CONNECTION_HANDLER_ID);
         super.onDestroy();
+    }
+
+    private void connect() {
+        if (SendBird.getConnectionState() != SendBird.ConnectionState.OPEN) {
+            showProgressBar(true);
+            ConnectionManager.connect(this, PreferenceUtils.getUserId(), PreferenceUtils.getNickname(), new SendBird.ConnectHandler() {
+                @Override
+                public void onConnected(User user, SendBirdException e) {
+                    showProgressBar(false);
+                    if (e != null) {
+                        e.printStackTrace();
+                    } else {
+                        checkExtra();
+                    }
+                }
+            });
+        } else {
+            checkExtra();
+        }
+    }
+
+    private void checkExtra() {
+        if (getIntent().hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
+            String extraChannelUrl = getIntent().getStringExtra(EXTRA_GROUP_CHANNEL_URL);
+            Intent mainIntent = new Intent(MainActivity.this, GroupChannelActivity.class);
+            mainIntent.putExtra(EXTRA_GROUP_CHANNEL_URL, extraChannelUrl);
+            startActivity(mainIntent);
+        }
     }
 
     /**
@@ -115,24 +136,6 @@ public class MainActivity extends BaseActivity {
                         finish();
                     }
                 });
-            }
-        });
-    }
-
-    private void registerConnectionHandler() {
-        SendBird.addConnectionHandler(CONNECTION_HANDLER_ID, new SendBird.ConnectionHandler() {
-            @Override
-            public void onReconnectStarted() {
-                SendBirdSyncManager.getInstance().pauseSync();
-            }
-
-            @Override
-            public void onReconnectSucceeded() {
-                SendBirdSyncManager.getInstance().resumeSync();
-            }
-
-            @Override
-            public void onReconnectFailed() {
             }
         });
     }

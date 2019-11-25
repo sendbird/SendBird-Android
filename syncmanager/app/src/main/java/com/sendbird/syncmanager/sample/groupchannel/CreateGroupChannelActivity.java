@@ -172,5 +172,4 @@ public class CreateGroupChannelActivity extends BaseActivity
         });
     }
 
-
 }

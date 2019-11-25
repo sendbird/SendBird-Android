@@ -616,7 +616,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     urlPreviewSiteNameText.setText("@" + previewInfo.getSiteName());
                     urlPreviewTitleText.setText(previewInfo.getTitle());
                     urlPreviewDescriptionText.setText(previewInfo.getDescription());
-                    ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView, null);
+                    ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView);
                 } catch (JSONException e) {
                     urlPreviewContainer.setVisibility(View.GONE);
                     e.printStackTrace();
@@ -713,7 +713,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     urlPreviewSiteNameText.setText("@" + previewInfo.getSiteName());
                     urlPreviewTitleText.setText(previewInfo.getTitle());
                     urlPreviewDescriptionText.setText(previewInfo.getDescription());
-                    ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView, null);
+                    ImageUtils.displayImageFromUrl(context, previewInfo.getImageUrl(), urlPreviewMainImageView);
                 } catch (JSONException e) {
                     urlPreviewContainer.setVisibility(View.GONE);
                     e.printStackTrace();
@@ -883,17 +883,17 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             if (message.getRequestState() == FileMessage.RequestState.PENDING
                     || isFailedMessage && mResendingMessageSet.contains(message.getRequestId())) {
-                readReceiptText.setText(R.string.message_failed);
-                readReceiptText.setVisibility(View.VISIBLE);
-
-                circleProgressBar.setVisibility(View.GONE);
-                mFileMessageMap.remove(message);
-            } else if (isTempMessage) {
                 readReceiptText.setText(R.string.message_sending);
                 readReceiptText.setVisibility(View.GONE);
 
                 circleProgressBar.setVisibility(View.VISIBLE);
                 mFileMessageMap.put(message, circleProgressBar);
+            } else if (isTempMessage) {
+                readReceiptText.setText(R.string.message_failed);
+                readReceiptText.setVisibility(View.VISIBLE);
+
+                circleProgressBar.setVisibility(View.GONE);
+                mFileMessageMap.remove(message);
             } else {
                 circleProgressBar.setVisibility(View.GONE);
                 mFileMessageMap.remove(message);
@@ -911,7 +911,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
             if (isTempMessage && tempFileMessageUri != null) {
-                ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage, null);
+                ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage);
             } else {
                 // Get thumbnails from FileMessage
                 ArrayList<FileMessage.Thumbnail> thumbnails = (ArrayList<FileMessage.Thumbnail>) message.getThumbnails();
@@ -919,15 +919,15 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // If thumbnails exist, get smallest (first) thumbnail and display it in the message
                 if (thumbnails.size() > 0) {
                     if (message.getType().toLowerCase().contains("gif")) {
-                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, thumbnails.get(0).getUrl(), fileThumbnailImage.getDrawable());
+                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, thumbnails.get(0).getUrl());
                     } else {
-                        ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                        ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage);
                     }
                 } else {
                     if (message.getType().toLowerCase().contains("gif")) {
-                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, (String) null, fileThumbnailImage.getDrawable());
+                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, (String) null);
                     } else {
-                        ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                        ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnailImage);
                     }
                 }
             }
@@ -991,15 +991,15 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // If thumbnails exist, get smallest (first) thumbnail and display it in the message
             if (thumbnails.size() > 0) {
                 if (message.getType().toLowerCase().contains("gif")) {
-                    ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, thumbnails.get(0).getUrl(), fileThumbnailImage.getDrawable());
+                    ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, thumbnails.get(0).getUrl());
                 } else {
-                    ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                    ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage);
                 }
             } else {
                 if (message.getType().toLowerCase().contains("gif")) {
-                    ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, (String) null, fileThumbnailImage.getDrawable());
+                    ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, (String) null);
                 } else {
-                    ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                    ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnailImage);
                 }
             }
 
@@ -1039,17 +1039,17 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             if (message.getRequestState() == FileMessage.RequestState.PENDING
                     || isFailedMessage && mResendingMessageSet.contains(message.getRequestId())) {
-                readReceiptText.setText(R.string.message_failed);
-                readReceiptText.setVisibility(View.VISIBLE);
-
-                circleProgressBar.setVisibility(View.GONE);
-                mFileMessageMap.remove(message);
-            } else if (isTempMessage) {
                 readReceiptText.setText(R.string.message_sending);
                 readReceiptText.setVisibility(View.GONE);
 
                 circleProgressBar.setVisibility(View.VISIBLE);
                 mFileMessageMap.put(message, circleProgressBar);
+            } else if (isTempMessage) {
+                readReceiptText.setText(R.string.message_failed);
+                readReceiptText.setVisibility(View.VISIBLE);
+
+                circleProgressBar.setVisibility(View.GONE);
+                mFileMessageMap.remove(message);
             } else {
                 circleProgressBar.setVisibility(View.GONE);
                 mFileMessageMap.remove(message);
@@ -1067,14 +1067,14 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
             if (isTempMessage && tempFileMessageUri != null) {
-                ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage, null);
+                ImageUtils.displayImageFromUrl(context, tempFileMessageUri.toString(), fileThumbnailImage);
             } else {
                 // Get thumbnails from FileMessage
                 ArrayList<FileMessage.Thumbnail> thumbnails = (ArrayList<FileMessage.Thumbnail>) message.getThumbnails();
 
                 // If thumbnails exist, get smallest (first) thumbnail and display it in the message
                 if (thumbnails.size() > 0) {
-                    ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                    ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage);
                 }
             }
 
@@ -1136,7 +1136,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             // If thumbnails exist, get smallest (first) thumbnail and display it in the message
             if (thumbnails.size() > 0) {
-                ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage);
             }
 
             if (listener != null) {

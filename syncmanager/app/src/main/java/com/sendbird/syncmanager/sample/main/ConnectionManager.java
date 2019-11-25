@@ -6,10 +6,13 @@ import android.widget.Toast;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
+import com.sendbird.syncmanager.SendBirdSyncManager;
+import com.sendbird.syncmanager.handler.CompletionHandler;
 import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.model.ConnectionEvent;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 import com.sendbird.syncmanager.sample.utils.PushUtils;
+import com.sendbird.syncmanager.sample.utils.SyncManagerUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -27,11 +30,17 @@ public class ConnectionManager {
 
                     if (handler != null) {
                         handler.onConnected(user, e);
-                    } else {
-                        EventBus.getDefault().post(new ConnectionEvent(false));
                     }
+                    EventBus.getDefault().post(new ConnectionEvent(false));
                     return;
                 }
+
+                SyncManagerUtils.setup(context, userId, new CompletionHandler() {
+                    @Override
+                    public void onCompleted(SendBirdException e) {
+                        SendBirdSyncManager.getInstance().resumeSync();
+                    }
+                });
 
                 PushUtils.registerPushTokenForCurrentUser();
                 SendBird.updateCurrentUserInfo(userNickname, null, new SendBird.UserInfoUpdateHandler() {
@@ -46,9 +55,8 @@ public class ConnectionManager {
 
                 if (handler != null) {
                     handler.onConnected(user, e);
-                } else {
-                    EventBus.getDefault().post(new ConnectionEvent(true));
                 }
+                EventBus.getDefault().post(new ConnectionEvent(true));
             }
         });
     }
@@ -57,6 +65,8 @@ public class ConnectionManager {
         SendBird.disconnect(new SendBird.DisconnectHandler() {
             @Override
             public void onDisconnected() {
+                SendBirdSyncManager.getInstance().pauseSync();
+
                 if (handler != null) {
                     handler.onDisconnected();
                 }

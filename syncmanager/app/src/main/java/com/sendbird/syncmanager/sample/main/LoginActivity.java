@@ -67,15 +67,6 @@ public class LoginActivity extends BaseActivity {
         snackbar.show();
     }
 
-    // Shows or hides the ProgressBar
-    private void showProgressBar(boolean show) {
-        if (show) {
-            WaitingDialog.show(this);
-        } else {
-            WaitingDialog.dismiss();
-        }
-    }
-
     private void connect(String userId, String userNickname) {
         ConnectionManager.connect(LoginActivity.this, userId, userNickname, new SendBird.ConnectHandler() {
             @Override

@@ -21,6 +21,10 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        if (getIntent() != null && (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) {
+            getIntent().removeExtra(MainActivity.EXTRA_GROUP_CHANNEL_URL);
+        }
+
         if (ConnectionManager.isLogin() && PreferenceUtils.getUserId() != null) {
             setUpSyncManager();
         } else {
@@ -50,9 +54,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                     startActivity(intent);
                     finish();
-
                 }
-
             });
         }
     }

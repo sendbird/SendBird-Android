@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar','*.aar'], dir: 'libs')
 
     // Required for local unit tests (JUnit 4 framework)
     testImplementation 'junit:junit:4.12'
@@ -46,7 +46,7 @@ dependencies {
     implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.108'
 
     // SendBird SyncManager
-    implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.10'
+    implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.11'
 
     // Android support libraries
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

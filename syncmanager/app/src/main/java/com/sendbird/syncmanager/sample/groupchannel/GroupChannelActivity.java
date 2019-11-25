@@ -49,6 +49,11 @@ public class GroupChannelActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected String getConnectionHandlerId() {
+        return "CONNECTION_HANDLER_GROUP_CHANNEL_ACTIVITY";
+    }
+
     interface onBackPressedListener {
         boolean onBack();
     }
