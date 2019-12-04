@@ -52,6 +52,7 @@ import com.sendbird.syncmanager.MessageCollection;
 import com.sendbird.syncmanager.MessageEventAction;
 import com.sendbird.syncmanager.MessageFilter;
 import com.sendbird.syncmanager.handler.CompletionHandler;
+import com.sendbird.syncmanager.handler.FetchCompletionHandler;
 import com.sendbird.syncmanager.handler.MessageCollectionCreateHandler;
 import com.sendbird.syncmanager.handler.MessageCollectionHandler;
 import com.sendbird.syncmanager.sample.R;
@@ -239,7 +240,7 @@ public class GroupChatFragment extends Fragment {
             public void onClick(View v) {
                 mNewMessageText.setVisibility(View.GONE);
                 mMessageCollection.resetViewpointTimestamp(Long.MAX_VALUE);
-                mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.PREVIOUS, null);
+                fetchInitialMessages();
             }
         });
         setUpRecyclerView();
@@ -263,7 +264,27 @@ public class GroupChatFragment extends Fragment {
             @Override
             public void onReconnectSucceeded() {
                 if (mMessageCollection != null) {
-                    mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, null);
+                    if (mLayoutManager.findFirstVisibleItemPosition() <= 0) {
+                        mMessageCollection.fetchAllNextMessages(new FetchCompletionHandler() {
+                            @Override
+                            public void onCompleted(boolean hasMore, SendBirdException e) {
+                            }
+                        });
+                    } else {
+                        mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, new FetchCompletionHandler() {
+                            @Override
+                            public void onCompleted(boolean hasMore, SendBirdException e) {
+                            }
+                        });
+                    }
+
+                    if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
+                        mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.PREVIOUS, new FetchCompletionHandler() {
+                            @Override
+                            public void onCompleted(boolean hasMore, SendBirdException e) {
+                            }
+                        });
+                    }
                 }
             }
             @Override
@@ -616,12 +637,12 @@ public class GroupChatFragment extends Fragment {
             return;
         }
 
-        mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.PREVIOUS, new CompletionHandler() {
+        mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.PREVIOUS, new FetchCompletionHandler() {
             @Override
-            public void onCompleted(SendBirdException e) {
-                mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, new CompletionHandler() {
+            public void onCompleted(boolean hasMore, SendBirdException e) {
+                mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, new FetchCompletionHandler() {
                     @Override
-                    public void onCompleted(SendBirdException e) {
+                    public void onCompleted(boolean hasMore, SendBirdException e) {
                         mMessageCollection.fetchFailedMessages(new CompletionHandler() {
                             @Override
                             public void onCompleted(SendBirdException e) {
