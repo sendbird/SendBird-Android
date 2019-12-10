@@ -411,16 +411,13 @@ public class GroupChatFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
-                        mMessageCollection.fetch(MessageCollection.Direction.NEXT, null);
+                    if (mLayoutManager.findFirstVisibleItemPosition() <= 0) {
+                        mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, null);
+                        mNewMessageText.setVisibility(View.GONE);
                     }
 
                     if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
                         mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.PREVIOUS, null);
-                    }
-
-                    if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
-                        mNewMessageText.setVisibility(View.GONE);
                     }
                 }
             }
@@ -562,25 +559,29 @@ public class GroupChatFragment extends Fragment {
                         @Override
                         public void onResult(MessageCollection messageCollection, SendBirdException e) {
                             if (e == null) {
-                                if (mMessageCollection == null) {
-                                    mMessageCollection = messageCollection;
-                                    mMessageCollection.setCollectionHandler(mMessageCollectionHandler);
-                                    mChannel = mMessageCollection.getChannel();
-
-                                    if (getActivity() == null) {
-                                        return;
-                                    }
-
-                                    getActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mChatAdapter.setChannel(mChannel);
-                                            updateActionBarTitle();
-                                        }
-                                    });
-
-                                    fetchInitialMessages();
+                                if (mMessageCollection != null) {
+                                    mMessageCollection.remove();
                                 }
+
+                                mMessageCollection = messageCollection;
+                                mMessageCollection.setCollectionHandler(mMessageCollectionHandler);
+
+                                mChannel = mMessageCollection.getChannel();
+                                mChatAdapter.setChannel(mChannel);
+
+                                if (getActivity() == null) {
+                                    return;
+                                }
+
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mChatAdapter.clear();
+                                        updateActionBarTitle();
+                                    }
+                                });
+
+                                fetchInitialMessages();
                             } else {
                                 Toast.makeText(getContext(), getString(R.string.get_channel_failed), Toast.LENGTH_SHORT).show();
                                 new Handler().postDelayed(new Runnable() {
@@ -593,16 +594,19 @@ public class GroupChatFragment extends Fragment {
                         }
                     });
                 } else {
+                    if (mMessageCollection != null) {
+                        mMessageCollection.remove();
+                    }
+
+                    mMessageCollection = new MessageCollection(groupChannel, mMessageFilter, mLastRead);
+                    mMessageCollection.setCollectionHandler(mMessageCollectionHandler);
+
                     mChannel = groupChannel;
                     mChatAdapter.setChannel(mChannel);
+                    mChatAdapter.clear();
                     updateActionBarTitle();
 
-                    if (mMessageCollection == null) {
-                        mMessageCollection = new MessageCollection(groupChannel, mMessageFilter, mLastRead);
-                        mMessageCollection.setCollectionHandler(mMessageCollectionHandler);
-
-                        fetchInitialMessages();
-                    }
+                    fetchInitialMessages();
                 }
             }
         });
@@ -620,13 +624,9 @@ public class GroupChatFragment extends Fragment {
                     }
 
                     updateActionBarTitle();
+                    createMessageCollection(mChannel.getUrl());
                 }
             });
-
-            // call fetch(NEXT) to get missed message when app is offline.
-            if (mMessageCollection != null) {
-                mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, null);
-            }
         } else {
             createMessageCollection(mChannelUrl);
         }
@@ -890,7 +890,11 @@ public class GroupChatFragment extends Fragment {
         final UserMessage pendingMessage = mChannel.sendUserMessage(text, new BaseChannel.SendUserMessageHandler() {
             @Override
             public void onSent(UserMessage userMessage, SendBirdException e) {
-                mMessageCollection.handleSendMessageResponse(userMessage, e);
+                if (mMessageCollection != null) {
+                    mMessageCollection.handleSendMessageResponse(userMessage, e);
+                    mMessageCollection.fetchAllNextMessages(null);
+                }
+                
                 if (e != null) {
                     // Error!
                     Log.e(LOG_TAG, e.toString());
@@ -982,6 +986,7 @@ public class GroupChatFragment extends Fragment {
                     // append sent message.
                     if (mMessageCollection != null) {
                         mMessageCollection.appendMessage(fileMessage);
+                        mMessageCollection.fetchAllNextMessages(null);
                     }
                 }
             };
