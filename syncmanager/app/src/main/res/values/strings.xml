@@ -45,7 +45,8 @@
     <string name="action_send_message">SEND</string>
     <string name="action_update_message">SAVE</string>
     <string name="get_channel_failed">failed to get channel.</string>
-    <string name="user_typing"> is typing</string>
+    <string name="user_typing">%s is typing</string>
+    <string name="two_users_typing">%s and %s is typing</string>
     <string name="users_typing"> Multiple users are typing</string>
     <string name="request_external_storage">Storage access permissions are required to upload/download files.</string>
     <string name="request_download_file">Download file?</string>

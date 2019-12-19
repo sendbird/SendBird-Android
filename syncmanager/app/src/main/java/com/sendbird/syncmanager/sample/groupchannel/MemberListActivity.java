@@ -40,8 +40,8 @@ public class MemberListActivity extends BaseActivity {
         setContentView(R.layout.activity_member_list);
 
         if (getIntent().hasExtra(GroupChatFragment.EXTRA_CHANNEL)) {
-           byte[] serializedChannelData = getIntent().getByteArrayExtra(GroupChatFragment.EXTRA_CHANNEL);
-           mChannel = (GroupChannel) BaseChannel.buildFromSerializedData(serializedChannelData);
+            byte[] serializedChannelData = getIntent().getByteArrayExtra(GroupChatFragment.EXTRA_CHANNEL);
+            mChannel = (GroupChannel) BaseChannel.buildFromSerializedData(serializedChannelData);
         }
 
         if (mChannel == null) {

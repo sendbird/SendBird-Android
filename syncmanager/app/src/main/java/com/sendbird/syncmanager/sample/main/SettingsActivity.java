@@ -13,16 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -38,6 +28,15 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.FileProvider;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.syncmanager.sample.R;
@@ -586,7 +585,7 @@ public class SettingsActivity extends BaseActivity {
             File tempFile = File.createTempFile("SendBird_" + System.currentTimeMillis(), ".jpg", imagePath);
 
             if (Build.VERSION.SDK_INT >= 24) {
-                mTempPhotoUri = FileProvider.getUriForFile(this, "com.sendbird.android.sample.fileprovider", tempFile);
+                mTempPhotoUri = FileProvider.getUriForFile(this, "com.sendbird.syncmanager.sample.fileprovider", tempFile);
 
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 

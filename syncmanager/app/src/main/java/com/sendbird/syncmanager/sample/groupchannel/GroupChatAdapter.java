@@ -25,6 +25,7 @@ import com.sendbird.syncmanager.sample.utils.UrlPreviewInfo;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -220,15 +221,15 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (message instanceof UserMessage) {
             UserMessage.RequestState requestState = ((UserMessage) message).getRequestState();
             if (requestState == UserMessage.RequestState.PENDING
-                || requestState == UserMessage.RequestState.FAILED
-                || ((UserMessage) message).getSender().getUserId().equals(getMyUserId())) {
+                    || requestState == UserMessage.RequestState.FAILED
+                    || ((UserMessage) message).getSender().getUserId().equals(getMyUserId())) {
                 isMyMessage = true;
             }
         } else if (message instanceof FileMessage) {
             FileMessage.RequestState requestState = ((FileMessage) message).getRequestState();
             if (requestState == FileMessage.RequestState.PENDING
-                || requestState == FileMessage.RequestState.FAILED
-                || ((FileMessage) message).getSender().getUserId().equals(getMyUserId())) {
+                    || requestState == FileMessage.RequestState.FAILED
+                    || ((FileMessage) message).getSender().getUserId().equals(getMyUserId())) {
                 isMyMessage = true;
             }
         }
@@ -430,6 +431,24 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         notifyDataSetChanged();
+    }
+
+    boolean failedMessageListContains(BaseMessage message) {
+        if (mFailedMessageList.isEmpty()) {
+            return false;
+        }
+        for (BaseMessage failedMessage : mFailedMessageList) {
+            if (message instanceof UserMessage && failedMessage instanceof UserMessage) {
+                if (((UserMessage) message).getRequestId().equals(((UserMessage) failedMessage).getRequestId())) {
+                    return true;
+                }
+            } else if (message instanceof FileMessage && failedMessage instanceof FileMessage) {
+                if (((FileMessage) message).getRequestId().equals(((FileMessage) failedMessage).getRequestId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     void clear() {

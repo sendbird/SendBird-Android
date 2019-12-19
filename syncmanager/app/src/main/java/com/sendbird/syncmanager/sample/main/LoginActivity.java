@@ -2,6 +2,7 @@ package com.sendbird.syncmanager.sample.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -16,7 +17,6 @@ import com.sendbird.syncmanager.sample.R;
 import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 import com.sendbird.syncmanager.sample.utils.SyncManagerUtils;
 import com.sendbird.syncmanager.sample.view.BaseActivity;
-import com.sendbird.syncmanager.sample.widget.WaitingDialog;
 
 public class LoginActivity extends BaseActivity {
 

@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -261,17 +260,12 @@ public class GroupChatFragment extends Fragment {
             @Override
             public void onReconnectStarted() {
             }
+
             @Override
             public void onReconnectSucceeded() {
                 if (mMessageCollection != null) {
                     if (mLayoutManager.findFirstVisibleItemPosition() <= 0) {
                         mMessageCollection.fetchAllNextMessages(new FetchCompletionHandler() {
-                            @Override
-                            public void onCompleted(boolean hasMore, SendBirdException e) {
-                            }
-                        });
-                    } else {
-                        mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, new FetchCompletionHandler() {
                             @Override
                             public void onCompleted(boolean hasMore, SendBirdException e) {
                             }
@@ -287,6 +281,7 @@ public class GroupChatFragment extends Fragment {
                     }
                 }
             }
+
             @Override
             public void onReconnectFailed() {
             }
@@ -388,7 +383,7 @@ public class GroupChatFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        ((GroupChannelActivity)context).setOnBackPressedListener(new GroupChannelActivity.onBackPressedListener() {
+        ((GroupChannelActivity) context).setOnBackPressedListener(new GroupChannelActivity.onBackPressedListener() {
             @Override
             public boolean onBack() {
                 if (mCurrentState == STATE_EDIT) {
@@ -419,6 +414,7 @@ public class GroupChatFragment extends Fragment {
                     if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
                         mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.PREVIOUS, null);
                     }
+
                 }
             }
         });
@@ -470,7 +466,9 @@ public class GroupChatFragment extends Fragment {
         mChatAdapter.setItemLongClickListener(new GroupChatAdapter.OnItemLongClickListener() {
             @Override
             public void onUserMessageItemLongClick(UserMessage message, int position) {
-                showMessageOptionsDialog(message, position);
+                if (message.getSender().getUserId().equals(PreferenceUtils.getUserId())) {
+                    showMessageOptionsDialog(message, position);
+                }
             }
 
             @Override
@@ -487,19 +485,23 @@ public class GroupChatFragment extends Fragment {
         String[] options;
 
         if (message.getMessageId() == 0) {
-            options = new String[] { getString(R.string.option_delete_message) };
+            options = new String[]{getString(R.string.option_delete_message)};
         } else {
-            options = new String[] { getString(R.string.option_edit_message), getString(R.string.option_delete_message)};
+            options = new String[]{getString(R.string.option_edit_message), getString(R.string.option_delete_message)};
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    setState(STATE_EDIT, message, position);
-                } else if (which == 1) {
+                if (options.length == 1) {
                     deleteMessage(message);
+                } else {
+                    if (which == 0) {
+                        setState(STATE_EDIT, message, position);
+                    } else if (which == 1) {
+                        deleteMessage(message);
+                    }
                 }
             }
         });
@@ -523,7 +525,7 @@ public class GroupChatFragment extends Fragment {
 
                 mUploadFileButton.setVisibility(View.GONE);
                 mMessageSendButton.setText(getString(R.string.action_update_message));
-                String messageString = ((UserMessage)editingMessage).getMessage();
+                String messageString = ((UserMessage) editingMessage).getMessage();
                 if (messageString == null) {
                     messageString = "";
                 }
@@ -713,9 +715,9 @@ public class GroupChatFragment extends Fragment {
             String string;
 
             if (typingUsers.size() == 1) {
-                string = typingUsers.get(0).getNickname() + getString(R.string.user_typing);
+                string = String.format(getString(R.string.user_typing), typingUsers.get(0).getNickname());
             } else if (typingUsers.size() == 2) {
-                string = typingUsers.get(0).getNickname() + " " + typingUsers.get(1).getNickname() + getString(R.string.user_typing);
+                string = String.format(getString(R.string.two_users_typing), typingUsers.get(0).getNickname(), typingUsers.get(1).getNickname());
             } else {
                 string = getString(R.string.users_typing);
             }
@@ -733,16 +735,7 @@ public class GroupChatFragment extends Fragment {
             requestStoragePermissions();
         } else {
             Intent intent = new Intent();
-
-            // Pick images or videos
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                intent.setType("*/*");
-                String[] mimeTypes = {"image/*", "video/*"};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-            } else {
-                intent.setType("image/* video/*");
-            }
-
+            intent.setType("*/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
 
             // Always show the chooser (if there are multiple options available)
@@ -818,7 +811,7 @@ public class GroupChatFragment extends Fragment {
     private void updateActionBarTitle() {
         String title = "";
 
-        if(mChannel != null) {
+        if (mChannel != null) {
             title = TextUtils.getGroupChannelTitle(mChannel);
         }
 
@@ -894,11 +887,11 @@ public class GroupChatFragment extends Fragment {
                     mMessageCollection.handleSendMessageResponse(userMessage, e);
                     mMessageCollection.fetchAllNextMessages(null);
                 }
-                
+
                 if (e != null) {
                     // Error!
                     Log.e(LOG_TAG, e.toString());
-                    Toast.makeText(getActivity(),getString(R.string.send_message_error, e.getCode(), e.getMessage()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.send_message_error, e.getCode(), e.getMessage()), Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -944,20 +937,25 @@ public class GroupChatFragment extends Fragment {
 
         Hashtable<String, Object> info = FileUtils.getFileInfo(getActivity(), uri);
 
-        if (info == null) {
+        if (info == null || info.isEmpty()) {
             Toast.makeText(getActivity(), getString(R.string.wrong_file_info), Toast.LENGTH_LONG).show();
             return;
         }
-
+        final String name;
+        if (info.containsKey("name")) {
+            name = (String) info.get("name");
+        } else {
+            name = "SendBird File";
+        }
         final String path = (String) info.get("path");
         final File file = new File(path);
-        final String name = file.getName();
         final String mime = (String) info.get("mime");
-        final int size = (Integer) info.get("size");
+        final int size = (int) info.get("size");
 
-        if (path.equals("")) {
+        if (path == null || path.equals("")) {
             Toast.makeText(getActivity(), getString(R.string.wrong_file_path), Toast.LENGTH_LONG).show();
         } else {
+
             BaseChannel.SendFileMessageWithProgressHandler progressHandler = new BaseChannel.SendFileMessageWithProgressHandler() {
                 @Override
                 public void onProgress(int bytesSent, int totalBytesSent, int totalBytesToSend) {
@@ -970,23 +968,13 @@ public class GroupChatFragment extends Fragment {
 
                 @Override
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
+                    mMessageCollection.handleSendMessageResponse(fileMessage, e);
+                    mMessageCollection.fetchAllNextMessages(null);
                     if (e != null) {
-                        Toast.makeText(getActivity(), getString(R.string.sendbird_error_with_code, e.getCode(), e.getMessage()), Toast.LENGTH_SHORT).show();
-
-                        // removeSucceededMessages preview message from MessageCollection
-                        if (mMessageCollection != null) {
-                            mMessageCollection.deleteMessage(fileMessage);
+                        Log.d("MyTag", "onSent: " + getActivity());
+                        if (getActivity() != null) {
+                            Toast.makeText(getActivity(), getString(R.string.sendbird_error_with_code, e.getCode(), e.getMessage()), Toast.LENGTH_SHORT).show();
                         }
-
-                        // add failed message to adapter
-                        mChatAdapter.insertFailedMessages(Collections.singletonList((BaseMessage) fileMessage));
-                        return;
-                    }
-
-                    // append sent message.
-                    if (mMessageCollection != null) {
-                        mMessageCollection.appendMessage(fileMessage);
-                        mMessageCollection.fetchAllNextMessages(null);
                     }
                 }
             };
@@ -1120,7 +1108,13 @@ public class GroupChatFragment extends Fragment {
                 public void run() {
                     switch (action) {
                         case INSERT:
-                            mChatAdapter.insertSucceededMessages(messages);
+                            List<BaseMessage> pendingMessages = new ArrayList<>();
+                            for (BaseMessage message : messages) {
+                                if (!mChatAdapter.failedMessageListContains(message)) {
+                                    pendingMessages.add(message);
+                                }
+                            }
+                            mChatAdapter.insertSucceededMessages(pendingMessages);
                             break;
 
                         case REMOVE:

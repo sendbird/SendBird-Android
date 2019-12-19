@@ -92,16 +92,14 @@ public class GroupChannelListFragment extends Fragment {
         setUpRecyclerView();
         setUpChannelListAdapter();
 
+        refresh();
+
         return rootView;
     }
 
     @Override
     public void onResume() {
         Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
-
-        String userId = PreferenceUtils.getUserId();
-
-        refresh();
 
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
@@ -125,14 +123,19 @@ public class GroupChannelListFragment extends Fragment {
     public void onPause() {
         Log.d("LIFECYCLE", "GroupChannelListFragment onPause()");
 
+        SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
+
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
         if (mChannelCollection != null) {
             mChannelCollection.setCollectionHandler(null);
             mChannelCollection.remove();
         }
 
-        SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
-
-        super.onPause();
+        super.onDestroy();
     }
 
     @Override

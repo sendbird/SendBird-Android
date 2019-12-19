@@ -6,6 +6,7 @@ import com.sendbird.android.SendBird;
 import com.sendbird.syncmanager.SendBirdSyncManager;
 import com.sendbird.syncmanager.sample.model.ConnectionEvent;
 import com.sendbird.syncmanager.sample.utils.DialogUtils;
+import com.sendbird.syncmanager.sample.utils.PreferenceUtils;
 import com.sendbird.syncmanager.sample.widget.WaitingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,7 +69,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ConnectionEvent event) {
-        if (!event.isConnected()) {
+        if (!event.isConnected() && PreferenceUtils.getConnected()) {
             DialogUtils.showConnectionRetryDialog(this);
         }
     }
