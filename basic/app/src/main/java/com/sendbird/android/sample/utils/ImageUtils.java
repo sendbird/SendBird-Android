@@ -2,9 +2,9 @@ package com.sendbird.android.sample.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -45,19 +45,18 @@ public class ImageUtils {
     }
 
     public static void displayImageFromUrl(final Context context, final String url,
-                                           final ImageView imageView, Drawable placeholderDrawable) {
-        displayImageFromUrl(context, url, imageView, placeholderDrawable, null);
+                                           final ImageView imageView) {
+        displayImageFromUrl(context, url, imageView, null);
     }
 
     /**
      * Displays an image from a URL in an ImageView.
      */
     public static void displayImageFromUrl(final Context context, final String url,
-                                           final ImageView imageView, Drawable placeholderDrawable, RequestListener listener) {
+                                           final ImageView imageView, RequestListener listener) {
         RequestOptions myOptions = new RequestOptions()
                 .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .placeholder(placeholderDrawable);
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
 
         if (listener != null) {
             Glide.with(context)
@@ -138,11 +137,10 @@ public class ImageUtils {
     /**
      * Displays an image from a URL in an ImageView.
      */
-    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, Drawable placeholderDrawable, RequestListener listener) {
+    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, RequestListener listener) {
         RequestOptions myOptions = new RequestOptions()
                 .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .placeholder(placeholderDrawable);
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
 
         if (listener != null) {
             Glide.with(context)
@@ -163,11 +161,10 @@ public class ImageUtils {
     /**
      * Displays an GIF image from a URL in an ImageView.
      */
-    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, String thumbnailUrl, Drawable placeholderDrawable) {
+    public static void displayGifImageFromUrl(Context context, String url, ImageView imageView, String thumbnailUrl) {
         RequestOptions myOptions = new RequestOptions()
                 .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .placeholder(placeholderDrawable);
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
 
         if (thumbnailUrl != null) {
             Glide.with(context)

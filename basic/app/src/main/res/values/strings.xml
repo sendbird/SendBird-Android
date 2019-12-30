@@ -38,6 +38,11 @@
 
     <string name="member_info"></string>
 
+    <!-- Group Channel -->
+    <string name="user_typing">%s is typing</string>
+    <string name="two_users_typing">%s and %s are typing</string>
+    <string name="users_typing"> Multiple users are typing</string>
+
     <!-- Content descriptions -->
     <string name="open_channel_chat_content_desc_profile">Profile image</string>
 

@@ -7,17 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,6 +25,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -50,6 +50,7 @@ import com.sendbird.android.sample.main.ConnectionManager;
 import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.MediaPlayerActivity;
 import com.sendbird.android.sample.utils.PhotoViewerActivity;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 import com.sendbird.android.sample.utils.TextUtils;
 import com.sendbird.android.sample.utils.UrlPreviewInfo;
 import com.sendbird.android.sample.utils.WebUtils;
@@ -466,7 +467,9 @@ public class GroupChatFragment extends Fragment {
         mChatAdapter.setItemLongClickListener(new GroupChatAdapter.OnItemLongClickListener() {
             @Override
             public void onUserMessageItemLongClick(UserMessage message, int position) {
-                showMessageOptionsDialog(message, position);
+                if (message.getSender().getUserId().equals(PreferenceUtils.getUserId())) {
+                    showMessageOptionsDialog(message, position);
+                }
             }
 
             @Override
@@ -598,11 +601,11 @@ public class GroupChatFragment extends Fragment {
             String string;
 
             if (typingUsers.size() == 1) {
-                string = typingUsers.get(0).getNickname() + " is typing";
+                string = String.format(getString(R.string.user_typing), typingUsers.get(0).getNickname());
             } else if (typingUsers.size() == 2) {
-                string = typingUsers.get(0).getNickname() + " " + typingUsers.get(1).getNickname() + " is typing";
+                string = String.format(getString(R.string.two_users_typing), typingUsers.get(0).getNickname(), typingUsers.get(1).getNickname());
             } else {
-                string = "Multiple users are typing";
+                string = getString(R.string.users_typing);
             }
             mCurrentEventText.setText(string);
         } else {
@@ -619,14 +622,7 @@ public class GroupChatFragment extends Fragment {
         } else {
             Intent intent = new Intent();
 
-            // Pick images or videos
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                intent.setType("*/*");
-                String[] mimeTypes = {"image/*", "video/*"};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-            } else {
-                intent.setType("image/* video/*");
-            }
+            intent.setType("*/*");
 
             intent.setAction(Intent.ACTION_GET_CONTENT);
 
@@ -732,10 +728,12 @@ public class GroupChatFragment extends Fragment {
                         if (e != null) {
                             // Error!
                             Log.e(LOG_TAG, e.toString());
-                            Toast.makeText(
-                                    getActivity(),
-                                    "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
-                                    .show();
+                            if (getActivity() != null) {
+                                Toast.makeText(
+                                        getActivity(),
+                                        "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
+                                        .show();
+                            }
                             mChatAdapter.markMessageFailed(userMessage.getRequestId());
                             return;
                         }
@@ -778,10 +776,12 @@ public class GroupChatFragment extends Fragment {
                 if (e != null) {
                     // Error!
                     Log.e(LOG_TAG, e.toString());
-                    Toast.makeText(
-                            getActivity(),
-                            "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
-                            .show();
+                    if (getActivity() != null) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
+                                .show();
+                    }
                     mChatAdapter.markMessageFailed(userMessage.getRequestId());
                     return;
                 }
@@ -832,18 +832,23 @@ public class GroupChatFragment extends Fragment {
 
         Hashtable<String, Object> info = FileUtils.getFileInfo(getActivity(), uri);
 
-        if (info == null) {
+        if (info == null || info.isEmpty()) {
             Toast.makeText(getActivity(), "Extracting file information failed.", Toast.LENGTH_LONG).show();
             return;
         }
 
+        final String name;
+        if (info.containsKey("name")) {
+            name = (String) info.get("name");
+        } else {
+            name = "SendBird File";
+        }
         final String path = (String) info.get("path");
         final File file = new File(path);
-        final String name = file.getName();
         final String mime = (String) info.get("mime");
         final int size = (Integer) info.get("size");
 
-        if (path.equals("")) {
+        if (path == null || path.equals("")) {
             Toast.makeText(getActivity(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
         } else {
             BaseChannel.SendFileMessageWithProgressHandler progressHandler = new BaseChannel.SendFileMessageWithProgressHandler() {
@@ -851,7 +856,7 @@ public class GroupChatFragment extends Fragment {
                 public void onProgress(int bytesSent, int totalBytesSent, int totalBytesToSend) {
                     FileMessage fileMessage = mFileProgressHandlerMap.get(this);
                     if (fileMessage != null && totalBytesToSend > 0) {
-                        int percent = (totalBytesSent * 100) / totalBytesToSend;
+                        int percent = (int) (((double) totalBytesSent / totalBytesToSend) * 100);
                         mChatAdapter.setFileProgressPercent(fileMessage, percent);
                     }
                 }
@@ -859,7 +864,9 @@ public class GroupChatFragment extends Fragment {
                 @Override
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
                     if (e != null) {
-                        Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null) {
+                            Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                         mChatAdapter.markMessageFailed(fileMessage.getRequestId());
                         return;
                     }

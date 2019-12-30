@@ -1,8 +1,8 @@
 package com.sendbird.android.sample.utils;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -30,7 +30,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         if (type != null && type.toLowerCase().contains("gif")) {
-            ImageUtils.displayGifImageFromUrl(this, url, imageView, null, new RequestListener() {
+            ImageUtils.displayGifImageFromUrl(this, url, imageView, new RequestListener() {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
                     progressBar.setVisibility(View.GONE);
@@ -44,7 +44,7 @@ public class PhotoViewerActivity extends AppCompatActivity {
                 }
             });
         } else {
-            ImageUtils.displayImageFromUrl(this, url, imageView, null, new RequestListener() {
+            ImageUtils.displayImageFromUrl(this, url, imageView, new RequestListener() {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
                     progressBar.setVisibility(View.GONE);

@@ -1,13 +1,14 @@
 package com.sendbird.android.sample.main;
 
-import android.content.Context;
-
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.sample.utils.PreferenceUtils;
 
 public class ConnectionManager {
+    public static boolean isLogin() {
+        return PreferenceUtils.getConnected();
+    }
 
     public static void login(String userId, final SendBird.ConnectHandler handler) {
         SendBird.connect(userId, new SendBird.ConnectHandler() {

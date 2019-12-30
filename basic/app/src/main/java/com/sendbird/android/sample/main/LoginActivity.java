@@ -2,13 +2,11 @@ package com.sendbird.android.sample.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.widget.ContentLoadingProgressBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import androidx.appcompat.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,13 +16,12 @@ import com.sendbird.android.User;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.utils.PreferenceUtils;
 import com.sendbird.android.sample.utils.PushUtils;
+import com.sendbird.android.sample.widget.WaitingDialog;
 
 public class LoginActivity extends AppCompatActivity {
 
     private CoordinatorLayout mLoginLayout;
     private TextInputEditText mUserIdConnectEditText, mUserNicknameEditText;
-    private Button mConnectButton;
-    private ContentLoadingProgressBar mProgressBar;
 
 
     @Override
@@ -33,50 +30,33 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        mLoginLayout = (CoordinatorLayout) findViewById(R.id.layout_login);
-
-        mUserIdConnectEditText = (TextInputEditText) findViewById(R.id.edittext_login_user_id);
-        mUserNicknameEditText = (TextInputEditText) findViewById(R.id.edittext_login_user_nickname);
+        mLoginLayout = findViewById(R.id.layout_login);
+        mUserIdConnectEditText = findViewById(R.id.edittext_login_user_id);
+        mUserNicknameEditText = findViewById(R.id.edittext_login_user_nickname);
 
         mUserIdConnectEditText.setText(PreferenceUtils.getUserId());
         mUserNicknameEditText.setText(PreferenceUtils.getNickname());
 
-        mConnectButton = (Button) findViewById(R.id.button_login_connect);
-        mConnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String userId = mUserIdConnectEditText.getText().toString();
-                // Remove all spaces from userID
-                userId = userId.replaceAll("\\s", "");
+        findViewById(R.id.button_login_connect).setOnClickListener(v -> {
+            String userId = mUserIdConnectEditText.getText().toString();
+            // Remove all spaces from userID
+            userId = userId.replaceAll("\\s", "");
+            String userNickname = mUserNicknameEditText.getText().toString();
 
-                String userNickname = mUserNicknameEditText.getText().toString();
+            PreferenceUtils.setUserId(userId);
+            PreferenceUtils.setNickname(userNickname);
 
-                PreferenceUtils.setUserId(userId);
-                PreferenceUtils.setNickname(userNickname);
-
-                connectToSendBird(userId, userNickname);
-
-            }
+            connectToSendBird(userId, userNickname);
         });
 
         mUserIdConnectEditText.setSelectAllOnFocus(true);
         mUserNicknameEditText.setSelectAllOnFocus(true);
 
-        // A loading indicator
-        mProgressBar = (ContentLoadingProgressBar) findViewById(R.id.progress_bar_login);
-
         // Display current SendBird and app versions in a TextView
         String sdkVersion = String.format(getResources().getString(R.string.all_app_version),
                 BaseApplication.VERSION, SendBird.getSDKVersion());
-        ((TextView) findViewById(R.id.text_login_versions)).setText(sdkVersion);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(PreferenceUtils.getConnected()) {
-            connectToSendBird(PreferenceUtils.getUserId(), PreferenceUtils.getNickname());
-        }
+        ((TextView) findViewById(R.id.text_login_versions)).setText(sdkVersion);
     }
 
     /**
@@ -85,10 +65,11 @@ public class LoginActivity extends AppCompatActivity {
      * @param userNickname  The user's nickname, which will be displayed in chats.
      */
     private void connectToSendBird(final String userId, final String userNickname) {
+        if (TextUtils.isEmpty(userId) || TextUtils.isEmpty(userNickname)) {
+            return;
+        }
         // Show the loading indicator
         showProgressBar(true);
-        mConnectButton.setEnabled(false);
-
         ConnectionManager.login(userId, new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
@@ -104,8 +85,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     // Show login failure snackbar
                     showSnackbar("Login to SendBird failed");
-                    mConnectButton.setEnabled(true);
-                    PreferenceUtils.setConnected(false);
                     return;
                 }
 
@@ -127,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
      * Update the user's push token.
      */
     private void updateCurrentUserPushToken() {
-        PushUtils.registerPushTokenForCurrentUser(LoginActivity.this, null);
+        PushUtils.registerPushTokenForCurrentUser();
     }
 
     /**
@@ -166,9 +145,9 @@ public class LoginActivity extends AppCompatActivity {
     // Shows or hides the ProgressBar
     private void showProgressBar(boolean show) {
         if (show) {
-            mProgressBar.show();
+            WaitingDialog.show(this);
         } else {
-            mProgressBar.hide();
+            WaitingDialog.dismiss();
         }
     }
 }

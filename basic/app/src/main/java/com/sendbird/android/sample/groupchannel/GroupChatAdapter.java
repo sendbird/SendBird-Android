@@ -2,7 +2,7 @@ package com.sendbird.android.sample.groupchannel;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1034,15 +1034,15 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // If thumbnails exist, get smallest (first) thumbnail and display it in the message
                 if (thumbnails.size() > 0) {
                     if (message.getType().toLowerCase().contains("gif")) {
-                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, thumbnails.get(0).getUrl(), fileThumbnailImage.getDrawable());
+                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, thumbnails.get(0).getUrl());
                     } else {
-                        ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                        ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage);
                     }
                 } else {
                     if (message.getType().toLowerCase().contains("gif")) {
-                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, (String) null, fileThumbnailImage.getDrawable());
+                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, (String) null);
                     } else {
-                        ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                        ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnailImage);
                     }
                 }
             }
@@ -1114,15 +1114,15 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // If thumbnails exist, get smallest (first) thumbnail and display it in the message
             if (thumbnails.size() > 0) {
                 if (message.getType().toLowerCase().contains("gif")) {
-                    ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, thumbnails.get(0).getUrl(), fileThumbnailImage.getDrawable());
+                    ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, thumbnails.get(0).getUrl());
                 } else {
-                    ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                    ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage);
                 }
             } else {
                 if (message.getType().toLowerCase().contains("gif")) {
-                    ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, (String) null, fileThumbnailImage.getDrawable());
+                    ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnailImage, (String) null);
                 } else {
-                    ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                    ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnailImage);
                 }
             }
 
@@ -1203,7 +1203,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 // If thumbnails exist, get smallest (first) thumbnail and display it in the message
                 if (thumbnails.size() > 0) {
-                    ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                    ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage);
                 }
             }
 
@@ -1273,7 +1273,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             // If thumbnails exist, get smallest (first) thumbnail and display it in the message
             if (thumbnails.size() > 0) {
-                ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage, fileThumbnailImage.getDrawable());
+                ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnailImage);
             }
 
             if (listener != null) {

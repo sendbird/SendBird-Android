@@ -8,15 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -33,6 +24,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -47,6 +48,7 @@ import com.sendbird.android.sample.main.ConnectionManager;
 import com.sendbird.android.sample.utils.FileUtils;
 import com.sendbird.android.sample.utils.MediaPlayerActivity;
 import com.sendbird.android.sample.utils.PhotoViewerActivity;
+import com.sendbird.android.sample.utils.PreferenceUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -337,8 +339,20 @@ public class OpenChatFragment extends Fragment {
 
         mChatAdapter.setOnItemLongClickListener(new OpenChatAdapter.OnItemLongClickListener() {
             @Override
-            public void onBaseMessageLongClick(final BaseMessage message, int position) {
-                showMessageOptionsDialog(message, position);
+            public void onUserMessageItemLongClick(UserMessage message, int position) {
+                if (message.getSender().getUserId().equals(PreferenceUtils.getUserId())) {
+                    showMessageOptionsDialog(message, position);
+                }
+            }
+
+            @Override
+            public void onFileMessageItemLongClick(FileMessage message) {
+
+            }
+
+            @Override
+            public void onAdminMessageItemLongClick(AdminMessage message) {
+
             }
         });
     }
@@ -595,10 +609,12 @@ public class OpenChatFragment extends Fragment {
                 if (e != null) {
                     // Error!
                     Log.e(LOG_TAG, e.toString());
-                    Toast.makeText(
-                            getActivity(),
-                            "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
-                            .show();
+                    if (getActivity() != null) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
+                                .show();
+                    }
                     return;
                 }
 
@@ -616,13 +632,24 @@ public class OpenChatFragment extends Fragment {
      */
     private void sendImageWithThumbnail(Uri uri, List<FileMessage.ThumbnailSize> thumbnailSizes) {
         Hashtable<String, Object> info = FileUtils.getFileInfo(getActivity(), uri);
+        
+        if (info == null || info.isEmpty()) {
+            Toast.makeText(getActivity(), "Extracting file information failed.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        final String name;
+        if (info.containsKey("name")) {
+            name = (String) info.get("name");
+        } else {
+            name = "SendBird File";
+        }
         final String path = (String) info.get("path");
         final File file = new File(path);
-        final String name = file.getName();
         final String mime = (String) info.get("mime");
         final int size = (Integer) info.get("size");
 
-        if (path.equals("")) {
+        if (path == null || path.equals("")) {
             Toast.makeText(getActivity(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
         } else {
             // Send image with thumbnails in the specified dimensions
@@ -630,7 +657,9 @@ public class OpenChatFragment extends Fragment {
                 @Override
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
                     if (e != null) {
-                        Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null) {
+                            Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                         return;
                     }
 

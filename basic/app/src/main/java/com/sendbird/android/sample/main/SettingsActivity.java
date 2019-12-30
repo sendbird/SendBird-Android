@@ -13,15 +13,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -231,7 +231,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
                 if (isChecked) {
-                    PushUtils.registerPushTokenForCurrentUser(SettingsActivity.this, new SendBird.RegisterPushTokenWithStatusHandler() {
+                    PushUtils.registerPushTokenForCurrentUser(new SendBird.RegisterPushTokenWithStatusHandler() {
                         @Override
                         public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
                             if (e != null) {
@@ -245,7 +245,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    PushUtils.unregisterPushTokenForCurrentUser(SettingsActivity.this, new SendBird.UnregisterPushTokenHandler() {
+                    PushUtils.unregisterPushTokenForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
                         @Override
                         public void onUnregistered(SendBirdException e) {
                             if (e != null) {

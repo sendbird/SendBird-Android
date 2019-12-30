@@ -2,8 +2,8 @@ package com.sendbird.android.sample.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +56,24 @@ public class MainActivity extends AppCompatActivity {
         String sdkVersion = String.format(getResources().getString(R.string.all_app_version),
                 BaseApplication.VERSION, SendBird.getSDKVersion());
         ((TextView) findViewById(R.id.text_main_versions)).setText(sdkVersion);
+
+        checkExtra();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        checkExtra();
+    }
+
+    private void checkExtra() {
+        if (getIntent().hasExtra("groupChannelUrl")) {
+            String extraChannelUrl = getIntent().getStringExtra("groupChannelUrl");
+            Intent mainIntent = new Intent(MainActivity.this, GroupChannelActivity.class);
+            mainIntent.putExtra("groupChannelUrl", extraChannelUrl);
+            startActivity(mainIntent);
+        }
     }
 
     /**

@@ -2,9 +2,9 @@ package com.sendbird.android.sample.openchannel;
 
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +53,11 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     interface OnItemLongClickListener {
-        void onBaseMessageLongClick(BaseMessage message, int position);
+        void onUserMessageItemLongClick(UserMessage message, int position);
+
+        void onFileMessageItemLongClick(FileMessage message);
+
+        void onAdminMessageItemLongClick(AdminMessage message);
     }
 
 
@@ -251,7 +255,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        longClickListener.onBaseMessageLongClick(message, postion);
+                        longClickListener.onUserMessageItemLongClick(message, postion);
                         return true;
                     }
                 });
@@ -341,15 +345,15 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // If thumbnails exist, get smallest (first) thumbnail and display it in the message
                 if (thumbnails.size() > 0) {
                     if (message.getType().toLowerCase().contains("gif")) {
-                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnail, thumbnails.get(0).getUrl(), fileThumbnail.getDrawable());
+                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnail, thumbnails.get(0).getUrl());
                     } else {
-                        ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnail, fileThumbnail.getDrawable());
+                        ImageUtils.displayImageFromUrl(context, thumbnails.get(0).getUrl(), fileThumbnail);
                     }
                 } else {
                     if (message.getType().toLowerCase().contains("gif")) {
-                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnail, (String) null, fileThumbnail.getDrawable());
+                        ImageUtils.displayGifImageFromUrl(context, message.getUrl(), fileThumbnail, (String) null);
                     } else {
-                        ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnail, fileThumbnail.getDrawable());
+                        ImageUtils.displayImageFromUrl(context, message.getUrl(), fileThumbnail);
                     }
                 }
 
@@ -382,7 +386,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        longClickListener.onBaseMessageLongClick(message, position);
+                        longClickListener.onFileMessageItemLongClick(message);
                         return true;
                     }
                 });
