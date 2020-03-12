@@ -33,22 +33,21 @@
             android:layout_width="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Anna Bluiasdfasdfasdfasdfasdfasdfasdfasdfafm" />
+            android:text="" />
 
         <TextView
             android:id="@+id/text_group_channel_list_member_count"
             android:layout_width="wrap_content"
-            android:minWidth="16dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:background="@drawable/group_channel_list_member_background"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
             android:gravity="center"
             android:maxLines="1"
-            android:text="3" />
+            android:minWidth="16dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -75,8 +74,7 @@
             android:textSize="14sp"
             android:textColor="#8e8e8e"
             android:ellipsize="end"
-            android:maxLines="2"
-            android:text="This sounded nonsense to Alice, so she said nothing, but set off at her being blah blah" />
+            android:maxLines="2" />
 
     </LinearLayout>
 
@@ -89,8 +87,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/container_group_channel_list_topic"
-        android:maxLines="1"
-        android:text="9999/99/99" />
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/text_group_channel_list_unread_count"
@@ -103,8 +100,7 @@
         android:textColor="@color/groupChannelUnreadCountText"
         android:background="@drawable/group_channel_list_unread_background"
         android:gravity="center"
-        android:maxLines="1"
-        android:text="9+" />
+        android:maxLines="1"/>
 
 
 

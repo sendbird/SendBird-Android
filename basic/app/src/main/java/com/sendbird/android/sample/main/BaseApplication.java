@@ -4,7 +4,9 @@ package com.sendbird.android.sample.main;
 import android.app.Application;
 
 import com.sendbird.android.SendBird;
+import com.sendbird.android.sample.fcm.MyFirebaseMessagingService;
 import com.sendbird.android.sample.utils.PreferenceUtils;
+import com.sendbird.android.sample.utils.PushUtils;
 
 public class BaseApplication extends Application {
 
@@ -17,5 +19,7 @@ public class BaseApplication extends Application {
         PreferenceUtils.init(getApplicationContext());
 
         SendBird.init(APP_ID, getApplicationContext());
+
+        PushUtils.registerPushHandler(new MyFirebaseMessagingService());
     }
 }

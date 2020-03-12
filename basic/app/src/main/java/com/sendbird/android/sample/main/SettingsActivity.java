@@ -13,15 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -37,6 +28,16 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.FileProvider;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.sample.R;
@@ -230,35 +231,14 @@ public class SettingsActivity extends AppCompatActivity {
         mSwitchNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                if (isChecked) {
-                    PushUtils.registerPushTokenForCurrentUser(new SendBird.RegisterPushTokenWithStatusHandler() {
-                        @Override
-                        public void onRegistered(SendBird.PushTokenRegistrationStatus pushTokenRegistrationStatus, SendBirdException e) {
-                            if (e != null) {
-                                mSwitchNotifications.setChecked(!isChecked);
-                                checkNotifications(!isChecked);
-                                return;
-                            }
-
-                            PreferenceUtils.setNotifications(isChecked);
-                            checkNotifications(isChecked);
-                        }
-                    });
-                } else {
-                    PushUtils.unregisterPushTokenForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
-                        @Override
-                        public void onUnregistered(SendBirdException e) {
-                            if (e != null) {
-                                mSwitchNotifications.setChecked(!isChecked);
-                                checkNotifications(!isChecked);
-                                return;
-                            }
-
-                            PreferenceUtils.setNotifications(isChecked);
-                            checkNotifications(isChecked);
-                        }
-                    });
-                }
+                PushUtils.setPushNotification(isChecked, new SendBird.SetPushTriggerOptionHandler() {
+                    @Override
+                    public void onResult(SendBirdException e) {
+                        mSwitchNotifications.setChecked((e == null) == isChecked);
+                        PreferenceUtils.setNotifications(e == null);
+                        checkNotifications(isChecked);
+                    }
+                });
             }
         });
 

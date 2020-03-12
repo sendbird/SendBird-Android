@@ -2,19 +2,22 @@ package com.sendbird.android.sample.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
+import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.android.sample.R;
 import com.sendbird.android.sample.groupchannel.GroupChannelActivity;
 import com.sendbird.android.sample.openchannel.OpenChannelActivity;
 import com.sendbird.android.sample.utils.PreferenceUtils;
+import com.sendbird.android.sample.utils.PushUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,18 +84,9 @@ public class MainActivity extends AppCompatActivity {
      * then disconnects from SendBird.
      */
     private void disconnect() {
-        SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
+        PushUtils.unregisterPushHandler(new SendBirdPushHelper.OnPushRequestCompleteListener() {
             @Override
-            public void onUnregistered(SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    e.printStackTrace();
-
-                    // Don't return because we still need to disconnect.
-                } else {
-//                    Toast.makeText(MainActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT).show();
-                }
-
+            public void onComplete(boolean isActive, String token) {
                 ConnectionManager.logout(new SendBird.DisconnectHandler() {
                     @Override
                     public void onDisconnected() {
@@ -102,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+            }
+
+            @Override
+            public void onError(SendBirdException e) {
             }
         });
     }

@@ -10,7 +10,9 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.fcm.MyFirebaseMessagingService;
 import com.sendbird.android.sample.utils.PreferenceUtils;
+import com.sendbird.android.sample.utils.PushUtils;
 
 public class SplashActivity extends AppCompatActivity {
 

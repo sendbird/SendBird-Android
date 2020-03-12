@@ -1,29 +1,21 @@
 package com.sendbird.android.sample.utils;
 
-import android.util.Log;
-
 import com.sendbird.android.SendBird;
-import com.sendbird.android.sample.fcm.MyFirebaseMessagingService;
+import com.sendbird.android.SendBirdPushHandler;
+import com.sendbird.android.SendBirdPushHelper;
 
 public class PushUtils {
 
-    public static void registerPushTokenForCurrentUser() {
-        registerPushTokenForCurrentUser(null);
+    public static void registerPushHandler(SendBirdPushHandler handler) {
+        SendBirdPushHelper.registerPushHandler(handler);
     }
 
-    public static void registerPushTokenForCurrentUser(SendBird.RegisterPushTokenWithStatusHandler handler) {
-        MyFirebaseMessagingService.getPushToken(pushToken -> {
-            Log.d("Token", "++ pushToken : "+ pushToken);
-            SendBird.registerPushTokenForCurrentUser(pushToken, handler);
-        });
+    public static void unregisterPushHandler(SendBirdPushHelper.OnPushRequestCompleteListener listener) {
+        SendBirdPushHelper.unregisterPushHandler(listener);
     }
 
-    public static void unregisterPushTokenForCurrentUser(SendBird.UnregisterPushTokenHandler handler) {
-        MyFirebaseMessagingService.getPushToken(pushToken -> SendBird.unregisterPushTokenForCurrentUser(pushToken, handler));
+    public static void setPushNotification(boolean enable, SendBird.SetPushTriggerOptionHandler handler) {
+        SendBird.PushTriggerOption option = enable ? SendBird.PushTriggerOption.ALL : SendBird.PushTriggerOption.OFF;
+        SendBird.setPushTriggerOption(option, handler);
     }
-
-    public static void unregisterPushTokenAllForCurrentUser(SendBird.UnregisterPushTokenHandler handler) {
-        SendBird.unregisterPushTokenAllForCurrentUser(handler);
-    }
-
 }

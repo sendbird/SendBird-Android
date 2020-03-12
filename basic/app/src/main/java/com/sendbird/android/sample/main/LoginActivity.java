@@ -2,18 +2,20 @@ package com.sendbird.android.sample.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.sample.R;
+import com.sendbird.android.sample.fcm.MyFirebaseMessagingService;
 import com.sendbird.android.sample.utils.PreferenceUtils;
 import com.sendbird.android.sample.utils.PushUtils;
 import com.sendbird.android.sample.widget.WaitingDialog;
@@ -92,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Update the user's nickname
                 updateCurrentUserInfo(userNickname);
-                updateCurrentUserPushToken();
+                PushUtils.registerPushHandler(new MyFirebaseMessagingService());
 
                 // Proceed to MainActivity
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -100,13 +102,6 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    /**
-     * Update the user's push token.
-     */
-    private void updateCurrentUserPushToken() {
-        PushUtils.registerPushTokenForCurrentUser();
     }
 
     /**

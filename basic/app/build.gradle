@@ -27,12 +27,12 @@ android {
 }
 
 repositories {
-    maven { url "https://raw.githubusercontent.com/sendbird/SendBird-SDK-Android/master/" }
+    maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
     google()
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
     // Required for local unit tests (JUnit 4 framework)
     testImplementation 'junit:junit:4.12'
@@ -41,7 +41,7 @@ dependencies {
     })
 
     // SendBird
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.121'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.122'
 
     // Android support libraries
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
