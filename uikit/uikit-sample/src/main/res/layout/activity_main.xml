@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vgRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_100"
+    android:orientation="vertical"
+    tools:context=".activities.MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="56dp"
+                android:background="@drawable/logo_sendbird" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/text_title_login_activity"
+                android:textColor="@color/onlight_01"
+                android:textSize="24sp" />
+
+            <LinearLayout
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvLightTheme"
+                    android:textSize="16sp"
+                    android:textColor="@drawable/selector_enable_text_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_theme_light"
+                    />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/scTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    app:thumbTint="@color/primary_300"
+                    app:trackTint="@color/primary_100" />
+
+                <TextView
+                    android:id="@+id/tvDarkTheme"
+                    android:textSize="16sp"
+                    android:enabled="false"
+                    android:textColor="@drawable/selector_enable_text_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_theme_dark"
+                    />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btStartChat"
+                android:layout_marginTop="48dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:textColor="@color/ondark_01"
+                android:lineSpacingExtra="2sp"
+                android:background="@drawable/selector_button_primary_300"
+                android:text="@string/text_start_chat"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btSignOut"
+                android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:textColor="@color/primary_300"
+                android:lineSpacingExtra="2sp"
+                android:background="@drawable/selector_button_stroke_primary_300"
+                android:text="@string/text_sign_out"/>
+
+            <TextView
+                android:id="@+id/tvVersionInfo"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:gravity="center|bottom"
+                android:textColor="@color/onlight_02"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>
