@@ -13,51 +13,63 @@
     <application
         android:name="com.sendbird.syncmanager.sample.main.BaseApplication"
         android:allowBackup="false"
-        android:icon="@mipmap/sendbird_ic_launcher"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:usesCleartextTraffic="true"
 
         tools:replace="android:allowBackup"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".main.SplashActivity">
+        <activity android:name=".main.SplashActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name="com.sendbird.syncmanager.sample.main.LoginActivity"
-            android:label="@string/login_connect">
+            android:label="@string/login_connect"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name="com.sendbird.syncmanager.sample.main.MainActivity"
             android:launchMode="singleTask"
             android:label="@string/select_channel_type"/>
         <activity
             android:name="com.sendbird.syncmanager.sample.main.SettingsActivity"
-            android:label="@string/settings" />
+            android:label="@string/settings"
+            android:launchMode="singleTop"/>
         <activity
             android:name="com.sendbird.syncmanager.sample.main.BlockedMembersListActivity"
-            android:label="@string/blocked_members_list" />
+            android:label="@string/blocked_members_list"
+            android:launchMode="singleTop"/>
 
         <activity android:name="com.sendbird.syncmanager.sample.utils.PhotoViewerActivity" />
         <activity
             android:name="com.sendbird.syncmanager.sample.utils.MediaPlayerActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTop"/>
         <activity
             android:name="com.sendbird.syncmanager.sample.groupchannel.InviteMemberActivity"
-            android:label="@string/invite_member" />
+            android:label="@string/invite_member"
+            android:launchMode="singleTop"/>
         <activity
             android:name="com.sendbird.syncmanager.sample.groupchannel.MemberListActivity"
-            android:label="@string/member_list" />
+            android:label="@string/member_list"
+            android:launchMode="singleTop"/>
         <activity
             android:name="com.sendbird.syncmanager.sample.groupchannel.MemberInfoActivity"
-            android:label="@string/member_info" />
+            android:label="@string/member_info"
+            android:launchMode="singleTop"/>
         <activity
             android:name="com.sendbird.syncmanager.sample.groupchannel.CreateGroupChannelActivity"
-            android:label="@string/create_group_channel" />
+            android:label="@string/create_group_channel"
+            android:launchMode="singleTop"/>
 
         <activity android:name="com.sendbird.syncmanager.sample.groupchannel.GroupChannelActivity"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop"/>
 
         <service android:name="com.sendbird.syncmanager.sample.fcm.MyFirebaseMessagingService">
             <intent-filter>

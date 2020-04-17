@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/color_white"
@@ -8,26 +9,12 @@
     tools:context=".main.SplashActivity">
 
     <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="127dp"
-        android:layout_height="127dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@mipmap/sendbird_ic_launcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/logo_sendbird_full"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
-
-    <TextView
-        app:layout_constraintTop_toBottomOf="@id/ivLogo"
-        android:layout_marginTop="20dp"
-        android:textSize="45sp"
-        android:text="SendBird"
-        android:textStyle="bold"
-        android:textColor="@color/colorPrimary"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout >

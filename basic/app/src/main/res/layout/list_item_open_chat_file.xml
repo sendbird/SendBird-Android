@@ -81,7 +81,7 @@
             android:id="@+id/image_open_chat_file_thumbnail"
             android:layout_width="68dp"
             android:layout_height="68dp"
-            android:src="@drawable/login_logo"/>
+            android:src="@drawable/logo_sendbird"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

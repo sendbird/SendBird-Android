@@ -27,16 +27,25 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_gravity="center"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         android:focusable="true"
         android:focusableInTouchMode="true">
 
         <ImageView
-            android:id="@+id/image_login_logo"
-            android:layout_width="127dp"
-            android:layout_height="127dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/logo_square"/>
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="56dp"
+            android:background="@drawable/logo_sendbird" />
+
+        <TextView
+            android:layout_marginTop="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/color_black"
+            android:text="@string/app_name" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

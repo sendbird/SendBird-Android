@@ -39,7 +39,7 @@ public class SyncManagerUtils {
                 return i;
             }
 
-            if (compareTo(targetChannel, c, order) < 0) {
+            if (GroupChannel.compareTo(targetChannel, c, order) < 0) {
                 return i;
             }
         }
@@ -59,46 +59,6 @@ public class SyncManagerUtils {
         }
 
         return -1;
-    }
-
-    /**
-     *  If returned value is negative, it means that index of c1 is less than c2's
-     *  If returned value is zero, it means that index of c1 and c2 is same.
-     *  If returned value is positive, it means that index of c1 is larger than c2's
-     */
-    public static int compareTo(GroupChannel c1, GroupChannel c2, GroupChannelListQuery.Order order) {
-        switch (order) {
-            case CHRONOLOGICAL:
-                if (c1.getCreatedAt() > c2.getCreatedAt()) {
-                    return -1;
-                } else if (c1.getCreatedAt() < c2.getCreatedAt()) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            case LATEST_LAST_MESSAGE:
-                BaseMessage m1 = c1.getLastMessage();
-                BaseMessage m2 = c2.getLastMessage();
-
-                long createdAt1 = m1 != null ? m1.getCreatedAt() : c1.getCreatedAt();
-                long createdAt2 = m2 != null ? m2.getCreatedAt() : c2.getCreatedAt();
-
-                if (createdAt1 > createdAt2) {
-                    return -1;
-                } else if (createdAt1 < createdAt2) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            case CHANNEL_NAME_ALPHABETICAL:
-                return c1.getName().compareTo(c2.getName());
-
-            case METADATA_VALUE_ALPHABETICAL:
-                // TODO
-                break;
-        }
-
-        return 0;
     }
 
     /**
