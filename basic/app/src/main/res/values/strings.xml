@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SendBird Sample</string>
+    <string name="app_name">Sendbird Sample</string>
 
     <!-- all -->
     <string name="all_app_version">Sample UI v%1$s / SDK v%2$s</string>

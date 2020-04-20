@@ -945,7 +945,7 @@ public class GroupChatFragment extends Fragment {
         if (info.containsKey("name")) {
             name = (String) info.get("name");
         } else {
-            name = "SendBird File";
+            name = "Sendbird File";
         }
         final String path = (String) info.get("path");
         final File file = new File(path);
@@ -955,7 +955,6 @@ public class GroupChatFragment extends Fragment {
         if (path == null || path.equals("")) {
             Toast.makeText(getActivity(), getString(R.string.wrong_file_path), Toast.LENGTH_LONG).show();
         } else {
-
             BaseChannel.SendFileMessageWithProgressHandler progressHandler = new BaseChannel.SendFileMessageWithProgressHandler() {
                 @Override
                 public void onProgress(int bytesSent, int totalBytesSent, int totalBytesToSend) {

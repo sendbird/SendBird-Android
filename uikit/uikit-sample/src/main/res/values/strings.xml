@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">SendBirdUIKitSample</string>
-    <string name="text_title_login_activity">SendBird UIKit Sample</string>
+    <string name="app_name">SendbirdUIKitSample</string>
+    <string name="text_title_login_activity">Sendbird UIKit Sample</string>
 
     <string name="text_version_info">UI Kit v%1$s &#160;&#160;&#160;&#160; SDK v%2$s</string>
     <string name="text_theme_light">Light theme</string>

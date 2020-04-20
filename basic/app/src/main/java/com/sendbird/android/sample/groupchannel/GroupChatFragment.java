@@ -841,7 +841,7 @@ public class GroupChatFragment extends Fragment {
         if (info.containsKey("name")) {
             name = (String) info.get("name");
         } else {
-            name = "SendBird File";
+            name = "Sendbird File";
         }
         final String path = (String) info.get("path");
         final File file = new File(path);

@@ -21,7 +21,7 @@
     <string name="login_user_nickname">Nickname</string>
     <string name="login_connect">Connect</string>
     <string name="login_disconnect">Disconnect</string>
-    <string name="login_failed">Login to SendBird failed</string>
+    <string name="login_failed">Login to Sendbird failed</string>
 
     <!-- Group Channel List -->
     <string name="typing_status">Someone is Typing</string>

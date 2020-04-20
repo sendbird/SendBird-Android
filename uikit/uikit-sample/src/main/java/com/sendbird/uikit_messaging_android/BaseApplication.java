@@ -12,7 +12,7 @@ import com.sendbird.uikit_messaging_android.utils.PushUtils;
 
 public class BaseApplication extends Application {
 
-    private static final String APP_ID = "2D7B4CDB-932F-4082-9B09-A1153792DC8D"; // Tokyo
+    private static final String APP_ID = "2D7B4CDB-932F-4082-9B09-A1153792DC8D";
 
     @Override
     public void onCreate() {

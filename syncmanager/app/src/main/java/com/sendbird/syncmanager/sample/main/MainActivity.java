@@ -105,7 +105,7 @@ public class MainActivity extends BaseActivity {
 
     /**
      * Unregisters all push tokens for the current user so that they do not receive any notifications,
-     * then disconnects from SendBird.
+     * then disconnects from Sendbird.
      */
     private void disconnect() {
         SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {

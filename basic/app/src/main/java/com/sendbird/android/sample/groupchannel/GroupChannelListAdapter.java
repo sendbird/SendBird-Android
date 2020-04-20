@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Displays a list of Group Channels within a SendBird application.
+ * Displays a list of Group Channels within a Sendbird application.
  */
 class GroupChannelListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 

@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             PushUtils.unregisterPushHandler(new SendBirdPushHelper.OnPushRequestCompleteListener() {
                 @Override
                 public void onComplete(boolean isActive, String token) {
-                    SendBird.disconnect(() -> {
+                    SendBirdUIKit.disconnect(() -> {
                         WaitingDialog.dismiss();
                         PreferenceUtils.clearAll();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
