@@ -137,7 +137,7 @@ public class MyFirebaseMessagingService extends SendBirdPushHandler {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.img_notification)
                 .setColor(Color.parseColor("#7469C4"))  // small icon background color
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.img_notification_large))
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_sendbird))
                 .setContentTitle(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
