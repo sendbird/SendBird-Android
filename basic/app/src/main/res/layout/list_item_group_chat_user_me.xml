@@ -158,16 +158,11 @@
         android:layout_marginBottom="4dp"
         />
 
-    <TextView
-        android:id="@+id/text_group_chat_read_receipt"
-        android:textSize="10dp"
-        android:text="2"
-        android:textColor="@color/groupChatReadReceiptMe"
-        android:textStyle="bold"
-        android:layout_above="@id/text_group_chat_time"
-        android:layout_alignRight="@id/text_group_chat_time"
+    <com.sendbird.android.sample.widget.MessageStatusView
+        android:id="@+id/message_status_group_chat"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="wrap_content"
+        android:layout_above="@id/text_group_chat_time"
+        android:layout_alignRight="@id/text_group_chat_time"/>
 
 </RelativeLayout>

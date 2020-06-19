@@ -33,6 +33,7 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.RemoteMessage;
+import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdPushHandler;
 import com.sendbird.android.SendBirdPushHelper;
@@ -104,6 +105,7 @@ public class MyFirebaseMessagingService extends SendBirdPushHandler {
                 JSONObject channel = (JSONObject) sendBird.get("channel");
                 channelUrl = (String) channel.get("channel_url");
 
+                SendBird.markAsDelivered(channelUrl);
                 // Also if you intend on generating your own notifications as a result of a received FCM
                 // message, here is where that should be initiated. See sendNotification method below.
                 sendNotification(context, remoteMessage.getData().get("message"), channelUrl);

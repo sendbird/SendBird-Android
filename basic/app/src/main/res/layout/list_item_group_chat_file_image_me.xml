@@ -59,29 +59,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/text_group_chat_read_receipt"
-        android:textSize="10dp"
-        android:text="2"
-        android:textColor="@color/groupChatReadReceiptMe"
-        android:textStyle="bold"
-        android:layout_above="@id/text_group_chat_time"
-        android:layout_alignRight="@id/text_group_chat_time"
+    <com.sendbird.android.sample.widget.MessageStatusView
+        android:id="@+id/message_status_group_chat"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.dinuscxj.progressbar.CircleProgressBar
-        android:id="@+id/circle_progress"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_above="@id/text_group_chat_time"
-        android:layout_alignRight="@id/text_group_chat_time"
-        android:visibility="gone"
-        app:draw_progress_text="false"
-        app:progress_stroke_width="3.5dp"
-        app:progress_start_color="#875eff"
-        app:progress_end_color="#875eff"
-        app:progress_background_color="#c1c1c1"
-        app:progress_stroke_cap="butt"/>
+        android:layout_alignRight="@id/text_group_chat_time"/>
 
 </RelativeLayout>

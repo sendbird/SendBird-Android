@@ -124,6 +124,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        SendBird.markAsDelivered(channelUrl);
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
         sendNotification(this, remoteMessage.getData().get("message"), channelUrl);

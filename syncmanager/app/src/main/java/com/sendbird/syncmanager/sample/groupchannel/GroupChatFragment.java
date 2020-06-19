@@ -68,7 +68,6 @@ import org.json.JSONException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -89,7 +88,6 @@ public class GroupChatFragment extends Fragment {
     static final String EXTRA_CHANNEL = "EXTRA_CHANNEL";
 
     private InputMethodManager mIMM;
-    private HashMap<BaseChannel.SendFileMessageWithProgressHandler, FileMessage> mFileProgressHandlerMap;
 
     private RelativeLayout mRootLayout;
     private RecyclerView mRecyclerView;
@@ -131,7 +129,6 @@ public class GroupChatFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mIMM = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        mFileProgressHandlerMap = new HashMap<>();
 
         if (savedInstanceState != null) {
             mChannelUrl = savedInstanceState.getString(STATE_CHANNEL_URL);
@@ -306,6 +303,13 @@ public class GroupChatFragment extends Fragment {
                     displayTyping(typingUsers);
                 }
             }
+
+            @Override
+            public void onDeliveryReceiptUpdated(GroupChannel channel) {
+                if (channel.getUrl().equals(mChannelUrl)) {
+                    mChatAdapter.notifyDataSetChanged();
+                }
+            }
         });
     }
 
@@ -406,7 +410,7 @@ public class GroupChatFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (mLayoutManager.findFirstVisibleItemPosition() <= 0) {
+                    if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
                         mMessageCollection.fetchSucceededMessages(MessageCollection.Direction.NEXT, null);
                         mNewMessageText.setVisibility(View.GONE);
                     }
@@ -955,16 +959,7 @@ public class GroupChatFragment extends Fragment {
         if (path == null || path.equals("")) {
             Toast.makeText(getActivity(), getString(R.string.wrong_file_path), Toast.LENGTH_LONG).show();
         } else {
-            BaseChannel.SendFileMessageWithProgressHandler progressHandler = new BaseChannel.SendFileMessageWithProgressHandler() {
-                @Override
-                public void onProgress(int bytesSent, int totalBytesSent, int totalBytesToSend) {
-                    FileMessage fileMessage = mFileProgressHandlerMap.get(this);
-                    if (fileMessage != null && totalBytesToSend > 0) {
-                        int percent = (totalBytesSent * 100) / totalBytesToSend;
-                        mChatAdapter.setFileProgressPercent(fileMessage, percent);
-                    }
-                }
-
+            BaseChannel.SendFileMessageHandler fileMessageHandler = new BaseChannel.SendFileMessageHandler() {
                 @Override
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
                     mMessageCollection.handleSendMessageResponse(fileMessage, e);
@@ -979,9 +974,7 @@ public class GroupChatFragment extends Fragment {
             };
 
             // Send image with thumbnails in the specified dimensions
-            FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, progressHandler);
-
-            mFileProgressHandlerMap.put(progressHandler, tempFileMessage);
+            FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, fileMessageHandler);
 
             mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
 

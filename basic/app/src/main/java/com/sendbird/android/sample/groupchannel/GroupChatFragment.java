@@ -59,7 +59,6 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -81,7 +80,6 @@ public class GroupChatFragment extends Fragment {
     static final String EXTRA_CHANNEL_URL = "EXTRA_CHANNEL_URL";
 
     private InputMethodManager mIMM;
-    private HashMap<BaseChannel.SendFileMessageWithProgressHandler, FileMessage> mFileProgressHandlerMap;
 
     private RelativeLayout mRootLayout;
     private RecyclerView mRecyclerView;
@@ -120,7 +118,6 @@ public class GroupChatFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mIMM = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        mFileProgressHandlerMap = new HashMap<>();
 
         if (savedInstanceState != null) {
             // Get channel URL from saved state.
@@ -335,6 +332,12 @@ public class GroupChatFragment extends Fragment {
                 }
             }
 
+            @Override
+            public void onDeliveryReceiptUpdated(GroupChannel channel) {
+                if (channel.getUrl().equals(mChannelUrl)) {
+                    mChatAdapter.notifyDataSetChanged();
+                }
+            }
         });
     }
 
@@ -734,7 +737,7 @@ public class GroupChatFragment extends Fragment {
                                         "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
                                         .show();
                             }
-                            mChatAdapter.markMessageFailed(userMessage.getRequestId());
+                            mChatAdapter.markMessageFailed(userMessage);
                             return;
                         }
 
@@ -782,7 +785,7 @@ public class GroupChatFragment extends Fragment {
                                 "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
                                 .show();
                     }
-                    mChatAdapter.markMessageFailed(userMessage.getRequestId());
+                    mChatAdapter.markMessageFailed(userMessage);
                     return;
                 }
 
@@ -851,23 +854,14 @@ public class GroupChatFragment extends Fragment {
         if (path == null || path.equals("")) {
             Toast.makeText(getActivity(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
         } else {
-            BaseChannel.SendFileMessageWithProgressHandler progressHandler = new BaseChannel.SendFileMessageWithProgressHandler() {
-                @Override
-                public void onProgress(int bytesSent, int totalBytesSent, int totalBytesToSend) {
-                    FileMessage fileMessage = mFileProgressHandlerMap.get(this);
-                    if (fileMessage != null && totalBytesToSend > 0) {
-                        int percent = (int) (((double) totalBytesSent / totalBytesToSend) * 100);
-                        mChatAdapter.setFileProgressPercent(fileMessage, percent);
-                    }
-                }
-
+            BaseChannel.SendFileMessageHandler fileMessageHandler = new BaseChannel.SendFileMessageHandler() {
                 @Override
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
                     if (e != null) {
                         if (getActivity() != null) {
                             Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        mChatAdapter.markMessageFailed(fileMessage.getRequestId());
+                        mChatAdapter.markMessageFailed(fileMessage);
                         return;
                     }
 
@@ -876,9 +870,7 @@ public class GroupChatFragment extends Fragment {
             };
 
             // Send image with thumbnails in the specified dimensions
-            FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, progressHandler);
-
-            mFileProgressHandlerMap.put(progressHandler, tempFileMessage);
+            FileMessage tempFileMessage = mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, fileMessageHandler);
 
             mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
             mChatAdapter.addFirst(tempFileMessage);
