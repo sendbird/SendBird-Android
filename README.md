@@ -1,4 +1,4 @@
-# Sendbird Android Samples
+# Sendbird Android samples
 
 ## Introduction
 
