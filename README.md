@@ -32,8 +32,8 @@ You can **clone** the project from the [Chat sample repository](https://github.c
 // Clone this repository
 git clone git@github.com:sendbird/SendBird-Android.git  
 
-// Clone only Chat sample
-git clone git@github.com:sendbird/SendBird-Android.git ./basic
+// Move to the Chat sample
+cd SendBird-Android/basic
 ```
 
 ### UIKit sample
@@ -44,8 +44,8 @@ You can **clone** the project from the [UIKit sample repository](https://github.
 // Clone this repository
 git clone git@github.com:sendbird/SendBird-Android.git
 
-// Clone only UIKit sample
-git clone git@github.com:sendbird/SendBird-Android.git ./uikit
+// Move to the UIKit sample
+cd SendBird-Android/uikit
 ```
 
 ### SyncManager sample
@@ -56,6 +56,6 @@ You can **clone** the project directly from the [SyncManager sample repository](
 // Clone this repository
 git clone git@github.com:sendbird/SendBird-Android.git
 
-// Clone only SyncManager sample
-git clone git@github.com:sendbird/SendBird-Android.git ./syncmanager
+// Move to the SyncManager sample
+cd SendBird-Android/syncmanager
 ```
