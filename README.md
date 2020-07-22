@@ -18,12 +18,11 @@ To use our Android samples, you should first install [Chat SDK for Android](http
 
 ### Requirements
 
-|SDK|Android|Java|Gradle| 
+|Sample|Android|Java|Gradle| 
 |---|---|---|---|
 |Chat|4.0 (API level 14) or higher|7 or higher|3.4.0 or higher |
 |UIKit|4.1 (API level 16) or higher|8 or higher|3.4.0 or higher |
 |SyncManager|4.0 (API level 14) or higher|7 or higher|-|
-
 
 ### Chat sample
 
