@@ -50,7 +50,7 @@ git clone git@github.com:sendbird/SendBird-Android.git ./basic
 
 ### UIKit sample
 
-You can **clone** the project from the [UIKit sample repository](https://github.com/sendbird/SendBird-Android/tree/master/uikit). Or you can pull it using submodule command after this git repository.
+You can **clone** the project from the [UIKit sample repository](https://github.com/sendbird/SendBird-Android/tree/master/uikit).
 
 ```
 // Clone this repository
