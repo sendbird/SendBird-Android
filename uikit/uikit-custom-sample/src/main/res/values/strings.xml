@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SendbirdUIKitCustomSample</string>
+    <string name="text_title_login_activity">Sendbird UIKit Sample</string>
+
+    <string name="text_version_info">UI Kit v%1$s &#160;&#160;&#160;&#160; SDK v%2$s</string>
+    <string name="text_hint_user_id">User ID</string>
+    <string name="text_hint_nickname">Nickname</string>
+    <string name="text_sign_in">SIGN IN</string>
+
+</resources>

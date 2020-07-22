@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0091FF</color>
+    <color name="colorPrimaryDark">#006BBD</color>
+    <color name="colorAccent">#2EBA9F</color>
+
+    <color name="primary_500">#006BBD</color>
+    <color name="primary_400">#007CBD</color>
+    <color name="primary_300">#0091FF</color>
+    <color name="primary_200">#35A8FF</color>
+    <color name="primary_100">#85CAFF</color>
+    <color name="secondary_500">#007A7A</color>
+    <color name="secondary_400">#189A8D</color>
+    <color name="secondary_300">#2EBA9F</color>
+    <color name="secondary_200">#6FD6BE</color>
+    <color name="secondary_100">#AEF2DC</color>
+    <color name="error">#e53157</color>
+    <color name="background_700">#000000</color>
+    <color name="background_600">#161616</color>
+    <color name="background_500">#2c2c2c</color>
+    <color name="background_400">#393939</color>
+    <color name="background_200">#eaeaea</color>
+    <color name="background_300">#a8a8a8</color>
+    <color name="background_100">#ffffff</color>
+    <color name="onlight_01">#e1000000</color>
+    <color name="onlight_02">#80000000</color>
+    <color name="onlight_03">#61000000</color>
+    <color name="onlight_04">#1e000000</color>
+    <color name="ondark_01">#e1ffffff</color>
+    <color name="ondark_02">#80ffffff</color>
+    <color name="ondark_03">#61ffffff</color>
+    <color name="ondark_04">#1effffff</color>
+    <color name="overlay_01">#8c000000</color>
+    <color name="overlay_02">#51000000</color>
+
+    <color name="highlight">#F78900</color>
+</resources>

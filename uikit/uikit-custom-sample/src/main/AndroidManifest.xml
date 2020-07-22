@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.sendbird.uikit.customsample">
+
+    <application
+        android:name=".BaseApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="false"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activities.CustomChannelSettingsActivity"
+            android:parentActivityName=".activities.CustomChannelActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomMemberListActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomInviteChannelActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomChannelActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomCreateChannelActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomChannelListActivity"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".activities.LoginActivity"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
