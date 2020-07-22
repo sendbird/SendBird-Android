@@ -1,4 +1,6 @@
 # Sendbird Android samples
+![Platform](https://img.shields.io/badge/platform-iOS-orange.svg)
+![Languages](https://img.shields.io/badge/language-Objective--C%20%7C%20Swift-orange.svg)
 
 ## Introduction
 
