@@ -32,7 +32,7 @@ The minimum requirements for UIKit SDK for Android are:
 
 The minimum requirements for SyncManager SDK for Android are:
 
-* Android 4.0+ (API level 14) or higher
+* Android 4.0 (API level 14) or higher
 * Java 7 or higher
 * SendBird Android SDK 3.0.96 or higher.
 
