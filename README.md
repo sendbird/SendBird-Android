@@ -21,7 +21,7 @@ The minimum requirements for Chat SDK for Android are:
 
 ### Chat sample
 
-A. You can **clone** the project directly from the [Chat Swift sample submodule repository](https://github.com/sendbird/SendBird-iOS-Swift). 
+A. You can **clone** the project directly from the [Chat sample submodule repository](https://github.com/sendbird/SendBird-Android). 
 
 ```
 // Clone this repository
@@ -43,7 +43,7 @@ git submodule update --init --recursive
 
 This sample is linked with the git submodule which you can download in two ways. 
 
-A. You can **clone** the project directly from the [SyncManager Swift Sample repository](https://github.com/sendbird/SyncManager-iOS-Swift).
+A. You can **clone** the project directly from the [SyncManager sample repository](https://github.com/sendbird/SendBird-Android/tree/master/syncmanager).
 
 ```
 // Clone this repository
@@ -64,13 +64,13 @@ git submodule update --init --recursive
 
 This sample is linked with the git submodule which you can download in two ways. 
 
-A. You can **clone** the project directly from the [UIKit Swift Sample repository](https://github.com/sendbird/UIKit-iOS-Swift). Or you can pull it using submodule command after this git repository.
+A. You can **clone** the project directly from the [UIKit sample repository](https://github.com/sendbird/SendBird-Android/tree/master/uikit). Or you can pull it using submodule command after this git repository.
 
 ```
 // Clone this repository
 git clone git@github.com:sendbird/SendBird-Android.git
 
-// Clone only UIKit swift sample
+// Clone only UIKit sample
 git submodule update --init ./uikit
 ```
 
