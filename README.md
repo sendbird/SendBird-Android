@@ -14,9 +14,11 @@
 
 ## Installation
 
+To use our Android samples, you should install [Chat SDK for Android](https://github.com/sendbird/SendBird-SDK-Android/tree/master/com/sendbird/sdk/sendbird-android-sdk) first.
+
 ### Requirements
 
-To use our Android samples, you should first install Chat SDK for Android. The minimum requirements for the Chat SDK are:
+The minimum requirements for Chat SDK for Android are:
 
 * Android 4.0 (API level 14) or higher
 * Java 7 or higher
