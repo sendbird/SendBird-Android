@@ -21,7 +21,7 @@ The minimum requirements for Chat SDK for Android are:
 
 ### Chat sample
 
-A. You can **clone** the project directly from the [Chat sample submodule repository](https://github.com/sendbird/SendBird-Android). 
+A. You can **clone** the project directly from the [Chat sample repository](https://github.com/sendbird/SendBird-Android). 
 
 ```
 // Clone this repository
