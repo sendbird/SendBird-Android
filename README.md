@@ -14,27 +14,16 @@
 
 ## Installation
 
-To use our Android samples, you should install [Chat SDK for Android](https://github.com/sendbird/SendBird-SDK-Android/tree/master/com/sendbird/sdk/sendbird-android-sdk) first.
+To use our Android samples, you should first install [Chat SDK for Android](https://github.com/sendbird/SendBird-SDK-Android/tree/master/com/sendbird/sdk/sendbird-android-sdk) 3.0.96 or higher on your system.
 
 ### Requirements
 
-The minimum requirements for Chat SDK for Android are:
+|SDK|Android|Java|Gradle| 
+|---|---|---|---|
+|Chat|4.0 (API level 14) or higher|7 or higher|3.4.0 or higher |
+|UIKit|4.1 (API level 16) or higher|8 or higher|3.4.0 or higher |
+|SyncManager|4.0 (API level 14) or higher|7 or higher|-|
 
-* Android 4.0 (API level 14) or higher
-* Java 7 or higher
-* Gradle 3.4.0 or higher
-
-The minimum requirements for UIKit SDK for Android are:
-
-* Android 4.1 (API level 16) or higher
-* Java 8 or higher
-* Gradle 3.4.0 or higher
-
-The minimum requirements for SyncManager SDK for Android are:
-
-* Android 4.0 (API level 14) or higher
-* Java 7 or higher
-* SendBird Android SDK 3.0.96 or higher.
 
 ### Chat sample
 
