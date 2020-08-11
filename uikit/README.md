@@ -18,7 +18,9 @@ Sendbird UIKit for Android is a development kit with an user interface that enab
 ### Sendbird UIKIT for Android doc
 
 Find out more about Sendbird UIKit for Android at [UIKit for Android doc](https://docs.sendbird.com/android/ui_kit_getting_started).
-  
+
+<br /><br />
+
 ## Before getting started
 
 This section shows you the prerequisites you need for testing Sendbird UIKit for Android sample apps.
