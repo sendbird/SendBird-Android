@@ -15,10 +15,30 @@ Sendbird UIKit for Android is a development kit with an user interface that enab
   * Styles, colors, fonts
   * Message auto translation support 
 
+### Sendbird UIKIT for Android doc
 
-
-  2. **uikit-custom-sample:** UIKit customized sample. It demonstrates how to implement the customization of each key functions provided by UIKit.
+Find out more about Sendbird UIKit for Android at [UIKit for Android doc](https://docs.sendbird.com/android/ui_kit_getting_started).
   
+## Before getting started
+
+This section shows you the prerequisites you need for testing Sendbird UIKit for Android sample apps.
+
+### Requirements
+
+The minimum requirements for UIKit for Android are:
+
+- Android + (API level as 16 or higher) 
+- Java 8
+- Support androidx only 
+- Gradle 3.4.0 or higher 
+
+
+### Try the sample app applied with your data 
+
+If you would like to try the sample app specifically fit to your usage, you can do so by replacing the default sample app ID with yours, which you can obtain by [creating your Sendbird application from the dashboard](https://docs.sendbird.com/android/quick_start#3_install_and_configure_the_chat_sdk_4_step_1_create_a_sendbird_application_from_your_dashboard). This will allow you to experience the sample app with data from your Sendbird application. 
+
+
+
  ## UIKit basic sample
  UIKit basic sample demonstrates the following features.
  * Push notifications
