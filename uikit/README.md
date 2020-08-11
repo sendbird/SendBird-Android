@@ -19,7 +19,7 @@ Sendbird UIKit for Android is a development kit with an user interface that enab
 
 Find out more about Sendbird UIKit for Android at [UIKit for Android doc](https://docs.sendbird.com/android/ui_kit_getting_started).
 
-<br /><br />
+<br />
 
 ## Before getting started
 
@@ -39,6 +39,8 @@ The minimum requirements for UIKit for Android are:
 
 If you would like to try the sample app specifically fit to your usage, you can do so by replacing the default sample app ID with yours, which you can obtain by [creating your Sendbird application from the dashboard](https://docs.sendbird.com/android/quick_start#3_install_and_configure_the_chat_sdk_4_step_1_create_a_sendbird_application_from_your_dashboard). This will allow you to experience the sample app with data from your Sendbird application. 
 
+<br />
+
 ## Getting started
 
 This section explains the steps you need to take before testing the sample apps.
@@ -51,9 +53,8 @@ Go to your `Android Studio` and create a project for UIKit for Android in the **
 2. In the **Select a Project Template** window, select **Empty Activity**, and click **Next**.
 3. Enter your project name in the **Name** field in the **Configure your project** window.
 4. Select your language as either **Java** or **Kotlin** from the **Language** drop-down menu.
-5. Enable **Use androidx.*artifacts**.
+5. Enable `Use androidx.*artifacts`.
 6. Select minimum API level as 16 or higher.
-
 
 ### Install UIKit for Android
 
@@ -111,6 +112,8 @@ dependencies {
 ```
 
 After saving your `build.gradle` file, click the **Sync** button to apply all the changes. 
+
+<br />
 
 ## UIKit features and ways to customize 
 
