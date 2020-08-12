@@ -6,7 +6,7 @@
 
 Sendbird UIKit for Android is a development kit with an user interface that enables an easy and fast integration of standard chat features into new or existing client apps. Here are two UIKit samples for Android in the submodules. 
 
-- **uikit-sample** is a chat app which contains UIKit’s most essential features such as push notifications and auto sign-in. When you sign in to the sample app, you will only see a list of channels rendered by the [ChannelListActivity](https://docs.sendbird.com/android/ui_kit_key_functions#3_list_channels) on the screen.  UIKit basic sample.
+- **uikit-sample** is a chat app which contains UIKit’s most essential features such as push notifications and auto sign-in. When you sign in to the sample app, you will only see a list of channels rendered by the [ChannelListActivity](https://docs.sendbird.com/android/ui_kit_key_functions#3_list_channels) on the screen. 
 - **uikit-custom-sample** is a chat app which contains customizable sample code for the following:  
   * Message type provides two types of messages: text and file.
   * MessageListParams provides various options for retrieving a list of messages with `MessageListParams`
