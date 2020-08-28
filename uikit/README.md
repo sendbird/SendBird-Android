@@ -34,10 +34,9 @@ The minimum requirements for UIKit for Android are:
 - Support androidx only 
 - Gradle 3.4.0 or higher 
 
-
 ### Try the sample app applied with your data 
 
-If you would like to try the sample app specifically fit to your usage, you can do so by replacing the default sample app ID with yours, which you can obtain by [creating your Sendbird application from the dashboard](https://docs.sendbird.com/android/quick_start#3_install_and_configure_the_chat_sdk_4_step_1_create_a_sendbird_application_from_your_dashboard). This will allow you to experience the sample app with data from your Sendbird application. 
+If you would like to try the sample app specifically fit to your usage, you can do so by replacing the default sample app ID with yours, which you can obtain by [creating your Sendbird application from the dashboard](https://docs.sendbird.com/android/quick_start#3_install_and_configure_the_chat_sdk_4_step_1_create_a_sendbird_application_from_your_dashboard). Furthermore, you could also add data of your choice on the dashboard to test. This will allow you to experience the sample app with data from your Sendbird application. 
 
 <br />
 
@@ -64,21 +63,21 @@ UIKit for Android is installed via `Gradle`. Begin by opening the project's top-
 
 ```gradle
 buildscript {
- repositories {
-  google()
-  jcenter()
- }
- dependencies {
-  classpath 'com.android.tools.build:gradle:3.5.0'
- }
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+    }
 }
 
 allprojects {
- repositories {
-  google()
-  jcenter()
-  maven { url "https://jitpack.io" }
- }
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
 }
 ```
  
@@ -90,24 +89,24 @@ Then, open the `build.gradle` file at the application level. For `Java` and `Kot
 apply plugin: 'com.android.application'
 
 android {
- ...
- 
- dataBinding {
-  enabled = true
- }
- 
- compileOptions {
-  sourceCompatibility JavaVersion.VERSION_1_8
-  targetCompatibility JavaVersion.VERSION_1_8
- }
- 
- ...
+    ...
+    
+    dataBinding {
+        enabled = true
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    ...
+    
 }
 
 dependencies {
- implementation 'com.sendbird.sdk:uikit:1.1.2'
- ...
-
+    implementation 'com.sendbird.sdk:uikit:1.1.2'
+    ...
+    
 }
 ```
 
