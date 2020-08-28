@@ -12,7 +12,7 @@ Sendbird SyncManager provides the local caching system and data synchronization 
 
 ### Sendbird SyncManager for Android doc
 
-Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://docs.sendbird.com/android/sync_manager_getting_started)
+Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://docs.sendbird.com/android/sync_manager_getting_started).
 
 <br />
 
