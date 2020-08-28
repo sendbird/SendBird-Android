@@ -1,33 +1,56 @@
-# SendBird SyncManager Sample for Android
+# SendBird SyncManager for Android sample
+![Platform](https://img.shields.io/badge/platform-ANDROID-orange.svg)
+![Languages](https://img.shields.io/badge/language-JAVA-orange.svg)
 
-The repository for a sample project that use `SendBird SyncManager` for __LocalCache__. Manager offers an event-based data management so that each view would see a single spot by subscribing data event. And it stores the data into database which implements local caching for faster loading.
+## Introduction
 
-## SendBird SyncManager
+SyncManager for Android is a Chat SDK add-on that optimizes the user caching experience by interlinking the synchronization of the local data storage with the chat data in Sendbird server through an event-driven structure. Provided here is a SyncManager sample for Android to experience first-hand the benefits of Sendbird’s SyncManager.
 
-[SyncManager SDK](https://github.com/sendbird/sendbird-syncmanager-android) is a support add-on for [SendBird SDK](https://github.com/sendbird/SendBird-SDK-Android). Major benefits of `SyncManager` are,
+### Benefits
 
- - Local cache integrated: store channel/message data in local storage for fast view loading.
- - Event-driven data handling: subscribe channel/message event like `insert`, `update`, `remove` at a single spot in order to apply data event to view.
+Sendbird SyncManager provides the local caching system and data synchronization with the Sendbird server, which are run on an event-driven structure. According to the real-time events of the messages and channels, SyncManager takes care of the background tasks for the cache updates from the Sendbird server to the local device. By leveraging this systemized structure with connection-based synchronization, SyncManager allows you to easily integrate the Chat SDK to utilize all of its features, while also reducing data usage and offering a reliable and effortless storage mechanism. 
 
-## Requirements
+### Sendbird SyncManager for Android doc
 
-- SendBird SyncManager works on Android 4.0+ (API level 14), Java 7+ and [SendBird Android SDK](https://github.com/sendbird/SendBird-SDK-Android) 3.0.96+.
+Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://docs.sendbird.com/android/sync_manager_getting_started)
 
+<br />
 
-## Install using Gradle
+## Before getting started
 
-```
+This section provides the prerequisites for testing Sendbird SyncManager for Android sample app.
+
+### Requirements
+
+The minimum requirements for SyncManager for Android are:
+
+- Android 4.0+ (API level 14)
+- Java 7+
+- [Chat SDK for Android](https://github.com/sendbird/SendBird-SDK-Android/tree/master/com/sendbird/sdk/sendbird-android-sdk) 3.0 96+
+
+### Try the sample app applied with your data 
+
+If you would like to try the sample app specifically fit to your usage, you can do so by replacing the default sample app ID with yours, which you can obtain by [creating your Sendbird application from the dashboard](https://docs.sendbird.com/android/quick_start#3_install_and_configure_the_chat_sdk_4_step_1_create_a_sendbird_application_from_your_dashboard). Furthermore, you could also add data of your choice on the dashboard to test. This will allow you to experience the sample app with data from your Sendbird application. 
+
+<br />
+
+## Getting started
+
+This section explains the steps you need to take before testing the Android sample app.
+
+### Install Chat SDK & SyncManager for Android
+
+You can install SyncManager for Android through `Gradle`.
+
+```gradle
 repositories {
     maven { url "https://raw.githubusercontent.com/sendbird/sendbird-syncmanager-android/master/" }
 }
 dependencies {
+    // Chat SDK
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.142'
+    
     // SyncManager
     implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.18'
-
-    // SendBird
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.141'
 }
 ``` 
-
-## How it works
-- For more information, please refer to [SyncManager Document](https://docs.sendbird.com/android/sync_manager_getting_started).
