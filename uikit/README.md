@@ -118,11 +118,11 @@ After saving your `build.gradle` file, click the **Sync** button to apply all th
 
 Here is an overview of a list of key components that can be customized on UIKit. All components can be called while fragments and activities are running on the Android platform. 
 
-| Component | Desctription |
-| :---: | :--- |
-|ChannelList | A component that shows all channels a user has joined.|
-|Channel | A component that shows the current channel a user has joined. From this component, users can send or receive messages.|
-|CreateChannel | A component that shows all the users in your client app so you can create a channel. Users can be selected from this component to begin chatting.|
-|InviteChannel | A component that shows all the users of your client app from the current channel so you can invite other users to join. |
-|ChannelSettings | A component that changes the channel information.|
-|MemberList | A component that shows the list of members who have joined the current channel.|
+|Component|Desctription|
+|:---:|:---|
+|ChannelList|A component that shows all channels a user has joined.|
+|Channel|A component that shows the current channel a user has joined. From this component, users can send or receive messages.|
+|CreateChannel|A component that shows all the users in your client app so you can create a channel. Users can be selected from this component to begin chatting.|
+|InviteChannel|A component that shows all the users of your client app from the current channel so you can invite other users to join. |
+|ChannelSettings|A component that changes the channel information.|
+|MemberList|A component that shows the list of members who have joined the current channel.|
