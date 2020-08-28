@@ -1,4 +1,4 @@
-# SendBird SyncManager for Android sample
+# Sendbird SyncManager for Android sample
 ![Platform](https://img.shields.io/badge/platform-ANDROID-orange.svg)
 ![Languages](https://img.shields.io/badge/language-JAVA-orange.svg)
 
