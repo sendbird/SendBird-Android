@@ -64,21 +64,21 @@ UIKit for Android is installed via `Gradle`. Begin by opening the project's top-
 
 ```gradle
 buildscript {
- repositories {
-  google()
-  jcenter()
- }
- dependencies {
-  classpath 'com.android.tools.build:gradle:3.5.0'
- }
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+    }
 }
 
 allprojects {
- repositories {
-  google()
-  jcenter()
-  maven { url "https://jitpack.io" }
- }
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
 }
 ```
  
@@ -90,23 +90,23 @@ Then, open the `build.gradle` file at the application level. For `Java` and `Kot
 apply plugin: 'com.android.application'
 
 android {
- ...
- 
- dataBinding {
-  enabled = true
- }
- 
- compileOptions {
-  sourceCompatibility JavaVersion.VERSION_1_8
-  targetCompatibility JavaVersion.VERSION_1_8
- }
- 
- ...
+    ...
+    
+    dataBinding {
+        enabled = true
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    ...
+
 }
 
 dependencies {
- implementation 'com.sendbird.sdk:uikit:1.1.2'
- ...
+    implementation 'com.sendbird.sdk:uikit:1.1.2'
+    ...
 
 }
 ```
