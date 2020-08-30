@@ -1,4 +1,4 @@
-# SendBird SyncManager for Android sample
+# Sendbird SyncManager for Android sample
 ![Platform](https://img.shields.io/badge/platform-ANDROID-orange.svg)
 ![Languages](https://img.shields.io/badge/language-JAVA-orange.svg)
 
@@ -12,7 +12,7 @@ Sendbird SyncManager provides the local caching system and data synchronization 
 
 ### Sendbird SyncManager for Android doc
 
-Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://docs.sendbird.com/android/sync_manager_getting_started)
+Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://docs.sendbird.com/android/sync_manager_getting_started).
 
 <br />
 
