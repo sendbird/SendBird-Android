@@ -10,9 +10,9 @@ SyncManager for Android is a Chat SDK add-on that optimizes the user caching exp
 
 Sendbird SyncManager provides the local caching system and data synchronization with the Sendbird server, which are run on an event-driven structure. According to the real-time events of the messages and channels, SyncManager takes care of the background tasks for the cache updates from the Sendbird server to the local device. By leveraging this systemized structure with connection-based synchronization, SyncManager allows you to easily integrate the Chat SDK to utilize all of its features, while also reducing data usage and offering a reliable and effortless storage mechanism. 
 
-### Sendbird SyncManager for Android doc
+### More about Sendbird SyncManager for Android
 
-Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://docs.sendbird.com/android/sync_manager_getting_started).
+Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://docs.sendbird.com/android/sync_manager_getting_started). If you need any help in resolving any issues or have questions, visit [our community](https://community.sendbird.com).
 
 <br />
 
@@ -28,7 +28,7 @@ The minimum requirements for SyncManager for Android are:
 - Java 7+
 - [Chat SDK for Android](https://github.com/sendbird/SendBird-SDK-Android/tree/master/com/sendbird/sdk/sendbird-android-sdk) 3.0 96+
 
-### Try the sample app applied with your data 
+### Try the sample app using your data 
 
 If you would like to try the sample app specifically fit to your usage, you can do so by replacing the default sample app ID with yours, which you can obtain by [creating your Sendbird application from the dashboard](https://docs.sendbird.com/android/quick_start#3_install_and_configure_the_chat_sdk_4_step_1_create_a_sendbird_application_from_your_dashboard). Furthermore, you could also add data of your choice on the dashboard to test. This will allow you to experience the sample app with data from your Sendbird application. 
 
