@@ -41,6 +41,7 @@ import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.uikit.activities.ChannelListActivity;
 import com.sendbird.uikit.log.Logger;
 import com.sendbird.uikit_messaging_android.R;
+import com.sendbird.uikit_messaging_android.activities.MainActivity;
 import com.sendbird.uikit_messaging_android.consts.StringSet;
 
 import org.json.JSONException;
@@ -122,7 +123,7 @@ public class MyFirebaseMessagingService extends SendBirdPushHandler {
             notificationManager.createNotificationChannel(mChannel);
         }
 
-        Intent intent = ChannelListActivity.newRedirectToChannelIntent(context, channelUrl);
+        Intent intent = MainActivity.newRedirectToChannelIntent(context, channelUrl);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

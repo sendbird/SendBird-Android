@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sendbird.uikit.customsample">
+    <uses-permission android:name="android.permission.VIBRATE" android:maxSdkVersion="18"/>
 
     <application
         android:name=".BaseApplication"
@@ -23,18 +24,37 @@
             android:launchMode="singleTop"/>
         <activity android:name=".activities.CustomCreateChannelActivity"
             android:launchMode="singleTop"/>
-        <activity android:name=".activities.CustomChannelListActivity"
+        <activity android:name=".activities.CustomPromoteOperatorsActivity"
             android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomBannedListActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomModerationActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomMutedMemberListActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.CustomOperatorListActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activities.MainActivity"
+            android:theme="@style/SendBird"
+            android:launchMode="singleTask" />
         <activity
             android:name=".activities.LoginActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/icon_push_lollipop" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/primary_300" />
     </application>
 
 </manifest>

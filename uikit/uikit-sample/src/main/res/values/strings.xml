@@ -11,4 +11,18 @@
     <string name="text_sign_out">SIGN OUT</string>
     <string name="text_splash_title">SENDBIRD</string>
     <string name="text_start_chat">START CHAT</string>
+
+    <string name="text_settings_header_title">My settings</string>
+    <string name="text_settings_header_edit_button">EDIT</string>
+    <string name="text_settings_user_id_badge">User ID</string>
+    <string name="text_settings_theme_title">Dark theme</string>
+    <string name="text_settings_disturb_title">Do not disturb</string>
+    <string name="text_settings_sign_out_title">Sign out</string>
+    <string name="text_settings_change_user_nickname">Change nickname</string>
+    <string name="text_settings_change_user_nickname_hint">Enter nickname</string>
+    <string name="text_settings_change_user_profile_image">Change profile image</string>
+
+    <string name="text_tab_channels">Channels</string>
+    <string name="text_tab_settings">My settings</string>
+    <string name="text_tab_badge_max_count">99+</string>
 </resources>

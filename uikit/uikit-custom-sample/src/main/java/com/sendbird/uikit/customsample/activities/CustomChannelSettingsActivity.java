@@ -1,7 +1,5 @@
 package com.sendbird.uikit.customsample.activities;
 
-import android.content.Intent;
-
 import androidx.annotation.NonNull;
 
 import com.sendbird.uikit.activities.ChannelSettingsActivity;
@@ -17,14 +15,10 @@ public class CustomChannelSettingsActivity extends ChannelSettingsActivity {
                 .setUseHeader(true)
                 .setHeaderTitle(getString(R.string.sb_text_header_channel_settings))
                 .setUseHeaderLeftButton(true)
+                .setUseHeaderRightButton(true)
                 .setHeaderLeftButtonIconResId(R.drawable.icon_arrow_left)
                 .setHeaderLeftButtonListener(null)
-                .setMemberSettingClickListener(v -> showCustomMemberListActivity(channelUrl))
+                .setOnSettingMenuClickListener(null)
                 .build();
-    }
-
-    private void showCustomMemberListActivity(String channelUrl) {
-        Intent intent = CustomMemberListActivity.newIntentFromCustomActivity(CustomChannelSettingsActivity.this, CustomMemberListActivity.class, channelUrl);
-        startActivity(intent);
     }
 }

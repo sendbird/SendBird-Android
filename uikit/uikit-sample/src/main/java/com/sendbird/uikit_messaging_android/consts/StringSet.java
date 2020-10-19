@@ -3,6 +3,7 @@ package com.sendbird.uikit_messaging_android.consts;
 public class StringSet {
     public static final String CHANNEL_NAME = "CHANNEL_NAME";
     public static final String CHANNEL_ID = "CHANNEL_ID";
+    public static final String PUSH_REDIRECT_CHANNEL = "PUSH_REDIRECT_CHANNEL";
 
     public static final String sendbird = "sendbird";
     public static final String channel = "channel";

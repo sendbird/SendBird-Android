@@ -6,13 +6,22 @@ import androidx.annotation.NonNull;
 
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelParams;
+import com.sendbird.uikit.activities.adapter.UserListAdapter;
+import com.sendbird.uikit.customsample.R;
 import com.sendbird.uikit.customsample.activities.CustomChannelActivity;
+import com.sendbird.uikit.customsample.activities.adapters.CustomUserListAdapter;
 import com.sendbird.uikit.fragments.CreateChannelFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomCreateChannelFragment extends CreateChannelFragment {
-    private List<String> userIds;
+    private List<String> userIds = new ArrayList<>();
+
+    @Override
+    protected void onUserSelectComplete(List<String> selectedUsers) {
+        super.onUserSelectComplete(selectedUsers);
+    }
 
     @Override
     protected void onBeforeCreateGroupChannel(@NonNull GroupChannelParams params) {
@@ -26,6 +35,11 @@ public class CustomCreateChannelFragment extends CreateChannelFragment {
     }
 
     @Override
+    protected void onNewChannelCreated(@NonNull GroupChannel channel) {
+        showCustomChannelActivity(channel.getUrl());
+    }
+
+    @Override
     public void setCreateButtonText(CharSequence text) {
         super.setCreateButtonText(text);
     }
@@ -36,12 +50,21 @@ public class CustomCreateChannelFragment extends CreateChannelFragment {
     }
 
     @Override
-    protected void onNewChannelCreated(@NonNull GroupChannel channel) {
-        showCustomChannelActivity(channel.getUrl());
+    protected <T extends UserListAdapter> void setUserListAdapter(T adapter) {
+        super.setUserListAdapter(createCustomUserListAdapter());
     }
 
-    public void setUserIds(List<String> userIds) {
-        this.userIds = userIds;
+    private CustomUserListAdapter createCustomUserListAdapter() {
+        CustomUserListAdapter customAdapter = new CustomUserListAdapter();
+        customAdapter.setOnUserCheckedListener((selectedUsers, isChecked) -> {
+            userIds.clear();
+            userIds.addAll(selectedUsers);
+
+            int count = selectedUsers.size();
+            setCreateButtonEnabled(count > 0);
+            setCreateButtonText(count > 0 ? count + " " + getString(R.string.sb_text_button_create) : getString(R.string.sb_text_button_create));
+        });
+        return customAdapter;
     }
 
     private void showCustomChannelActivity(String channelUrl) {

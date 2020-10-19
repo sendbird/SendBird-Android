@@ -45,7 +45,7 @@ public class BaseApplication extends Application {
 
                     @Override
                     public String getProfileUrl() {
-                        return "";
+                        return PreferenceUtils.getProfileUrl();
                     }
                 };
             }
@@ -54,5 +54,7 @@ public class BaseApplication extends Application {
         boolean useDarkTheme = PreferenceUtils.isUsingDarkTheme();
         SendBirdUIKit.setDefaultThemeMode(useDarkTheme ? SendBirdUIKit.ThemeMode.Dark : SendBirdUIKit.ThemeMode.Light);
         PushUtils.registerPushHandler(new MyFirebaseMessagingService());
+        SendBirdUIKit.setLogLevel(SendBirdUIKit.LogLevel.ALL);
+        SendBirdUIKit.setUseDefaultUserProfile(true);
     }
 }

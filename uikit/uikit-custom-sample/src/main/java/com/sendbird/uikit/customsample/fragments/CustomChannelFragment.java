@@ -7,13 +7,11 @@ import androidx.annotation.NonNull;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessageParams;
 import com.sendbird.android.UserMessageParams;
+import com.sendbird.uikit.customsample.activities.CustomChannelActivity;
 import com.sendbird.uikit.customsample.consts.StringSet;
 import com.sendbird.uikit.fragments.ChannelFragment;
 
 public class CustomChannelFragment extends ChannelFragment {
-
-    private boolean isHighlightMode = false;
-
     @Override
     protected void onBeforeSendUserMessage(@NonNull UserMessageParams params) {
         super.onBeforeSendUserMessage(params);
@@ -80,18 +78,13 @@ public class CustomChannelFragment extends ChannelFragment {
         super.resendMessage(message);
     }
 
-    public void setHighlightMode(boolean highlightMode) {
-        isHighlightMode = highlightMode;
-    }
-
-    public boolean isHighlightMode() {
-        return isHighlightMode;
-    }
-
     private String getType() {
         String type = null;
-        if (isHighlightMode) {
-            type = StringSet.highlight;
+        if (getActivity() != null && getActivity() instanceof CustomChannelActivity) {
+            CustomChannelActivity customChannelActivity = (CustomChannelActivity) getActivity();
+            if (customChannelActivity.isHighlightMode()) {
+                type = StringSet.highlight;
+            }
         }
         return type;
     }

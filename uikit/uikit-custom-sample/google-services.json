@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "45318056021",
+    "firebase_url": "https://sample-android-uikit.firebaseio.com",
+    "project_id": "sample-android-uikit",
+    "storage_bucket": "sample-android-uikit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45318056021:android:54331c18dc2a59c97e8cdc",
+        "android_client_info": {
+          "package_name": "com.sendbird.orange_sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45318056021-79pcjv9ifmjj53nh5aphgkrdm0ns31f2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJdCFD69c7_phssQIvDlTYdBJQ5s2w_Sc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45318056021-79pcjv9ifmjj53nh5aphgkrdm0ns31f2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45318056021:android:5e77060a31abc51a7e8cdc",
+        "android_client_info": {
+          "package_name": "com.sendbird.uikit.customsample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45318056021-79pcjv9ifmjj53nh5aphgkrdm0ns31f2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJdCFD69c7_phssQIvDlTYdBJQ5s2w_Sc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45318056021-79pcjv9ifmjj53nh5aphgkrdm0ns31f2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45318056021:android:9351cabdc8e2eb1b7e8cdc",
+        "android_client_info": {
+          "package_name": "com.sendbird.uikit.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45318056021-79pcjv9ifmjj53nh5aphgkrdm0ns31f2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJdCFD69c7_phssQIvDlTYdBJQ5s2w_Sc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45318056021-79pcjv9ifmjj53nh5aphgkrdm0ns31f2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -22,7 +22,9 @@ public class CustomMessageListAdapter extends MessageListAdapter {
     public static final int VIEW_MAP_MESSAGE_ME_TYPE = 1001;
     public static final int VIEW_MAP_MESSAGE_OTHER_TYPE = 1002;
 
-    public CustomMessageListAdapter() {}
+    public CustomMessageListAdapter(boolean useMessageGroupUI) {
+        super(null, null, null, useMessageGroupUI);
+    }
 
     @NonNull
     @Override

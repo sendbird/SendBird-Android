@@ -29,7 +29,6 @@
     <style name="CustomMessageListStyle" parent="SendBird.Custom">
         <item name="sb_message_user_style">@style/CustomUserMessage</item>
         <item name="sb_message_file_style">@style/CustomFileMessage</item>
-        <item name="sb_icon_button_style">@style/CustomMessageInputIconButton</item>
     </style>
 
     <style name="CustomUserMessage" parent="Widget.SendBird.Message.User">
@@ -38,11 +37,6 @@
 
     <style name="CustomFileMessage" parent="Widget.SendBird.Message.File">
         <item name="sb_message_sender_name_text_appearance">@style/SendbirdCaption1Primary300</item>
-    </style>
-
-    <style name="CustomMessageInputIconButton">
-        <item name="android:tint">@android:color/transparent</item>
-        <item name="android:background">@drawable/sb_button_uncontained_background_light</item>
     </style>
 
 </resources>

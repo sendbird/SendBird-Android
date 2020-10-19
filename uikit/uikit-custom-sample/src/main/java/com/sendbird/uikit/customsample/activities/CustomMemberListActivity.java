@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.sendbird.uikit.activities.MemberListActivity;
 import com.sendbird.uikit.customsample.R;
-import com.sendbird.uikit.customsample.consts.StringSet;
 import com.sendbird.uikit.customsample.fragments.CustomMemberListFragment;
 import com.sendbird.uikit.fragments.MemberListFragment;
 
@@ -23,7 +22,6 @@ public class CustomMemberListActivity extends MemberListActivity {
                 .setHeaderRightButtonIconResId(R.drawable.icon_add_member)
                 .setHeaderLeftButtonListener(null)
                 .setHeaderRightButtonListener(v -> showCustomInviteChannelActivity(channelUrl))
-                .setUserListAdapter(null)
                 .setItemClickListener(null)
                 .setItemLongClickListener(null)
                 .build();

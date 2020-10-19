@@ -9,6 +9,7 @@ import com.sendbird.android.BaseMessage;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.Reaction;
 import com.sendbird.uikit.activities.viewholder.MessageViewHolder;
+import com.sendbird.uikit.consts.MessageGroupType;
 import com.sendbird.uikit.customsample.databinding.ViewHighlightMessageMeHolderBinding;
 import com.sendbird.uikit.interfaces.OnItemClickListener;
 import com.sendbird.uikit.interfaces.OnItemLongClickListener;
@@ -24,7 +25,7 @@ public class HighlightMessageMeViewHolder extends MessageViewHolder {
     }
 
     @Override
-    public void bind(BaseChannel channel, @NonNull BaseMessage message) {
+    public void bind(BaseChannel channel, @NonNull BaseMessage message, MessageGroupType messageGroupType) {
         if (channel instanceof GroupChannel) {
             binding.setChannel((GroupChannel) channel);
         }

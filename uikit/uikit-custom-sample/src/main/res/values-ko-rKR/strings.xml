@@ -4,67 +4,68 @@
     tools:ignore="ExtraTranslation">
 
     <!-- Header Title -->
-    <string name="sb_text_header_channel_list">채널 목록</string>
+    <string name="sb_text_header_channel_list">채널</string>
     <string name="sb_text_header_channel_settings">채널 정보</string>
     <string name="sb_text_header_member_list">멤버</string>
     <string name="sb_text_header_invite_member">초대하기</string>
-    <string name="sb_text_header_create_channel">채널 만들기</string>
+    <string name="sb_text_header_create_channel">새 채널</string>
 
     <!-- Channel List -->
-    <string name="sb_text_channel_list_title_no_members">(No members)</string>
-    <string name="sb_text_channel_list_title_unknown">(No name)</string>
+    <string name="sb_text_channel_list_title_no_members">(빈 채널)</string>
+    <string name="sb_text_channel_list_title_unknown">(알 수 없는 사용자)</string>
     <string name="sb_text_channel_list_unread_count_max">99+</string>
-    <string name="sb_text_channel_list_last_message_file">%1$s가 파일을 보냈습니다.</string>
+    <string name="sb_text_channel_list_last_message_file">%1$s가 보낸 파일</string>
     <string name="sb_text_channel_list_last_message_file_unknown">알 수 없음</string>
     <string name="sb_text_channel_list_push_on">푸시 알림 켜기</string>
     <string name="sb_text_channel_list_push_off">푸시 알림 끄기</string>
-    <string name="sb_text_channel_list_leave">채널 나가기</string>
-    <string name="sb_text_channel_list_empty">채널이 없습니다.</string>
+    <string name="sb_text_channel_list_leave">나가기</string>
+    <string name="sb_text_channel_list_empty">아직 채널이 없습니다.</string>
 
     <!-- Channel -->
-    <string name="sb_text_channel_message_badge_edited">&#160;(edited)</string>
-    <string name="sb_text_channel_tooltip">%d개의 새로운 메시지</string>
-    <string name="sb_text_channel_tooltip_with_count">%d개의 새로운 메시지</string>
+    <string name="sb_text_channel_message_badge_edited">&#160;(편집됨)</string>
+    <string name="sb_text_channel_tooltip">새 메시지 %d개</string>
+    <string name="sb_text_channel_tooltip_with_count">새 메시지 %d개</string>
     <string name="sb_text_channel_anchor_copy">복사</string>
     <string name="sb_text_channel_anchor_save">저장</string>
     <string name="sb_text_channel_anchor_edit">편집</string>
     <string name="sb_text_channel_anchor_delete">삭제</string>
-    <string name="sb_text_channel_input_text_hint">메시지를 입력해주세요</string>
+    <string name="sb_text_channel_input_text_hint">메시지를 입력하세요</string>
     <string name="sb_text_channel_input_camera">카메라</string>
-    <string name="sb_text_channel_input_gallery">앨범</string>
+    <string name="sb_text_channel_input_gallery">포토 갤러리</string>
     <string name="sb_text_channel_input_document">파일</string>
-    <string name="sb_text_channel_typing_indicator_single">%s가 입력 중 입니다.&#8230;</string>
-    <string name="sb_text_channel_typing_indicator_double">%s와 %s가 입력 중 입니다.&#8230;</string>
-    <string name="sb_text_channel_typing_indicator_multiple">여러 명의 사용자들이 입력 중 입니다.&#8230;</string>
-    <string name="sb_text_channel_last_seen_at">마지막으로 본 시간 %s</string>
+    <string name="sb_text_channel_typing_indicator_single">%s 입력 중&#8230;</string>
+    <string name="sb_text_channel_typing_indicator_double">%s와 %s가 입력 중&#8230;</string>
+    <string name="sb_text_channel_typing_indicator_multiple">여러 명이 입력 중&#8230;</string>
+    <string name="sb_text_channel_last_seen_at">%s 전 마지막으로 확인</string>
     <string name="sb_text_channel_unknown_type_text">(알 수 없는 타입의 메시지)\n이 메시지를 읽을 수 없습니다.</string>
 
     <!-- Channel Settings -->
-    <string name="sb_text_channel_settings_notification">푸시 알림</string>
-    <string name="sb_text_channel_settings_members">%d명</string>
+    <string name="sb_text_channel_settings_moderations">관리</string>
+    <string name="sb_text_channel_settings_notification">알림</string>
+    <string name="sb_text_channel_settings_members">멤버 %d명</string>
     <string name="sb_text_channel_settings_leave_channel">채널 나가기</string>
     <string name="sb_text_channel_settings_change_channel_name">채널 이름 변경</string>
-    <string name="sb_text_channel_settings_change_channel_name_hint">채널 이름을 입력해주세요.</string>
+    <string name="sb_text_channel_settings_change_channel_name_hint">채널 이름을 입력하세요</string>
     <string name="sb_text_channel_settings_change_channel_image">채널 이미지 변경</string>
     <string name="sb_text_channel_settings_change_channel_image_camera">사진 찍기</string>
-    <string name="sb_text_channel_settings_change_channel_image_gallery">앨범에서 가져오기</string>
+    <string name="sb_text_channel_settings_change_channel_image_gallery">포토 갤러리에서 가져오기</string>
 
     <!-- User List -->
-    <string name="sb_text_user_list_badge_me">&#160;(You)</string>
-    <string name="sb_text_user_list_empty">사용자가 없습니다.</string>
+    <string name="sb_text_user_list_badge_me">&#160;(나)</string>
+    <string name="sb_text_user_list_empty">아직 사용자가 없습니다.</string>
 
     <!-- Views -->
     <string name="sb_text_yesterday">어제</string>
     <string name="sb_text_permission_yes">예</string>
     <string name="sb_text_permission_no">아니오</string>
-    <string name="sb_text_dialog_delete_file_message">파일을 삭제하시겠습니까?</string>
-    <string name="sb_text_dialog_delete_message">메시지를 삭제하시겠습니까?</string>
-    <string name="sb_text_toast_success_push_on">푸시 알림이 켜졌습니다.</string>
-    <string name="sb_text_toast_success_push_off">푸시 알림이 꺼졌습니다.</string>
+    <string name="sb_text_dialog_delete_file_message">파일 삭제하기</string>
+    <string name="sb_text_dialog_delete_message">메시지 삭제하기</string>
+    <string name="sb_text_toast_success_push_on">푸시 알림 켜짐</string>
+    <string name="sb_text_toast_success_push_off">푸시 알림 꺼짐</string>
     <string name="sb_text_toast_success_copy">복사 완료</string>
-    <string name="sb_text_toast_success_start_upload_file">업로드 중 입니다.&#8230;</string>
-    <string name="sb_text_toast_success_start_download_file">다운로드 중 입니다.&#8230;</string>
-    <string name="sb_text_toast_success_download_file">파일이 저장되었습니다.</string>
+    <string name="sb_text_toast_success_start_upload_file">업로드 중&#8230;</string>
+    <string name="sb_text_toast_success_start_download_file">다운로드 중&#8230;</string>
+    <string name="sb_text_toast_success_download_file">파일 저장 완료</string>
     <string name="sb_text_button_edit">편집</string>
     <string name="sb_text_button_invite">초대</string>
     <string name="sb_text_button_invite_with_count">%d명</string>
@@ -113,5 +114,48 @@
     <string name="sb_text_need_to_allow_permission_camera">%s\nneeds to access your camera to take photos and videos. Allow in Settings.</string>
     <string name="sb_text_need_to_allow_permission_storage">%s\nneeds to access your device storage to share photos, media, and files. Allow in Settings.</string>
 
-    <string name="sb_text_channel_input_text_hint_frozen">Chat is unavailable in this channel</string>
+    <string name="sb_text_channel_input_text_hint_frozen">메시지를 입력할 수 없습니다</string>
+    <string name="sb_text_channel_input_text_hit_muted">음소거 되었습니다.</string>
+    <string name="sb_text_select_channel_type">채널 타입</string>
+    <string name="sb_text_group">그릅</string>
+    <string name="sb_text_super_group">슈퍼그룹</string>
+    <string name="sb_text_broadcast">공지</string>
+    <string name="sb_text_information_channel_frozen">일시 정지된 채널입니다</string>
+    <string name="sb_text_operator">관리자</string>
+    <string name="sb_text_menu_operators">관리자</string>
+    <string name="sb_text_menu_muted_members">음소거된 멤버</string>
+    <string name="sb_text_menu_banned_members">접근 금지된 멤버</string>
+    <string name="sb_text_menu_freeze_channel">채널 일시 정지하기</string>
+    <string name="sb_text_empty_no_operator_member">관리자가 없습니다.</string>
+    <string name="sb_text_empty_no_muted_member">음소거된 멤버가 없습니다.</string>
+    <string name="sb_text_empty_no_banned_member">접근 금지된 멤버가 없습니다.</string>
+
+    <string name="sb_text_button_selected">선택</string>
+    <string name="sb_text_button_add">추가</string>
+    <string name="sb_text_button_mute">음소거</string>
+    <string name="sb_text_button_ban">접근 금지</string>
+    <string name="sb_text_button_add_with_count">%d명</string>
+    <string name="sb_text_button_mute_with_count">%d명</string>
+    <string name="sb_text_button_ban_with_count">%d명</string>
+
+    <string name="sb_text_promote_operator">관리자로 지정</string>
+    <string name="sb_text_mute_member">음소거</string>
+    <string name="sb_text_ban_member">접근 금지</string>
+    <string name="sb_text_dismiss_operator">관리자 해제</string>
+    <string name="sb_text_unmute_member">음소거 해제</string>
+    <string name="sb_text_unban_member">접근 금지 해제</string>
+
+    <string name="text_settings_header_title">설정</string>
+    <string name="text_settings_header_edit_button">편집</string>
+    <string name="text_settings_user_id_badge">아이디</string>
+    <string name="text_settings_theme_title">어두운 테마</string>
+    <string name="text_settings_disturb_title">방해 금지 모드</string>
+    <string name="text_settings_sign_out_title">로그아웃</string>
+    <string name="text_settings_change_user_nickname">닉네임 변경</string>
+    <string name="text_settings_change_user_nickname_hint">닉네임 입력</string>
+    <string name="text_settings_change_user_profile_image">프로필 이미지 변경</string>
+
+    <string name="text_tab_channels">채널</string>
+    <string name="text_tab_settings">설정</string>
+    <string name="text_tab_badge_max_count">99+</string>
 </resources>
