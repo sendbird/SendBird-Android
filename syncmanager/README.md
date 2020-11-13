@@ -12,7 +12,7 @@ Sendbird SyncManager provides the local caching system and data synchronization 
 
 ### More about Sendbird SyncManager for Android
 
-Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://docs.sendbird.com/android/sync_manager_getting_started). If you need any help in resolving any issues or have questions, visit [our community](https://community.sendbird.com).
+Find out more about Sendbird SyncManager for Android at [SyncManager for Android doc](https://sendbird.com/docs/syncmanager/v1/android/getting-started/about-syncmanager). If you need any help in resolving any issues or have questions, visit [our community](https://community.sendbird.com).
 
 <br />
 
@@ -30,7 +30,7 @@ The minimum requirements for SyncManager for Android are:
 
 ### Try the sample app using your data 
 
-If you would like to try the sample app specifically fit to your usage, you can do so by replacing the default sample app ID with yours, which you can obtain by [creating your Sendbird application from the dashboard](https://docs.sendbird.com/android/quick_start#3_install_and_configure_the_chat_sdk_4_step_1_create_a_sendbird_application_from_your_dashboard). Furthermore, you could also add data of your choice on the dashboard to test. This will allow you to experience the sample app with data from your Sendbird application. 
+If you would like to try the sample app specifically fit to your usage, you can do so by replacing the default sample app ID with yours, which you can obtain by [creating your Sendbird application from the dashboard](https://sendbird.com/docs/chat/v3/android/getting-started/install-chat-sdk#2-step-1-create-a-sendbird-application-from-your-dashboard). Furthermore, you could also add data of your choice on the dashboard to test. This will allow you to experience the sample app with data from your Sendbird application. 
 
 <br />
 
