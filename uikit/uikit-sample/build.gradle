@@ -31,7 +31,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.sendbird.sdk:uikit:1.2.3"
+    implementation "com.sendbird.sdk:uikit:1.2.4"
 
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
