@@ -43,10 +43,10 @@ dependencies {
     })
 
     // SendBird
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.151'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.152'
 
     // SendBird SyncManager
-    implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.28'
+    implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.29'
 
     // Android support libraries
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
