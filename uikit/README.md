@@ -104,7 +104,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.sendbird.sdk:uikit:1.2.4'
+    implementation 'com.sendbird.sdk:uikit:2.0.0'
     ...
     
 }
