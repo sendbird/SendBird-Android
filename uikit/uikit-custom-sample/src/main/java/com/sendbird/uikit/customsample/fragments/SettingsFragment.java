@@ -114,6 +114,9 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        SendBird.setAutoBackgroundDetection(true);
+        if (resultCode != RESULT_OK) return;
+
         if (requestCode == PERMISSION_SETTINGS_REQUEST_ID) {
             final boolean hasPermission = PermissionUtils.hasPermissions(getContext(), REQUIRED_PERMISSIONS);
             if (hasPermission) {
@@ -122,22 +125,19 @@ public class SettingsFragment extends Fragment {
             return;
         }
 
-        SendBird.setAutoBackgroundDetection(true);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
-                    break;
-                case PICK_IMAGE_ACTIVITY_REQUEST_CODE:
-                    if (data != null) {
-                        this.mediaUri = data.getData();
-                    }
-                    break;
-            }
+        switch (requestCode) {
+            case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
+                break;
+            case PICK_IMAGE_ACTIVITY_REQUEST_CODE:
+                if (data != null) {
+                    this.mediaUri = data.getData();
+                }
+                break;
+        }
 
-            if (this.mediaUri != null && getContext() != null) {
-                final File file = FileUtils.uriToFile(getContext().getApplicationContext(), mediaUri);
-                updateUserProfileImage(file);
-            }
+        if (this.mediaUri != null && getContext() != null) {
+            final File file = FileUtils.uriToFile(getContext().getApplicationContext(), mediaUri);
+            updateUserProfileImage(file);
         }
     }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/shape_image_view_background_light"/>
+
+    <item
+        android:top="@dimen/sb_size_8"
+        android:bottom="@dimen/sb_size_8"
+        android:left="@dimen/sb_size_8"
+        android:right="@dimen/sb_size_8">
+        <bitmap android:src="@drawable/icon_channels"
+            android:tint="@color/ondark_01" />
+    </item>
+</layer-list>

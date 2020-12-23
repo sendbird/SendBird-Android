@@ -1,4 +1,4 @@
-package com.sendbird.uikit_messaging_android.fragments;
+package com.sendbird.uikit_messaging_android;
 
 import android.Manifest;
 import android.content.Context;
@@ -8,36 +8,37 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.sendbird.android.SendBird;
-import com.sendbird.android.SendBirdException;
-import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.uikit.SendBirdUIKit;
-import com.sendbird.uikit.dialogs.DialogHelper;
+import com.sendbird.uikit.consts.DialogEditTextParams;
+import com.sendbird.uikit.interfaces.OnEditTextResultListener;
 import com.sendbird.uikit.log.Logger;
+import com.sendbird.uikit.model.DialogListItem;
 import com.sendbird.uikit.utils.ContextUtils;
+import com.sendbird.uikit.utils.DialogUtils;
 import com.sendbird.uikit.utils.FileUtils;
 import com.sendbird.uikit.utils.IntentUtils;
 import com.sendbird.uikit.utils.PermissionUtils;
 import com.sendbird.uikit.utils.TextUtils;
-import com.sendbird.uikit.widgets.AppBarView;
-import com.sendbird.uikit.widgets.ChannelCoverView;
 import com.sendbird.uikit.widgets.WaitingDialog;
-import com.sendbird.uikit_messaging_android.R;
-import com.sendbird.uikit_messaging_android.activities.LoginActivity;
+import com.sendbird.uikit_messaging_android.consts.StringSet;
+import com.sendbird.uikit_messaging_android.databinding.FragmentSettingsBinding;
+import com.sendbird.uikit_messaging_android.databinding.ViewCustomMenuTextButtonBinding;
 import com.sendbird.uikit_messaging_android.utils.PreferenceUtils;
-import com.sendbird.uikit_messaging_android.utils.PushUtils;
 
 import java.io.File;
 import java.util.Collections;
@@ -55,22 +56,52 @@ public class SettingsFragment extends Fragment {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 2001;
     private static final int PICK_IMAGE_ACTIVITY_REQUEST_CODE = 2002;
 
-    private ChannelCoverView profileImageView;
-    private TextView nicknameTextView;
-    private SwitchCompat darkThemeSwitch;
-    private SwitchCompat disturbSwitch;
+    private FragmentSettingsBinding binding;
     private Uri mediaUri;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initPage(view);
+        initPage();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.settings_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        final MenuItem editMenuItem = menu.findItem(R.id.action_edit_profile);
+        ViewCustomMenuTextButtonBinding binding = ViewCustomMenuTextButtonBinding.inflate(getLayoutInflater());
+        binding.text.setText(R.string.text_settings_header_edit_button);
+        View rootView = binding.getRoot();
+        rootView.setOnClickListener(v -> onOptionsItemSelected(editMenuItem));
+        editMenuItem.setActionView(rootView);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_edit_profile) {
+            Logger.d("++ edit button clicked");
+            showEditProfileDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -82,6 +113,10 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        SendBird.setAutoBackgroundDetection(true);
+
+        if (resultCode != RESULT_OK) return;
+
         if (requestCode == PERMISSION_SETTINGS_REQUEST_ID) {
             final boolean hasPermission = PermissionUtils.hasPermissions(getContext(), REQUIRED_PERMISSIONS);
             if (hasPermission) {
@@ -90,22 +125,19 @@ public class SettingsFragment extends Fragment {
             return;
         }
 
-        SendBird.setAutoBackgroundDetection(true);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
-                    break;
-                case PICK_IMAGE_ACTIVITY_REQUEST_CODE:
-                    if (data != null) {
-                        this.mediaUri = data.getData();
-                    }
-                    break;
-            }
+        switch (requestCode) {
+            case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
+                break;
+            case PICK_IMAGE_ACTIVITY_REQUEST_CODE:
+                if (data != null) {
+                    this.mediaUri = data.getData();
+                }
+                break;
+        }
 
-            if (this.mediaUri != null && getContext() != null) {
-                final File file = FileUtils.uriToFile(getContext().getApplicationContext(), mediaUri);
-                updateUserProfileImage(file);
-            }
+        if (this.mediaUri != null && getContext() != null) {
+            final File file = FileUtils.uriToFile(getContext().getApplicationContext(), mediaUri);
+            updateUserProfileImage(file);
         }
     }
 
@@ -146,132 +178,109 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void initPage(@NonNull View view) {
+    private void initPage() {
         if (getContext() == null) {
             return;
         }
 
-        boolean isDarkMode = PreferenceUtils.isUsingDarkTheme();
-        int backgroundRedId = isDarkMode ? R.color.background_600 : R.color.background_100;
-        view.setBackgroundResource(backgroundRedId);
+        boolean useHeader = true;
+        boolean useDoNotDisturb = true;
+        if (getArguments() != null) {
+            useHeader = getArguments().getBoolean(StringSet.SETTINGS_USE_HEADER, true);
+            useDoNotDisturb = getArguments().getBoolean(StringSet.SETTINGS_USE_DO_NOT_DISTURB, true);
+        }
 
-        AppBarView appBarView = view.findViewById(R.id.abHeader);
-        appBarView.setUseLeftImageButton(false);
-        profileImageView = view.findViewById(R.id.ivProfileView);
-        profileImageView.loadImages(Collections.singletonList(PreferenceUtils.getProfileUrl()));
-        TextView userIdBadgeView = view.findViewById(R.id.tvUserIdBadge);
-        int userIdBadgeAppearance = isDarkMode ? R.style.SendbirdBody3OnDark02 : R.style.SendbirdBody3OnLight02;
-        userIdBadgeView.setTextAppearance(getContext(), userIdBadgeAppearance);
-        TextView userIdTextView = view.findViewById(R.id.tvUserId);
-        int userIdTextAppearance = isDarkMode ? R.style.SendbirdBody1OnDark01 : R.style.SendbirdBody1OnLight01;
-        userIdTextView.setTextAppearance(getContext(), userIdTextAppearance);
-        userIdTextView.setText(PreferenceUtils.getUserId());
-        nicknameTextView = view.findViewById(R.id.tvNickname);
-        int userNicknameTextAppearance = isDarkMode ? R.style.SendbirdH1OnDark01 : R.style.SendbirdH1OnLight01;
-        nicknameTextView.setTextAppearance(getContext(), userNicknameTextAppearance);
-        nicknameTextView.setText(PreferenceUtils.getNickname());
-
-        int dividerBackground = isDarkMode ? R.drawable.sb_line_divider_dark : R.drawable.sb_line_divider_light;
-        View idDivider = view.findViewById(R.id.idDivider);
-        View profileDivider = view.findViewById(R.id.profileDivider);
-        View darkThemeDivider = view.findViewById(R.id.darkThemeDivider);
-        View disturbDivider = view.findViewById(R.id.disturbDivider);
-        View signOutDivider = view.findViewById(R.id.signOutDivider);
-        idDivider.setBackgroundResource(dividerBackground);
-        profileDivider.setBackgroundResource(dividerBackground);
-        darkThemeDivider.setBackgroundResource(dividerBackground);
-        disturbDivider.setBackgroundResource(dividerBackground);
-        signOutDivider.setBackgroundResource(dividerBackground);
-
-        appBarView.getRightTextButton().setOnClickListener(v -> {
+        binding.abHeader.setVisibility(useHeader ? View.VISIBLE : View.GONE);
+        binding.abHeader.setUseLeftImageButton(false);
+        binding.abHeader.getRightTextButton().setOnClickListener(v -> {
             Logger.d("++ edit button clicked");
             showEditProfileDialog();
         });
 
-        int itemBackground = isDarkMode ? R.drawable.selector_rectangle_dark600 : R.drawable.selector_rectangle_light;
-        int itemTextAppearance = isDarkMode ? R.style.SendbirdSubtitle2OnDark01: R.style.SendbirdSubtitle2OnLight01;
+        if (SendBird.getCurrentUser() != null) {
+            binding.ivProfileView.loadImages(Collections.singletonList(SendBird.getCurrentUser().getProfileUrl()));
+            binding.tvUserId.setText(SendBird.getCurrentUser().getUserId());
+            binding.tvNickname.setText(SendBird.getCurrentUser().getNickname());
+        } else {
+            binding.ivProfileView.loadImages(Collections.singletonList(PreferenceUtils.getProfileUrl()));
+            binding.tvUserId.setText(PreferenceUtils.getUserId());
+            binding.tvNickname.setText(PreferenceUtils.getNickname());
+        }
+
+        final boolean isDarkMode = PreferenceUtils.isUsingDarkTheme();
         int switchTrackTint = isDarkMode ? com.sendbird.uikit.R.color.sb_switch_track_dark : com.sendbird.uikit.R.color.sb_switch_track_light;
         int switchThumbTint = isDarkMode ? com.sendbird.uikit.R.color.sb_switch_thumb_dark : com.sendbird.uikit.R.color.sb_switch_thumb_light;
 
-        View darkThemeItem = view.findViewById(R.id.itemDarkTheme);
-        darkThemeItem.setBackgroundResource(itemBackground);
-        darkThemeItem.setOnClickListener(v -> {
+        binding.itemDarkTheme.setOnClickListener(v -> {
             Logger.d("++ dark theme clicked");
             updateDarkTheme();
         });
 
-        darkThemeSwitch = view.findViewById(R.id.scDarkThemeSwitch);
-        darkThemeSwitch.setTrackTintList(AppCompatResources.getColorStateList(getContext(), switchTrackTint));
-        darkThemeSwitch.setThumbTintList(AppCompatResources.getColorStateList(getContext(), switchThumbTint));
-        darkThemeSwitch.setChecked(PreferenceUtils.isUsingDarkTheme());
+        binding.scDarkThemeSwitch.setTrackTintList(AppCompatResources.getColorStateList(getContext(), switchTrackTint));
+        binding.scDarkThemeSwitch.setThumbTintList(AppCompatResources.getColorStateList(getContext(), switchThumbTint));
+        binding.scDarkThemeSwitch.setChecked(PreferenceUtils.isUsingDarkTheme());
         SendBirdUIKit.setDefaultThemeMode(PreferenceUtils.isUsingDarkTheme() ?
                 SendBirdUIKit.ThemeMode.Dark : SendBirdUIKit.ThemeMode.Light);
-        darkThemeSwitch.setOnClickListener(v -> {
+        binding.scDarkThemeSwitch.setOnClickListener(v -> {
             Logger.d("++ dark theme clicked");
             updateDarkTheme();
         });
 
-        TextView darkThemeNameTextView = view.findViewById(R.id.tvDarkThemeName);
-        darkThemeNameTextView.setTextAppearance(getContext(), itemTextAppearance);
+        binding.itemDisturb.setVisibility(useDoNotDisturb ? View.VISIBLE : View.GONE);
+        if (useDoNotDisturb) {
+            binding.itemDisturb.setOnClickListener(v -> {
+                Logger.d("++ disturb clicked");
+                updateDoNotDisturb();
+            });
 
-        View disturbItem = view.findViewById(R.id.itemDisturb);
-        disturbItem.setBackgroundResource(itemBackground);
-        disturbItem.setOnClickListener(v -> {
-            Logger.d("++ disturb clicked");
-            updateDoNotDisturb();
+            binding.scDisturbSwitch.setTrackTintList(AppCompatResources.getColorStateList(getContext(), switchTrackTint));
+            binding.scDisturbSwitch.setThumbTintList(AppCompatResources.getColorStateList(getContext(), switchThumbTint));
+            SendBird.getDoNotDisturb((b, i, i1, i2, i3, s, e) -> {
+                PreferenceUtils.setDoNotDisturb(b);
+                if (isActive()) {
+                    binding.scDisturbSwitch.setChecked(PreferenceUtils.getDoNotDisturb());
+                }
+            });
+            binding.scDisturbSwitch.setOnClickListener(v -> {
+                Logger.d("++ disturb clicked");
+                updateDoNotDisturb();
+            });
+        }
+
+        binding.itemHome.setOnClickListener(v -> {
+            Logger.d("++ home clicked");
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
         });
-
-        disturbSwitch = view.findViewById(R.id.scDisturbSwitch);
-        disturbSwitch.setTrackTintList(AppCompatResources.getColorStateList(getContext(), switchTrackTint));
-        disturbSwitch.setThumbTintList(AppCompatResources.getColorStateList(getContext(), switchThumbTint));
-        SendBird.getDoNotDisturb((b, i, i1, i2, i3, s, e) -> {
-            PreferenceUtils.setDoNotDisturb(b);
-            disturbSwitch.setChecked(PreferenceUtils.getDoNotDisturb());
-        });
-        disturbSwitch.setOnClickListener(v -> {
-            Logger.d("++ disturb clicked");
-            updateDoNotDisturb();
-        });
-
-        TextView disturbNameTextView = view.findViewById(R.id.tvDisturbName);
-        disturbNameTextView.setTextAppearance(getContext(), itemTextAppearance);
-
-        View signOutItem = view.findViewById(R.id.itemSignOut);
-        signOutItem.setBackgroundResource(itemBackground);
-        signOutItem.setOnClickListener(v -> {
-            Logger.d("++ sign out clicked");
-            signOut();
-        });
-
-        TextView signOutNameTextView = view.findViewById(R.id.tvSignOutName);
-        signOutNameTextView.setTextAppearance(getContext(), itemTextAppearance);
     }
 
     private void showEditProfileDialog() {
-        if (getContext() == null) return;
+        if (getContext() == null || getFragmentManager() == null) return;
 
-        DialogHelper.DialogListItem[] items = {
-                new DialogHelper.DialogListItem(R.string.text_settings_change_user_nickname),
-                new DialogHelper.DialogListItem(R.string.text_settings_change_user_profile_image)
+        DialogListItem[] items = {
+                new DialogListItem(R.string.text_settings_change_user_nickname),
+                new DialogListItem(R.string.text_settings_change_user_profile_image)
         };
 
-        DialogHelper.showBottomList(getContext(), items, (key) -> {
+        DialogUtils.buildItemsBottom(items, (v, p, key) -> {
             if (key == R.string.text_settings_change_user_nickname) {
                 Logger.dev("change user nickname");
-                DialogHelper.OnEditTextResultListener listener = result -> {
+                OnEditTextResultListener listener = result -> {
                     if (TextUtils.isEmpty(result)) {
                         return;
                     }
                     updateUserNickname(result);
                 };
 
-                DialogHelper.showEditText(getContext(),
-                        R.string.text_settings_change_user_nickname,
-                        R.string.text_settings_change_user_nickname_hint,
-                        com.sendbird.uikit.R.string.sb_text_button_cancel, v1 -> {
-                        },
-                        com.sendbird.uikit.R.string.sb_text_button_save, listener);
-
+                DialogEditTextParams params = new DialogEditTextParams(getString(com.sendbird.uikit.R.string.sb_text_channel_settings_change_channel_name_hint));
+                params.setEnableSingleLine(true);
+                DialogUtils.buildEditText(
+                        getString(R.string.text_settings_change_user_nickname),
+                        (int) getResources().getDimension(R.dimen.sb_dialog_width_280),
+                        params, listener,
+                        getString(com.sendbird.uikit.R.string.sb_text_button_save), null,
+                        getString(com.sendbird.uikit.R.string.sb_text_button_cancel), null).showSingle(getFragmentManager());
             } else if (key == R.string.text_settings_change_user_profile_image) {
                 Logger.dev("change user profile");
 
@@ -283,35 +292,53 @@ public class SettingsFragment extends Fragment {
 
                 requestPermissions(REQUIRED_PERMISSIONS, STORAGE_PERMISSIONS_REQUEST_CODE);
             }
-        });
+        }).showSingle(getFragmentManager());
     }
 
     private void updateUserNickname(@NonNull String nickname) {
         WaitingDialog.show(getContext());
-        SendBirdUIKit.updateUserInfo(nickname, SendBirdUIKit.getAdapter().getUserInfo().getProfileUrl(), e -> {
+        if (SendBird.getCurrentUser() == null) {
+            WaitingDialog.dismiss();
+            ContextUtils.toastError(getContext(), R.string.text_error_connection_must_be_made);
+            return;
+        }
+
+        SendBirdUIKit.updateUserInfo(nickname, SendBird.getCurrentUser().getProfileUrl(), e -> {
             WaitingDialog.dismiss();
             if (e != null) {
                 Logger.e(e);
+                ContextUtils.toastError(getContext(), R.string.text_error_update_user_information);
                 return;
             }
 
             PreferenceUtils.setNickname(nickname);
-            nicknameTextView.setText(nickname);
+            if (isActive()) {
+                binding.tvNickname.setText(nickname);
+            }
         });
     }
 
     private void updateUserProfileImage(@NonNull File profileImage) {
         WaitingDialog.show(getContext());
-        SendBird.updateCurrentUserInfoWithProfileImage(SendBirdUIKit.getAdapter().getUserInfo().getNickname(), profileImage, e -> {
+        if (SendBird.getCurrentUser() == null) {
+            WaitingDialog.dismiss();
+            ContextUtils.toastError(getContext(), R.string.text_error_connection_must_be_made);
+            return;
+        }
+
+        SendBird.updateCurrentUserInfoWithProfileImage(SendBird.getCurrentUser().getNickname(), profileImage, e -> {
             WaitingDialog.dismiss();
             if (e != null) {
                 Logger.e(e);
+                ContextUtils.toastError(getContext(), R.string.text_error_update_user_information);
                 return;
             }
 
             String profileUrl = SendBird.getCurrentUser().getProfileUrl();
             PreferenceUtils.setProfileUrl(profileUrl);
-            profileImageView.loadImages(Collections.singletonList(profileUrl));
+            if (isActive()) {
+                binding.ivProfileView.loadImages(Collections.singletonList(profileUrl));
+            }
         });
     }
 
@@ -319,7 +346,7 @@ public class SettingsFragment extends Fragment {
         SendBirdUIKit.setDefaultThemeMode(SendBirdUIKit.isDarkMode() ?
                 SendBirdUIKit.ThemeMode.Light : SendBirdUIKit.ThemeMode.Dark);
         PreferenceUtils.setUseDarkTheme(SendBirdUIKit.isDarkMode());
-        darkThemeSwitch.setChecked(SendBirdUIKit.isDarkMode());
+        binding.scDarkThemeSwitch.setChecked(SendBirdUIKit.isDarkMode());
         if (getActivity() != null) {
             getActivity().finish();
             startActivity(getActivity().getIntent());
@@ -327,11 +354,14 @@ public class SettingsFragment extends Fragment {
     }
 
     private void updateDoNotDisturb() {
-        disturbSwitch.setChecked(!PreferenceUtils.getDoNotDisturb());
+        binding.scDisturbSwitch.setChecked(!PreferenceUtils.getDoNotDisturb());
         Logger.d("update do not disturb : " + !PreferenceUtils.getDoNotDisturb());
         SendBird.setDoNotDisturb(!PreferenceUtils.getDoNotDisturb(), 0, 0, 23, 59, TimeZone.getDefault().getID(), e -> {
             if (e != null) {
-                disturbSwitch.setChecked(PreferenceUtils.getDoNotDisturb());
+                ContextUtils.toastError(getContext(), R.string.text_error_update_do_not_disturb);
+                if (isActive()) {
+                    binding.scDisturbSwitch.setChecked(PreferenceUtils.getDoNotDisturb());
+                }
                 return;
             }
             Logger.d("update do not disturb on callback : " + !PreferenceUtils.getDoNotDisturb());
@@ -339,42 +369,15 @@ public class SettingsFragment extends Fragment {
         });
     }
 
-    private void signOut() {
-        if (getContext() == null) {
-            return;
-        }
-        WaitingDialog.show(getContext());
-        PushUtils.unregisterPushHandler(new SendBirdPushHelper.OnPushRequestCompleteListener() {
-            @Override
-            public void onComplete(boolean isActive, String token) {
-                SendBirdUIKit.disconnect(() -> {
-                    if (getActivity() == null) {
-                        return;
-                    }
-                    WaitingDialog.dismiss();
-                    PreferenceUtils.clearAll();
-                    startActivity(new Intent(getActivity(), LoginActivity.class));
-                    getActivity().finish();
-                });
-            }
-
-            @Override
-            public void onError(SendBirdException e) {
-                WaitingDialog.dismiss();
-            }
-        });
-    }
-
     private void showMediaSelectDialog() {
-        if (getContext() == null) return;
-        
-        DialogHelper.DialogListItem[] items = {
-                new DialogHelper.DialogListItem(com.sendbird.uikit.R.string.sb_text_channel_settings_change_channel_image_camera),
-                new DialogHelper.DialogListItem(com.sendbird.uikit.R.string.sb_text_channel_settings_change_channel_image_gallery)};
+        if (getContext() == null || getFragmentManager() == null) return;
+        DialogListItem[] items = {
+                new DialogListItem(com.sendbird.uikit.R.string.sb_text_channel_settings_change_channel_image_camera),
+                new DialogListItem(com.sendbird.uikit.R.string.sb_text_channel_settings_change_channel_image_gallery)};
 
-        DialogHelper.showList(getContext(),
-                com.sendbird.uikit.R.string.sb_text_channel_settings_change_channel_image,
-                items, (key) -> {
+        DialogUtils.buildItems(getString(com.sendbird.uikit.R.string.sb_text_channel_settings_change_channel_image),
+                (int) getResources().getDimension(R.dimen.sb_dialog_width_280),
+                items, (v, p, key) -> {
                     try {
                         SendBird.setAutoBackgroundDetection(false);
                         if (key == com.sendbird.uikit.R.string.sb_text_channel_settings_change_channel_image_camera) {
@@ -385,7 +388,7 @@ public class SettingsFragment extends Fragment {
                     } catch (Exception e) {
                         Logger.e(e);
                     }
-                });
+                }).showSingle(getFragmentManager());
     }
 
     private void takeCamera() {
@@ -413,5 +416,10 @@ public class SettingsFragment extends Fragment {
             textResId = com.sendbird.uikit.R.string.sb_text_need_to_allow_permission_storage;
         }
         return String.format(Locale.US, context.getString(textResId), ContextUtils.getApplicationName(context));
+    }
+
+    protected boolean isActive() {
+        boolean isDeactivated = isRemoving() || isDetached() || getContext() == null;
+        return !isDeactivated;
     }
 }

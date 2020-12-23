@@ -7,8 +7,6 @@ import android.text.TextUtils;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sendbird.uikit.SendBirdUIKit;
-import com.sendbird.uikit_messaging_android.activities.LoginActivity;
-import com.sendbird.uikit_messaging_android.activities.MainActivity;
 import com.sendbird.uikit_messaging_android.utils.PreferenceUtils;
 
 public class SplashActivity extends AppCompatActivity {
@@ -33,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
     private Intent getNextIntent() {
         String userId = PreferenceUtils.getUserId();
         if (!TextUtils.isEmpty(userId)) {
-            return new Intent(SplashActivity.this, MainActivity.class);
+            return new Intent(SplashActivity.this, HomeActivity.class);
         }
 
         return new Intent(SplashActivity.this, LoginActivity.class);

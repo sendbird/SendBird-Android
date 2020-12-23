@@ -1,4 +1,4 @@
-package com.sendbird.uikit_messaging_android.activities;
+package com.sendbird.uikit_messaging_android.groupchannel;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,65 +7,61 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.sendbird.android.GroupChannelTotalUnreadMessageCountParams;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.User;
 import com.sendbird.uikit.activities.ChannelActivity;
 import com.sendbird.uikit.fragments.ChannelListFragment;
 import com.sendbird.uikit_messaging_android.R;
-import com.sendbird.uikit_messaging_android.fragments.SettingsFragment;
+import com.sendbird.uikit_messaging_android.databinding.ActivityGroupChannelMainBinding;
+import com.sendbird.uikit_messaging_android.SettingsFragment;
 import com.sendbird.uikit_messaging_android.utils.PreferenceUtils;
 import com.sendbird.uikit_messaging_android.widgets.CustomTabView;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.sendbird.uikit_messaging_android.consts.StringSet.PUSH_REDIRECT_CHANNEL;
 
-public class MainActivity extends AppCompatActivity {
+public class GroupChannelMainActivity extends AppCompatActivity {
     private static final String USER_EVENT_HANDLER_KEY = "USER_EVENT_HANDLER_KEY";
+
+    private ActivityGroupChannelMainBinding binding;
     private CustomTabView unreadCountTab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_group_channel_main);
         initPage();
     }
 
     private void initPage() {
-        ViewPager2 mainPage = findViewById(R.id.vpMain);
-        mainPage.setAdapter(new MainAdapter(getSupportFragmentManager(), getLifecycle()));
+        binding.vpMain.setAdapter(new MainAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT));
 
-        TabLayout tabLayout = findViewById(R.id.tlMain);
         boolean isDarkMode = PreferenceUtils.isUsingDarkTheme();
         int backgroundRedId = isDarkMode ? R.color.background_600 : R.color.background_100;
-        tabLayout.setBackgroundResource(backgroundRedId);
+        binding.tlMain.setBackgroundResource(backgroundRedId);
+        binding.tlMain.setupWithViewPager(binding.vpMain);
 
-        new TabLayoutMediator(tabLayout, mainPage, (tab, position) -> {
-                if (position == 0) {
-                    unreadCountTab = new CustomTabView(this);
-                    unreadCountTab.setBadgeVisibility(View.GONE);
-                    unreadCountTab.setTitle(getString(R.string.text_tab_channels));
-                    unreadCountTab.setIcon(R.drawable.icon_chat_filled);
-                    tab.setCustomView(unreadCountTab);
-                } else {
-                    CustomTabView settingsTab = new CustomTabView(this);
-                    settingsTab.setBadgeVisibility(View.GONE);
-                    settingsTab.setTitle(getString(R.string.text_tab_settings));
-                    settingsTab.setIcon(R.drawable.icon_settings_filled);
-                    tab.setCustomView(settingsTab);
-                }
-            }
-        ).attach();
+        unreadCountTab = new CustomTabView(this);
+        unreadCountTab.setBadgeVisibility(View.GONE);
+        unreadCountTab.setTitle(getString(R.string.text_tab_channels));
+        unreadCountTab.setIcon(R.drawable.icon_chat_filled);
+
+        CustomTabView settingsTab = new CustomTabView(this);
+        settingsTab.setBadgeVisibility(View.GONE);
+        settingsTab.setTitle(getString(R.string.text_tab_settings));
+        settingsTab.setIcon(R.drawable.icon_settings_filled);
+
+        Objects.requireNonNull(binding.tlMain.getTabAt(0)).setCustomView(unreadCountTab);
+        Objects.requireNonNull(binding.tlMain.getTabAt(1)).setCustomView(settingsTab);
 
         redirectChannelIfNeeded(getIntent());
     }
@@ -119,14 +115,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static Intent newRedirectToChannelIntent(@NonNull Context context, @NonNull String channelUrl) {
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, GroupChannelMainActivity.class);
         intent.putExtra(PUSH_REDIRECT_CHANNEL, channelUrl);
         return intent;
     }
 
     private void redirectChannelIfNeeded(Intent intent) {
         if (intent == null) return;
-        //if (SendBird.getCurrentUser() == null) return;
 
         if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) {
             getIntent().removeExtra(PUSH_REDIRECT_CHANNEL);
@@ -138,16 +133,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static class MainAdapter extends FragmentStateAdapter {
+    private static class MainAdapter extends FragmentPagerAdapter {
         private static final int PAGE_SIZE = 2;
 
-        public MainAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
-            super(fragmentManager, lifecycle);
+        public MainAdapter(@NonNull FragmentManager fm, int behavior) {
+            super(fm, behavior);
         }
 
         @NonNull
         @Override
-        public Fragment createFragment(int position) {
+        public Fragment getItem(int position) {
             if (position == 0) {
                 return new ChannelListFragment.Builder()
                         .setUseHeader(true)
@@ -159,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public int getItemCount() {
+        public int getCount() {
             return PAGE_SIZE;
         }
     }
