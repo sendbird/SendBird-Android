@@ -48,7 +48,7 @@ repositories {
 }
 dependencies {
     // Chat SDK
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.153'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.154'
 
     // SyncManager
     implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.29'
