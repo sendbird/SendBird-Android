@@ -61,4 +61,8 @@ public class TextUtils {
 
         return hexString.toString();
     }
+
+    public static boolean isEmpty(CharSequence text) {
+        return text == null || text.length() == 0;
+    }
 }

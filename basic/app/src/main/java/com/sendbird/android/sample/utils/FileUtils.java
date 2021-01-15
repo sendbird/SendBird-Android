@@ -1,6 +1,7 @@
 package com.sendbird.android.sample.utils;
 
 import android.app.DownloadManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +10,9 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
+
+import androidx.annotation.NonNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,24 +37,8 @@ public class FileUtils {
     }
 
     public static Hashtable<String, Object> getFileInfo(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        try {
+        try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
             String mime = context.getContentResolver().getType(uri);
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "sendbird");
-
-            ParcelFileDescriptor inputPFD = context.getContentResolver().openFileDescriptor(uri, "r");
-            FileDescriptor fd = null;
-            if (inputPFD != null) {
-                fd = inputPFD.getFileDescriptor();
-            }
-            FileInputStream inputStream = new FileInputStream(fd);
-            file.createNewFile();
-            FileOutputStream outputStream = new FileOutputStream(file);
-            int read;
-            byte[] bytes = new byte[1024];
-            while ((read = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, read);
-            }
             if (cursor != null) {
                 int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                 int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
@@ -60,7 +48,25 @@ public class FileUtils {
                     String name = cursor.getString(nameIndex);
                     int size = (int) cursor.getLong(sizeIndex);
 
-                    value.put("path", file.getPath());
+                    if (TextUtils.isEmpty(name)) {
+                        name = "Temp_" + uri.hashCode() + "." + extractExtension(context, uri);
+                    }
+                    File file = new File(context.getCacheDir(), name);
+
+                    ParcelFileDescriptor inputPFD = context.getContentResolver().openFileDescriptor(uri, "r");
+                    FileDescriptor fd = null;
+                    if (inputPFD != null) {
+                        fd = inputPFD.getFileDescriptor();
+                    }
+                    FileInputStream inputStream = new FileInputStream(fd);
+                    FileOutputStream outputStream = new FileOutputStream(file);
+                    int read;
+                    byte[] bytes = new byte[1024];
+                    while ((read = inputStream.read(bytes)) != -1) {
+                        outputStream.write(bytes, 0, read);
+                    }
+
+                    value.put("path", file.getAbsolutePath());
                     value.put("size", size);
                     value.put("mime", mime);
                     value.put("name", name);
@@ -71,12 +77,25 @@ public class FileUtils {
             e.printStackTrace();
             Log.e(e.getLocalizedMessage(), "File not found.");
             return null;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
         return null;
+    }
+
+    public static String extractExtension(@NonNull Context context, @NonNull Uri uri) {
+        String extension;
+
+        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            extension = extractExtension(context.getContentResolver().getType(uri));
+        } else {
+            extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(uri.getPath())).toString());
+        }
+
+        return extension;
+    }
+
+    public static String extractExtension(@NonNull String mimeType) {
+        final MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(mimeType);
     }
 
     /**
