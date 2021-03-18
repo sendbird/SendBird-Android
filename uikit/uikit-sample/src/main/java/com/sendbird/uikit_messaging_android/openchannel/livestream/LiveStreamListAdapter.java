@@ -1,5 +1,7 @@
 package com.sendbird.uikit_messaging_android.openchannel.livestream;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sendbird.android.OpenChannel;
+import com.sendbird.uikit.SendBirdUIKit;
 import com.sendbird.uikit.interfaces.UserInfo;
 import com.sendbird.uikit.utils.TextUtils;
 import com.sendbird.uikit_messaging_android.R;
@@ -17,7 +20,7 @@ import com.sendbird.uikit_messaging_android.databinding.ViewLiveStreamListItemBi
 import com.sendbird.uikit_messaging_android.model.LiveStreamingChannelData;
 import com.sendbird.uikit_messaging_android.openchannel.OpenChannelListAdapter;
 import com.sendbird.uikit_messaging_android.openchannel.OpenChannelListViewHolder;
-import com.sendbird.uikit_messaging_android.utils.PreferenceUtils;
+import com.sendbird.uikit_messaging_android.utils.DrawableUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,7 +75,8 @@ public class LiveStreamListAdapter extends OpenChannelListAdapter<LiveStreamList
                     binding.tvBadge.setText(channelData.getTags().get(0));
                 }
 
-                Glide.with(binding.getRoot().getContext())
+                Context context = binding.getRoot().getContext();
+                Glide.with(context)
                         .load(channelData.getLiveUrl())
                         .override(binding.ivLiveThumbnail.getWidth(), binding.ivLiveThumbnail.getHeight())
                         .centerCrop()
@@ -81,12 +85,16 @@ public class LiveStreamListAdapter extends OpenChannelListAdapter<LiveStreamList
                         .into(binding.ivLiveThumbnail);
 
                 binding.ivChannelThumbnail.setVisibility(View.VISIBLE);
-                Glide.with(binding.getRoot().getContext())
+
+                int iconTint = SendBirdUIKit.isDarkMode() ? R.color.onlight_01 : R.color.ondark_01;
+                int backgroundTint = SendBirdUIKit.isDarkMode() ? R.color.background_400 : R.color.background_300;
+                Drawable errorIcon = DrawableUtils.createOvalIcon(context, backgroundTint, R.drawable.icon_channels, iconTint);
+                Glide.with(context)
                         .load(channelData.getThumbnailUrl())
                         .override(binding.ivChannelThumbnail.getWidth(), binding.ivChannelThumbnail.getHeight())
                         .circleCrop()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .error(PreferenceUtils.isUsingDarkTheme() ? R.drawable.layer_channel_cover_default_dark : R.drawable.layer_channel_cover_default_light)
+                        .error(errorIcon)
                         .into(binding.ivChannelThumbnail);
             } catch (JSONException e) {
                 e.printStackTrace();

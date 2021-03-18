@@ -1,5 +1,7 @@
 package com.sendbird.uikit_messaging_android.openchannel.community;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +12,12 @@ import androidx.databinding.DataBindingUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sendbird.android.OpenChannel;
-import com.sendbird.uikit.utils.DrawableUtils;
+import com.sendbird.uikit.SendBirdUIKit;
 import com.sendbird.uikit_messaging_android.R;
 import com.sendbird.uikit_messaging_android.databinding.ViewCommunityListItemBinding;
 import com.sendbird.uikit_messaging_android.openchannel.OpenChannelListAdapter;
 import com.sendbird.uikit_messaging_android.openchannel.OpenChannelListViewHolder;
+import com.sendbird.uikit_messaging_android.utils.DrawableUtils;
 import com.sendbird.uikit_messaging_android.utils.PreferenceUtils;
 
 public class CommunityListAdapter extends OpenChannelListAdapter<CommunityListAdapter.CommunityListViewHolder> {
@@ -42,12 +45,16 @@ public class CommunityListAdapter extends OpenChannelListAdapter<CommunityListAd
             binding.tvCommunityTitle.setText(openChannel.getName());
             binding.ivFrozenIcon.setVisibility(openChannel.isFrozen() ? View.VISIBLE : View.GONE);
 
-            Glide.with(binding.getRoot().getContext())
+            Context context = binding.getRoot().getContext();
+            int iconTint = SendBirdUIKit.isDarkMode() ? R.color.onlight_01 : R.color.ondark_01;
+            int backgroundTint = SendBirdUIKit.isDarkMode() ? R.color.background_400 : R.color.background_300;
+            Drawable errorIcon = DrawableUtils.createOvalIcon(context, backgroundTint, R.drawable.icon_channels, iconTint);
+            Glide.with(context)
                     .load(openChannel.getCoverUrl())
                     .override(binding.ivCommunityCover.getWidth(), binding.ivCommunityCover.getHeight())
                     .circleCrop()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(PreferenceUtils.isUsingDarkTheme() ? R.drawable.layer_channel_cover_default_dark : R.drawable.layer_channel_cover_default_light)
+                    .error(errorIcon)
                     .into(binding.ivCommunityCover);
         }
     }

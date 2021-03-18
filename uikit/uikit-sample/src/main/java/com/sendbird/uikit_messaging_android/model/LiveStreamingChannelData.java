@@ -76,5 +76,95 @@ public class LiveStreamingChannelData {
         public String getProfileUrl() {
             return profileUrl;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Creator)) return false;
+            Creator creator = (Creator) o;
+
+            if (!userId.equals(creator.userId)) {
+                return false;
+            }
+
+            if (!nickname.equals(creator.nickname)) {
+                return false;
+            }
+
+            if (!profileUrl.equals(creator.profileUrl)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 17;
+            result = result * 31 + (userId != null ? userId.hashCode() : 0);
+            result = result * 31 + (nickname != null ? nickname.hashCode() : 0);
+            result = result * 31 + (profileUrl != null ? profileUrl.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Creator{" +
+                    "userId='" + userId + '\'' +
+                    ", nickname='" + nickname + '\'' +
+                    ", profileUrl='" + profileUrl + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LiveStreamingChannelData)) return false;
+        LiveStreamingChannelData that = (LiveStreamingChannelData) o;
+
+        if (!name.equals(that.name)) {
+            return false;
+        }
+
+        if (!tags.equals(that.tags)) {
+            return false;
+        }
+
+        if (!creator.equals(that.creator)) {
+            return false;
+        }
+
+        if (!thumbnailUrl.equals(that.thumbnailUrl)) {
+            return false;
+        }
+
+        if (!liveUrl.equals(that.liveUrl)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = result * 31 + (name != null ? name.hashCode() : 0);
+        result = result * 31 + (tags != null ? tags.hashCode() : 0);
+        result = result * 31 + (creator != null ? creator.hashCode() : 0);
+        result = result * 31 + (thumbnailUrl != null ? thumbnailUrl.hashCode() : 0);
+        result = result * 31 + (liveUrl != null ? liveUrl.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "LiveStreamingChannelData{" +
+                "name='" + name + '\'' +
+                ", tags=" + tags +
+                ", creator=" + creator +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", liveUrl='" + liveUrl + '\'' +
+                '}';
     }
 }

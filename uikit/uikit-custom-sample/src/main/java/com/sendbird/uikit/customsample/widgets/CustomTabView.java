@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.sendbird.uikit.SendBirdUIKit;
 import com.sendbird.uikit.customsample.R;
-import com.sendbird.uikit.utils.DrawableUtils;
+import com.sendbird.uikit.customsample.utils.DrawableUtils;
 
 public class CustomTabView extends FrameLayout {
     private int tintColorRedId;
@@ -45,7 +45,7 @@ public class CustomTabView extends FrameLayout {
         boolean isDarkMode = SendBirdUIKit.isDarkMode();
         tintColorRedId = isDarkMode ? R.color.selector_tab_tint_dark : R.color.selector_tab_tint;
 
-        int badgeTextAppearance = isDarkMode ? R.style.SendbirdCaption4OnLight01 : R.style.SendbirdCaption4OnDark01;
+        int badgeTextAppearance = isDarkMode ? R.style.SendbirdCaption3OnLight01 : R.style.SendbirdCaption3OnDark01;
         int badgeBackgroundRes = isDarkMode ? R.drawable.shape_badge_background_dark : R.drawable.shape_badge_background;
         int titleTextAppearance = isDarkMode ? R.style.SendbirdCaption2Primary200 : R.style.SendbirdCaption2Primary300;
 

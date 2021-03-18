@@ -117,7 +117,7 @@
     <string name="sb_text_channel_input_text_hint_frozen">메시지를 입력할 수 없습니다</string>
     <string name="sb_text_channel_input_text_hit_muted">음소거 되었습니다.</string>
     <string name="sb_text_select_channel_type">채널 타입</string>
-    <string name="sb_text_group">그릅</string>
+    <string name="sb_text_group">그룹</string>
     <string name="sb_text_super_group">슈퍼그룹</string>
     <string name="sb_text_broadcast">공지</string>
     <string name="sb_text_information_channel_frozen">일시 정지된 채널입니다</string>
@@ -151,6 +151,7 @@
     <string name="text_settings_theme_title">어두운 테마</string>
     <string name="text_settings_disturb_title">방해 금지 모드</string>
     <string name="text_settings_sign_out_title">로그아웃</string>
+    <string name="text_settings_home_title">홈으로 나가기</string>
     <string name="text_settings_change_user_nickname">닉네임 변경</string>
     <string name="text_settings_change_user_nickname_hint">닉네임 입력</string>
     <string name="text_settings_change_user_profile_image">프로필 이미지 변경</string>
@@ -158,4 +159,14 @@
     <string name="text_tab_channels">채널</string>
     <string name="text_tab_settings">설정</string>
     <string name="text_tab_badge_max_count">99+</string>
+
+    <string name="text_create_community">커뮤니티 만들기</string>
+    <string name="text_live_streams">라이브</string>
+    <string name="text_community">커뮤니티</string>
+    <string name="text_live_streaming_description">UIKit sample을 위한 예시 채널입니다.</string>
+    <string name="text_header_create_button">만들기</string>
+    <string name="text_input_channel_name_hint">채널 이름을 입력하세요</string>
+    <string name="text_remove_photo">사진 삭제</string>
+    <string name="text_live">라이브</string>
+    <string name="text_participants">%s명</string>
 </resources>

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.sendbird.android.ApplicationUserListQuery;
 import com.sendbird.android.FileMessageParams;
 import com.sendbird.android.GroupChannelParams;
+import com.sendbird.android.OpenChannelParams;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.User;
 import com.sendbird.android.UserMessageParams;
@@ -94,6 +95,11 @@ public class BaseApplication extends Application {
             @Override
             public void onBeforeUpdateUserMessage(@NonNull UserMessageParams userMessageParams) {
                 // You can set UserMessageParams globally before updating a text message.
+            }
+
+            @Override
+            public void onBeforeUpdateOpenChannel(@NonNull OpenChannelParams openChannelParams) {
+                // You can set OpenChannelParams globally before updating a channel.
             }
         });
     }

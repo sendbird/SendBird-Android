@@ -40,7 +40,7 @@ public class OpenChannelMainActivity extends AppCompatActivity {
         binding.vpMain.setAdapter(new MainAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT));
 
         boolean isDarkMode = PreferenceUtils.isUsingDarkTheme();
-        int backgroundRedId = isDarkMode ? R.color.background_600 : R.color.background_100;
+        int backgroundRedId = isDarkMode ? R.color.background_600 : R.color.background_50;
         binding.tlMain.setBackgroundResource(backgroundRedId);
         binding.tlMain.setupWithViewPager(binding.vpMain);
 

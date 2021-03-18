@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <androidx.viewpager2.widget.ViewPager2
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vpMain"
         android:layout_width="@dimen/sb_size_0"
         android:layout_height="@dimen/sb_size_0"
@@ -31,8 +31,11 @@
         android:id="@+id/tlMain"
         android:layout_width="@dimen/sb_size_0"
         android:layout_height="@dimen/sb_size_56"
-        android:background="@color/background_100"
+        android:background="@color/background_50"
         app:tabIndicatorHeight="@dimen/sb_size_0"
+        app:tabMaxWidth="@dimen/sb_size_0"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
         app:layout_constraintTop_toBottomOf="@id/vpMain"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,34 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_500">#4d2aa6</color>
-    <color name="primary_400">#6440c4</color>
-    <color name="primary_300">#7b53ef</color>
-    <color name="primary_200">#9e8cf5</color>
-    <color name="primary_100">#e2dfff</color>
-    <color name="secondary_500">#007a7a</color>
-    <color name="secondary_400">#189a8d</color>
-    <color name="secondary_300">#2eba9f</color>
-    <color name="secondary_200">#6fd6be</color>
-    <color name="secondary_100">#aef2dc</color>
-    <color name="error">#e53157</color>
-    <color name="background_700">#000000</color>
-    <color name="background_600">#161616</color>
-    <color name="background_500">#2c2c2c</color>
-    <color name="background_400">#393939</color>
-    <color name="background_200">#eaeaea</color>
-    <color name="background_300">#a8a8a8</color>
-    <color name="background_100">#ffffff</color>
-    <color name="onlight_01">#e1000000</color>
-    <color name="onlight_02">#80000000</color>
-    <color name="onlight_03">#61000000</color>
-    <color name="onlight_04">#1e000000</color>
-    <color name="ondark_01">#e1ffffff</color>
-    <color name="ondark_02">#80ffffff</color>
-    <color name="ondark_03">#61ffffff</color>
-    <color name="ondark_04">#1effffff</color>
-    <color name="overlay_01">#8c000000</color>
-    <color name="overlay_02">#51000000</color>
-
     <color name="primary_300_dim">#807b53ef</color>
-
 </resources>

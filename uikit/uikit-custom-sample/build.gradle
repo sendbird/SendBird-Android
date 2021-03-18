@@ -34,13 +34,12 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.sendbird.sdk:uikit:1.2.5"
+    implementation "com.sendbird.sdk:uikit:2.1.0"
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
 
     implementation 'com.google.android.material:material:1.2.1'
 

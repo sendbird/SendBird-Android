@@ -10,11 +10,11 @@ import androidx.annotation.NonNull;
 
 import com.sendbird.android.OpenChannel;
 import com.sendbird.uikit.log.Logger;
-import com.sendbird.uikit.utils.DrawableUtils;
 import com.sendbird.uikit_messaging_android.R;
 import com.sendbird.uikit_messaging_android.consts.StringSet;
 import com.sendbird.uikit_messaging_android.databinding.ViewCustomMenuIconButtonBinding;
 import com.sendbird.uikit_messaging_android.openchannel.OpenChannelListFragment;
+import com.sendbird.uikit_messaging_android.utils.DrawableUtils;
 import com.sendbird.uikit_messaging_android.utils.PreferenceUtils;
 
 public class CommunityListFragment extends OpenChannelListFragment {

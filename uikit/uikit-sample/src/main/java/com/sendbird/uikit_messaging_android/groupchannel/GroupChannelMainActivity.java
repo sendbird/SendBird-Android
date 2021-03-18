@@ -30,7 +30,7 @@ import java.util.Objects;
 import static com.sendbird.uikit_messaging_android.consts.StringSet.PUSH_REDIRECT_CHANNEL;
 
 public class GroupChannelMainActivity extends AppCompatActivity {
-    private static final String USER_EVENT_HANDLER_KEY = "USER_EVENT_HANDLER_KEY";
+    private static final String USER_EVENT_HANDLER_KEY = "USER_EVENT_HANDLER_KEY" + System.currentTimeMillis();
 
     private ActivityGroupChannelMainBinding binding;
     private CustomTabView unreadCountTab;
@@ -46,7 +46,7 @@ public class GroupChannelMainActivity extends AppCompatActivity {
         binding.vpMain.setAdapter(new MainAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT));
 
         boolean isDarkMode = PreferenceUtils.isUsingDarkTheme();
-        int backgroundRedId = isDarkMode ? R.color.background_600 : R.color.background_100;
+        int backgroundRedId = isDarkMode ? R.color.background_600 : R.color.background_50;
         binding.tlMain.setBackgroundResource(backgroundRedId);
         binding.tlMain.setupWithViewPager(binding.vpMain);
 

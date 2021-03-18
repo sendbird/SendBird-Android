@@ -36,8 +36,8 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdPushHandler;
 import com.sendbird.uikit.customsample.R;
-import com.sendbird.uikit.customsample.activities.MainActivity;
 import com.sendbird.uikit.customsample.consts.StringSet;
+import com.sendbird.uikit.customsample.groupchannel.GroupChannelMainActivity;
 import com.sendbird.uikit.log.Logger;
 
 import org.json.JSONException;
@@ -81,13 +81,8 @@ public class MyFirebaseMessagingService extends SendBirdPushHandler {
         try {
             if (remoteMessage.getData().containsKey(StringSet.sendbird)) {
                 String jsonStr = remoteMessage.getData().get(StringSet.sendbird);
-                JSONObject sendBird = new JSONObject(jsonStr);
-                JSONObject channel = sendBird.getJSONObject(StringSet.channel);
-                String channelUrl = channel.getString(StringSet.channel_url);
-
-                SendBird.markAsDelivered(channelUrl);
-                sendNotification(context, sendBird);
-
+                SendBird.markAsDelivered(remoteMessage.getData());
+                sendNotification(context, new JSONObject(jsonStr));
             }
         } catch (JSONException e) {
             Logger.e(e);
@@ -104,8 +99,11 @@ public class MyFirebaseMessagingService extends SendBirdPushHandler {
         JSONObject channel = sendBird.getJSONObject(StringSet.channel);
         String channelUrl = channel.getString(StringSet.channel_url);
 
-        JSONObject sender = sendBird.getJSONObject(StringSet.sender);
-        String senderName = sender.getString(StringSet.name);
+        String senderName = context.getString(R.string.app_name);
+        if (sendBird.has(StringSet.sender)) {
+            JSONObject sender = sendBird.getJSONObject(StringSet.sender);
+            senderName = sender.getString(StringSet.name);
+        }
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -115,7 +113,7 @@ public class MyFirebaseMessagingService extends SendBirdPushHandler {
             notificationManager.createNotificationChannel(mChannel);
         }
 
-        Intent intent = MainActivity.newRedirectToChannelIntent(context, channelUrl);
+        Intent intent = GroupChannelMainActivity.newRedirectToChannelIntent(context, channelUrl);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -132,6 +130,6 @@ public class MyFirebaseMessagingService extends SendBirdPushHandler {
                 .setContentIntent(pendingIntent);
         notificationBuilder.setContentText(message);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(String.valueOf(System.currentTimeMillis()), 0, notificationBuilder.build());
     }
 }

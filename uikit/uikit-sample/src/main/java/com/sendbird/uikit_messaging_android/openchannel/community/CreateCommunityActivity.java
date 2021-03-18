@@ -29,7 +29,6 @@ import com.sendbird.uikit.log.Logger;
 import com.sendbird.uikit.model.DialogListItem;
 import com.sendbird.uikit.utils.ContextUtils;
 import com.sendbird.uikit.utils.DialogUtils;
-import com.sendbird.uikit.utils.DrawableUtils;
 import com.sendbird.uikit.utils.FileUtils;
 import com.sendbird.uikit.utils.IntentUtils;
 import com.sendbird.uikit.utils.PermissionUtils;
@@ -38,6 +37,7 @@ import com.sendbird.uikit.widgets.WaitingDialog;
 import com.sendbird.uikit_messaging_android.R;
 import com.sendbird.uikit_messaging_android.consts.StringSet;
 import com.sendbird.uikit_messaging_android.databinding.ActivityCreateCommunityBinding;
+import com.sendbird.uikit_messaging_android.utils.DrawableUtils;
 import com.sendbird.uikit_messaging_android.utils.PreferenceUtils;
 
 import java.io.File;
@@ -62,7 +62,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
         int themeResId = SendBirdUIKit.getDefaultThemeMode().getResId();
         setTheme(themeResId);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_create_community);
-        binding.tbCreateCommunity.getLeftImageButton().setOnClickListener(v -> finish());
+        binding.tbCreateCommunity.setLeftImageButtonClickListener(v -> finish());
         binding.tbCreateCommunity.getRightTextButton().setEnabled(false);
         binding.tbCreateCommunity.getRightTextButton().setOnClickListener(v -> createCommunityChannel());
         int iconTint = PreferenceUtils.isUsingDarkTheme() ? R.color.onlight_01 : R.color.ondark_01;

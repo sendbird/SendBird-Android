@@ -2,7 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/background_100"
+    android:background="@color/background_50"
     android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -43,7 +43,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserIdBadge"
             android:text="@string/text_settings_user_id_badge"
-            android:textAppearance="@style/SendbirdBody3OnLight02"
+            android:textAppearance="@style/SendbirdBody2OnLight02"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -55,7 +55,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserId"
-            android:textAppearance="@style/SendbirdBody1OnLight01"
+            android:textAppearance="@style/SendbirdBody3OnLight01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -103,7 +103,7 @@
                 android:padding="@dimen/sb_size_5"
                 android:background="@drawable/shape_oval"
                 android:src="@drawable/icon_notifications_filled"
-                android:tint="@color/ondark_01"
+                android:tint="@color/background_50"
                 app:backgroundTint="@color/secondary_400"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tvDisturbName"
@@ -135,7 +135,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/itemSignOut"
+            android:id="@+id/itemHome"
             android:background="@drawable/selector_rectangle_light"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sb_size_56"
@@ -145,35 +145,35 @@
             android:paddingRight="@dimen/sb_size_16">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivSignOutIcon"
+                android:id="@+id/ivHomeIcon"
                 android:layout_width="@dimen/sb_size_28"
                 android:layout_height="@dimen/sb_size_28"
                 android:padding="@dimen/sb_size_5"
                 android:background="@drawable/shape_oval"
                 android:src="@drawable/icon_leave"
-                android:tint="@color/ondark_01"
-                app:backgroundTint="@color/error"
+                android:tint="@color/background_50"
+                app:backgroundTint="@color/error_300"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tvSignOutName"
+                app:layout_constraintEnd_toStartOf="@id/tvHomeName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSignOutName"
+                android:id="@+id/tvHomeName"
                 android:textAppearance="@style/SendbirdSubtitle2OnLight01"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/sb_size_16"
                 android:layout_marginRight="@dimen/sb_size_16"
                 android:gravity="center_vertical"
-                android:text="@string/text_settings_sign_out_title"
+                android:text="@string/text_settings_home_title"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ivSignOutIcon"
+                app:layout_constraintStart_toEndOf="@id/ivHomeIcon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <View
-                android:id="@+id/signOutDivider"
+                android:id="@+id/homeDivider"
                 android:background="@drawable/sb_line_divider_light"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sb_size_1"

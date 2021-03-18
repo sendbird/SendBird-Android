@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@{PreferenceUtils.isUsingDarkTheme() ? @color/background_600 : @color/background_100}">
+        android:background="@{PreferenceUtils.isUsingDarkTheme() ? @color/background_600 : @color/background_50}">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tbMain"
@@ -20,7 +20,7 @@
             android:paddingLeft="@dimen/sb_size_20"
             android:paddingEnd="@dimen/sb_size_4"
             android:paddingRight="@dimen/sb_size_4"
-            android:background="@{PreferenceUtils.isUsingDarkTheme() ? @color/background_500 : @color/background_100}"
+            android:background="@{PreferenceUtils.isUsingDarkTheme() ? @color/background_500 : @color/background_50}"
             app:titleTextColor="@{PreferenceUtils.isUsingDarkTheme() ? @color/ondark_01 : @color/onlight_01}"
             app:titleTextAppearance="@style/SendbirdH1OnLight01"
             app:layout_constraintTop_toTopOf="parent"

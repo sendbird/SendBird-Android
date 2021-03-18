@@ -12,7 +12,7 @@ import java.util.List;
 
 abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolder> extends RecyclerView.Adapter<VH> {
     protected List<OpenChannel> openChannelList = new ArrayList<>();
-    private List<ChannelInfo> cachedOpenChannelList = new ArrayList<>();
+    private List<OpenChannelInfo> cachedOpenChannelList = new ArrayList<>();
     protected OnItemClickListener<OpenChannel> itemClickListener;
 
     public OpenChannelListAdapter() {
@@ -48,7 +48,7 @@ abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolde
 
         this.openChannelList.clear();
         this.openChannelList.addAll(items);
-        this.cachedOpenChannelList = ChannelInfo.toChannelInfoList(items);
+        this.cachedOpenChannelList = OpenChannelInfo.toOpenChannelInfoList(items);
         diffResult.dispatchUpdatesTo(this);
     }
 
@@ -57,10 +57,10 @@ abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolde
     }
 
     private static class OpenChannelDiffCallback extends DiffUtil.Callback {
-        private final List<OpenChannelListAdapter.ChannelInfo> oldChannelList;
+        private final List<OpenChannelInfo> oldChannelList;
         private final List<OpenChannel> newChannelList;
 
-        OpenChannelDiffCallback(@NonNull List<OpenChannelListAdapter.ChannelInfo> oldChannelList, @NonNull List<OpenChannel> newChannelList) {
+        OpenChannelDiffCallback(@NonNull List<OpenChannelInfo> oldChannelList, @NonNull List<OpenChannel> newChannelList) {
             this.oldChannelList = oldChannelList;
             this.newChannelList = newChannelList;
         }
@@ -77,7 +77,7 @@ abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolde
 
         @Override
         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-            OpenChannelListAdapter.ChannelInfo oldChannel = oldChannelList.get(oldItemPosition);
+            OpenChannelInfo oldChannel = oldChannelList.get(oldItemPosition);
             OpenChannel newChannel = newChannelList.get(newItemPosition);
             if (!newChannel.getUrl().equals(oldChannel.getChannelUrl())) {
                 return false;
@@ -88,7 +88,7 @@ abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolde
 
         @Override
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-            OpenChannelListAdapter.ChannelInfo oldChannel = oldChannelList.get(oldItemPosition);
+            OpenChannelInfo oldChannel = oldChannelList.get(oldItemPosition);
             OpenChannel newChannel = newChannelList.get(newItemPosition);
 
             if (!areItemsTheSame(oldItemPosition, newItemPosition)) {
@@ -113,7 +113,7 @@ abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolde
         }
     }
 
-    private static class ChannelInfo {
+    private static class OpenChannelInfo {
         private final String channelUrl;
         private final long createdAt;
         private final int participantCount;
@@ -121,7 +121,7 @@ abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolde
         private final String coverImageUrl;
         private final boolean isFrozen;
 
-        ChannelInfo(@NonNull OpenChannel channel) {
+        OpenChannelInfo(@NonNull OpenChannel channel) {
             this.channelUrl = channel.getUrl();
             this.createdAt = channel.getCreatedAt();
             this.participantCount = channel.getParticipantCount();
@@ -159,7 +159,7 @@ abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolde
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            ChannelInfo that = (ChannelInfo) o;
+            OpenChannelInfo that = (OpenChannelInfo) o;
 
             if (createdAt != that.createdAt) return false;
             if (channelUrl != null && channelUrl.equals(that.channelUrl)) return false;
@@ -193,10 +193,10 @@ abstract public class OpenChannelListAdapter<VH extends OpenChannelListViewHolde
                     '}';
         }
 
-        static List<ChannelInfo> toChannelInfoList(@NonNull List<OpenChannel> channelList) {
-            List<ChannelInfo> results = new ArrayList<>();
+        static List<OpenChannelInfo> toOpenChannelInfoList(@NonNull List<OpenChannel> channelList) {
+            List<OpenChannelInfo> results = new ArrayList<>();
             for (OpenChannel channel : channelList) {
-                results.add(new ChannelInfo(channel));
+                results.add(new OpenChannelInfo(channel));
             }
             return results;
         }

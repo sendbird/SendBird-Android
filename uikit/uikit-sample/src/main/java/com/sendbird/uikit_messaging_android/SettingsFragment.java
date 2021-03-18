@@ -38,6 +38,7 @@ import com.sendbird.uikit.widgets.WaitingDialog;
 import com.sendbird.uikit_messaging_android.consts.StringSet;
 import com.sendbird.uikit_messaging_android.databinding.FragmentSettingsBinding;
 import com.sendbird.uikit_messaging_android.databinding.ViewCustomMenuTextButtonBinding;
+import com.sendbird.uikit_messaging_android.utils.DrawableUtils;
 import com.sendbird.uikit_messaging_android.utils.PreferenceUtils;
 
 import java.io.File;
@@ -216,6 +217,11 @@ public class SettingsFragment extends Fragment {
             updateDarkTheme();
         });
 
+
+        int iconTint = SendBirdUIKit.isDarkMode() ? R.color.background_700 : R.color.background_50;
+        int themeBackgroundTint = SendBirdUIKit.isDarkMode() ? R.color.background_300 : R.color.background_400;
+        binding.ivDarkThemeIcon.setImageDrawable(DrawableUtils.setTintList(getContext(), R.drawable.icon_theme, iconTint));
+        binding.ivDarkThemeIcon.setBackgroundDrawable(DrawableUtils.setTintList(getContext(), R.drawable.shape_oval, themeBackgroundTint));
         binding.scDarkThemeSwitch.setTrackTintList(AppCompatResources.getColorStateList(getContext(), switchTrackTint));
         binding.scDarkThemeSwitch.setThumbTintList(AppCompatResources.getColorStateList(getContext(), switchThumbTint));
         binding.scDarkThemeSwitch.setChecked(PreferenceUtils.isUsingDarkTheme());
@@ -226,6 +232,9 @@ public class SettingsFragment extends Fragment {
             updateDarkTheme();
         });
 
+        int disturbBackgroundTint = SendBirdUIKit.isDarkMode() ? R.color.secondary_200 : R.color.secondary_300;
+        binding.ivDisturbIcon.setImageDrawable(DrawableUtils.setTintList(getContext(), R.drawable.icon_notifications_filled, iconTint));
+        binding.ivDisturbIcon.setBackgroundDrawable(DrawableUtils.setTintList(getContext(), R.drawable.shape_oval, disturbBackgroundTint));
         binding.itemDisturb.setVisibility(useDoNotDisturb ? View.VISIBLE : View.GONE);
         if (useDoNotDisturb) {
             binding.itemDisturb.setOnClickListener(v -> {
@@ -247,6 +256,9 @@ public class SettingsFragment extends Fragment {
             });
         }
 
+        int homeBackgroundTint = SendBirdUIKit.isDarkMode() ? R.color.error_200 : R.color.error_300;
+        binding.ivHomeIcon.setImageDrawable(DrawableUtils.setTintList(getContext(), R.drawable.icon_leave, iconTint));
+        binding.ivHomeIcon.setBackgroundDrawable(DrawableUtils.setTintList(getContext(), R.drawable.shape_oval, homeBackgroundTint));
         binding.itemHome.setOnClickListener(v -> {
             Logger.d("++ home clicked");
             if (getActivity() != null) {

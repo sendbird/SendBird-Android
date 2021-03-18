@@ -9,7 +9,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background_100" >
+        android:background="@color/background_50" >
 
         <ScrollView
             android:layout_width="match_parent"

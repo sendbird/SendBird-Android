@@ -10,10 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.sendbird.uikit.SendBirdUIKit;
-import com.sendbird.uikit.consts.StringSet;
 import com.sendbird.uikit.fragments.OpenChannelFragment;
 import com.sendbird.uikit.utils.ContextUtils;
 import com.sendbird.uikit_messaging_android.R;
+import com.sendbird.uikit_messaging_android.consts.StringSet;
 
 
 /**

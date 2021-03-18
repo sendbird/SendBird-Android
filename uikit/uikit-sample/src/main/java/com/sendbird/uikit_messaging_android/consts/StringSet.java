@@ -3,11 +3,13 @@ package com.sendbird.uikit_messaging_android.consts;
 public class StringSet {
     public static final String CHANNEL_NAME = "CHANNEL_NAME";
     public static final String CHANNEL_ID = "CHANNEL_ID";
+    public static final String KEY_CHANNEL_URL = "KEY_CHANNEL_URL";
     public static final String PUSH_REDIRECT_CHANNEL = "PUSH_REDIRECT_CHANNEL";
     public static final String SETTINGS_USE_HEADER = "SETTINGS_USE_HEADER";
     public static final String SETTINGS_USE_DO_NOT_DISTURB = "SETTINGS_USE_DO_NOT_DISTURB";
     public static final String SB_LIVE_TYPE = "SB_LIVE_TYPE";
     public static final String SB_COMMUNITY_TYPE = "SB_COMMUNITY_TYPE";
+    public static final String KEY_INPUT_TEXT = "KEY_INPUT_TEXT";
 
     public static final String sendbird = "sendbird";
     public static final String channel = "channel";

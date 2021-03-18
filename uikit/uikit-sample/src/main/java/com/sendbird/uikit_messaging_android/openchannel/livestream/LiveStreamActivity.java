@@ -26,10 +26,10 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.User;
 import com.sendbird.uikit.SendBirdUIKit;
 import com.sendbird.uikit.consts.KeyboardDisplayType;
-import com.sendbird.uikit.consts.StringSet;
 import com.sendbird.uikit.fragments.OpenChannelFragment;
 import com.sendbird.uikit.utils.ContextUtils;
 import com.sendbird.uikit_messaging_android.R;
+import com.sendbird.uikit_messaging_android.consts.StringSet;
 import com.sendbird.uikit_messaging_android.databinding.ActivityLiveStreamBinding;
 import com.sendbird.uikit_messaging_android.model.LiveStreamingChannelData;
 
@@ -48,6 +48,7 @@ public class LiveStreamActivity extends AppCompatActivity {
     private ActivityLiveStreamBinding binding;
     private String creatorName;
     private String channelUrl;
+    private String inputText;
 
     private final HideHandler hideHandler = new HideHandler(this);
     private static class HideHandler extends Handler {
@@ -70,6 +71,12 @@ public class LiveStreamActivity extends AppCompatActivity {
         Intent intent = new Intent(context, LiveStreamActivity.class);
         intent.putExtra(StringSet.KEY_CHANNEL_URL, channelUrl);
         return intent;
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(StringSet.KEY_INPUT_TEXT, inputText);
     }
 
     @Override
@@ -148,6 +155,11 @@ public class LiveStreamActivity extends AppCompatActivity {
                             .into(binding.ivLive);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
+                }
+
+                if(savedInstanceState != null) {
+                    inputText = savedInstanceState.getString(StringSet.KEY_INPUT_TEXT);
+                    savedInstanceState.clear();
                 }
 
                 OpenChannelFragment fragment = createOpenChannelFragment(channelUrl);
@@ -232,7 +244,9 @@ public class LiveStreamActivity extends AppCompatActivity {
         OpenChannelFragment.Builder builder = new OpenChannelFragment.Builder(channelUrl)
                 .setUseHeader(true)
                 .setHeaderDescription(creatorName)
-                .setKeyboardDisplayType(KeyboardDisplayType.Dialog);
+                .setKeyboardDisplayType(KeyboardDisplayType.Dialog)
+                .setInputText(inputText)
+                .setOnInputTextChangedListener((s, start, before, count) -> inputText = s.toString());
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             builder.useOverlayMode();

@@ -9,16 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.uikit.SendBirdUIKit;
-import com.sendbird.uikit.fragments.ItemAnimator;
 import com.sendbird.uikit.interfaces.OnItemClickListener;
 import com.sendbird.uikit.log.Logger;
-import com.sendbird.uikit.widgets.PagerRecyclerView;
 import com.sendbird.uikit.widgets.StatusFrameView;
 import com.sendbird.uikit_messaging_android.R;
 import com.sendbird.uikit_messaging_android.databinding.FragmentOpenChannelListBinding;
@@ -31,8 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-abstract public class OpenChannelListFragment extends Fragment implements PagerRecyclerView.Pageable,
-        SendBird.ConnectionHandler {
+abstract public class OpenChannelListFragment extends Fragment implements SendBird.ConnectionHandler {
     private final String CONNECTION_HANDLER_ID = getClass().getName() + System.currentTimeMillis();
 
     private FragmentOpenChannelListBinding binding;
@@ -49,6 +47,7 @@ abstract public class OpenChannelListFragment extends Fragment implements PagerR
         }
         return result;
     };
+    private final AtomicBoolean refresing = new AtomicBoolean();
 
     public OpenChannelListFragment(@NonNull OpenChannelListAdapter<? extends OpenChannelListViewHolder> adapter) {
         this.adapter = adapter;
@@ -69,26 +68,17 @@ abstract public class OpenChannelListFragment extends Fragment implements PagerR
         adapter.setOnItemClickListener(itemClickListener);
         binding.rvOpenChannelList.setAdapter(adapter);
         binding.rvOpenChannelList.setHasFixedSize(true);
-        binding.rvOpenChannelList.setPager(this);
-        binding.rvOpenChannelList.setItemAnimator(new ItemAnimator());
-        binding.rvOpenChannelList.setThreshold(5);
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        binding.rvOpenChannelList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-                super.onItemRangeMoved(fromPosition, toPosition, itemCount);
-                if (toPosition == 0) {
-                    if (binding.rvOpenChannelList.findFirstVisibleItemPosition() == 0) {
-                        binding.rvOpenChannelList.scrollToPosition(0);
-                    }
-                }
-            }
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int threshold = 1;
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                int lastItemPosition = channelListCache.size();
 
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                if (positionStart == 0) {
-                    if (binding.rvOpenChannelList.findFirstVisibleItemPosition() == 0) {
-                        binding.rvOpenChannelList.scrollToPosition(0);
-                    }
+                if (!refresing.get() && lastItemPosition - lastVisibleItemPosition <= threshold && hasMore.get()) {
+                    refresing.set(true);
+                    next(false);
                 }
             }
         });
@@ -130,16 +120,6 @@ abstract public class OpenChannelListFragment extends Fragment implements PagerR
         return !isDeactivated;
     }
 
-    @Override
-    public boolean hasMore() {
-        return hasMore.get();
-    }
-
-    @Override
-    public void loadMore() {
-        next(false);
-    }
-
     private void loadInitial() {
         openChannelListQuery = OpenChannel.createOpenChannelListQuery();
         next(true);
@@ -154,6 +134,7 @@ abstract public class OpenChannelListFragment extends Fragment implements PagerR
 
         if (!openChannelListQuery.isLoading()) {
             openChannelListQuery.next((list, e) -> {
+                refresing.set(false);
                 final boolean hasData = channelListCache.size() > 0;
 
                 if (e != null) {
@@ -167,6 +148,7 @@ abstract public class OpenChannelListFragment extends Fragment implements PagerR
                 synchronized (channelListCache) {
                     if (isInitialLoading) {
                         channelListCache.clear();
+                        binding.rvOpenChannelList.scrollToPosition(0);
                     }
                     channelListCache.addAll(list);
                 }
@@ -205,7 +187,6 @@ abstract public class OpenChannelListFragment extends Fragment implements PagerR
     }
 
     private void notifyDataSetChanged(List<OpenChannel> newList) {
-        binding.rvOpenChannelList.setRefreshing(false);
         adapter.setItems(newList == null ? new ArrayList<>() : newList);
     }
 

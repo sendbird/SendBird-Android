@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@{PreferenceUtils.isUsingDarkTheme() ? @color/background_600 : @color/background_100}"
+        android:background="@{PreferenceUtils.isUsingDarkTheme() ? @color/background_600 : @color/background_50}"
         tools:context="com.sendbird.uikit_messaging_android.openchannel.community.CreateCommunityActivity">
 
         <com.sendbird.uikit.widgets.AppBarView
