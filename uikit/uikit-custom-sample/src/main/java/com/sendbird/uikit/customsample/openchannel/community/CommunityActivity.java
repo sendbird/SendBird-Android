@@ -76,6 +76,7 @@ public class CommunityActivity extends AppCompatActivity {
         return new OpenChannelFragment.Builder(openChannel.getUrl(), themeResId)
                 .setUseHeader(true)
                 .setUseHeaderLeftButton(true)
+                .setHeaderTitle(null)
                 .setHeaderDescription(null)
                 .setKeyboardDisplayType(KeyboardDisplayType.Plane)
                 .setCustomOpenChannelFragment(customOpenChannelFragment)

@@ -6,7 +6,7 @@
 
 Sendbird UIKit for Android is a development kit with an user interface that enables an easy and fast integration of standard chat features into new or existing client apps. Here are two UIKit samples for Android in the submodules. 
 
-- **uikit-sample** is a chat app with UIKit’s core core features in which you can see items such as push notifications, total unread message count and auto sign-in are demonstrated. When you sign in to the sample app, you will only see a list of channels rendered by the [ChannelListActivity](https://sendbird.com/docs/uikit/v1/android/guides/key-functions#2-list-channels) on the screen. 
+- **uikit-sample** is a chat app with UIKit’s core core features in which you can see items such as push notifications, total unread message count and auto sign-in are demonstrated. When you sign in to the sample app, you will only see a list of channels rendered by the [ChannelListActivity](https://sendbird.com/docs/uikit/v1/android/guides/group-channel#2-list-channels) on the screen. 
 - **uikit-custom-sample** is a chat app which contains customizable sample code for the following:  
   * An example of how you can create your own custom message type, for example, a demonstration of sending a message in highlight.
   * MessageListParams provides various options for retrieving a list of messages with `MessageListParams`
@@ -57,9 +57,7 @@ Go to your `Android Studio` and create a project for UIKit for Android in the **
 
 ### Install UIKit for Android
 
-UIKit for Android is installed via `Gradle`. Begin by opening the project's top-level `build.gradle` file and adding code blocks as below:
-
-> Note: Add the code blocks in your root `build.gradle` file, not your module `build.gradle` file.
+UIKit for Android is installed using `Gradle`. Begin by opening the **root** `build.gradle` file and adding code blocks as shown below:
 
 ```gradle
 buildscript {
@@ -77,40 +75,43 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url "https://repo.sendbird.com/public/maven" }
     }
 }
 ```
- 
-Then, open the `build.gradle` file at the application level. For `Java` and `Kotlin`, add code blocks and dependencies as below:
 
-> Note: Data binding should be enabled in your `build.gradle` file.
+> **Note**: Make sure the above code blocks aren't added to your module `bundle.gradle` file.
+
+Then, open the `build.gradle` file at the application level. For `Java` and `Kotlin`, add code blocks and dependencies as below:
 
 ```gradle
 apply plugin: 'com.android.application'
 
 android {
     ...
-    
+
     dataBinding {
         enabled = true
     }
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     ...
-    
 }
 
 dependencies {
-    implementation 'com.sendbird.sdk:uikit:2.1.0'
     ...
-    
+    implementation 'com.sendbird.sdk:uikit:LATEST_VERSION'
+    ...
 }
 ```
 
-After saving your `build.gradle` file, click the **Sync** button to apply all the changes. 
+Before saving the `build.gradle` file, check if you've enabled the data binding. Then, click the **Sync** button to apply all the changes.
+
+> **Note**: UIKit SDK versions `2.1.1` or lower can be downloaded from JCenter until February 1, 2022. SDK versions higher than `2.1.1` will be available on Sendbird's remote repository.
 
 <br />
 

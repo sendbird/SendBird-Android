@@ -257,6 +257,7 @@ public class LiveStreamActivity extends AppCompatActivity {
 
         OpenChannelFragment.Builder builder = new OpenChannelFragment.Builder(channelUrl, themeResId)
                 .setUseHeader(true)
+                .setHeaderTitle(null)
                 .setHeaderDescription(creatorName)
                 .setKeyboardDisplayType(KeyboardDisplayType.Dialog)
                 .setCustomOpenChannelFragment(customOpenChannelFragment)
