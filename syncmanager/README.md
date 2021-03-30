@@ -40,17 +40,29 @@ This section explains the steps you need to take before testing the Android samp
 
 ### Install Chat SDK & SyncManager for Android
 
-You can install SyncManager for Android through `Gradle`.
+Installing the SyncManager SDK is simple if you're familiar with using external libraries or SDKs. First, add the following code to your **root** `build.gradle` file:
 
 ```gradle
-repositories {
-    maven { url "https://raw.githubusercontent.com/sendbird/sendbird-syncmanager-android/master/" }
+allprojects {
+    repositories {
+        ...
+        maven { url "https://repo.sendbird.com/public/maven" }
+    }
 }
-dependencies {
-    // Chat SDK
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.160'
+```
 
-    // SyncManager
+>**Note**: Make sure the above code block isn't added to your module `bundle.gradle` file.
+
+Then, add the dependency to the project's top-level `build.gradle` file.
+
+```gradle
+dependencies {
+    // SyncManager SDK for Android (Latest, embeds Sendbird Chat SDK 3.0.158)
     implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.30'
+
+    // Chat SDK for Android (If you want to use higher version than the version embedded in the SyncManager)
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.160'
 }
-``` 
+```
+
+> **Note**: SyncManager SDK versions `1.1.30` or lower can be downloaded from JCenter until February 1, 2022. SDK versions higher than `1.1.30` will be available on Sendbird's remote repository.
