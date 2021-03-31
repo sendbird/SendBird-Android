@@ -1,3 +1,6 @@
+> ### **Sendbird UIKit samples for Android have moved to a new repository starting in April 1, 2021. [Check it out here](https://github.com/sendbird/sendbird-uikit-android-sources). The UIKit samples in this repository will be deprecated in July 1, 2021.**
+
+
 # Sendbird Android samples
 ![Platform](https://img.shields.io/badge/platform-ANDROID-orange.svg)
 ![Languages](https://img.shields.io/badge/language-JAVA-orange.svg)
