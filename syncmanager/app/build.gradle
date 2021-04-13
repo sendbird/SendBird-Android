@@ -5,7 +5,7 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.sendbird.syncmanager.sample"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode getVersionCode()
         versionName getVersionName()
@@ -43,7 +43,7 @@ dependencies {
     })
 
     // SendBird
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.160'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.161'
 
     // SendBird SyncManager
     implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.30'

@@ -18,5 +18,6 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://repo.sendbird.com/public/maven" }
     }
 }
