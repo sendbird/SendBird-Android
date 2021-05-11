@@ -61,7 +61,7 @@ dependencies {
     implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.30'
 
     // Chat SDK for Android (If you want to use higher version than the version embedded in the SyncManager)
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.163'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.164'
 }
 ```
 
