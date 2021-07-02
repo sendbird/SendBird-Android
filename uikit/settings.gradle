@@ -1,3 +1,0 @@
-include ':uikit-custom-sample'
-include ':uikit-sample'
-rootProject.name='uikit'
