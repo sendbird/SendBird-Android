@@ -20,6 +20,7 @@ public class PreferenceUtils {
 
     // Prevent instantiation
     private PreferenceUtils() {
+
     }
 
     public static void init(Context appContext) {

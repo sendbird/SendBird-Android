@@ -161,7 +161,7 @@ class OpenChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // If the date of the previous message is different, display the date before the message,
             // and also set isContinuous to false to show information such as the sender's nickname
             // and profile image.
-            if (!DateUtils.hasSameDate(message.getCreatedAt(), prevMessage.getCreatedAt())) {
+            if (DateUtils.isNotSameDate(message.getCreatedAt(), prevMessage.getCreatedAt())) {
                 isNewDay = true;
             }
 

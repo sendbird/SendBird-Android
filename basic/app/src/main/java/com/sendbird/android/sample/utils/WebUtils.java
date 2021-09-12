@@ -30,33 +30,30 @@ public class WebUtils {
      * @param input
      * @return
      */
-    public static List<String> extractUrls(String input)
-    {
-        List<String> result = new ArrayList<String>();
+    public static List<String> extractUrls(String input) {
+        List<String> urls = new ArrayList<String>();
 
         String[] words = input.split("\\s+");
 
-
         Pattern pattern = Patterns.WEB_URL;
-        for(String word : words)
-        {
-            if(pattern.matcher(word).find())
-            {
-                if(!word.toLowerCase().contains("http://") && !word.toLowerCase().contains("https://"))
-                {
+        for (String word : words) {
+
+            if(pattern.matcher(word).find()) {
+
+                if(!word.toLowerCase().contains("http://") && !word.toLowerCase().contains("https://")) {
                     word = "http://" + word;
                 }
-                result.add(word);
+                urls.add(word);
             }
         }
 
-        return result;
+        return urls;
     }
 
     /**
-     * Scrap page information of given URL.
+     * Scrape page information of given URL.
      *
-     * ScrapInfo will contain below information.
+     * ScrapeInfo will contain below information.
      *
      * site_name
      * title
@@ -74,7 +71,7 @@ public class WebUtils {
         protected UrlPreviewInfo doInBackground(String... params) {
             Hashtable<String, String> result = new Hashtable<>();
             String url = params[0];
-            Document doc = null;
+            Document doc;
             try {
                 doc = Jsoup.connect(url).followRedirects(true).timeout(TIMEOUT_MILLIS).get();
 
@@ -102,37 +99,37 @@ public class WebUtils {
 
                     String text = tag.attr("property");
                     if ("twitter:image".equals(text)) {
-                        if(!result.containsKey("image")) {
+                        if (!result.containsKey("image")) {
                             result.put("image", tag.attr("content"));
                         }
                     } else if ("twitter:description".equals(text)) {
-                        if(!result.containsKey("description")) {
+                        if (!result.containsKey("description")) {
                             result.put("description", tag.attr("content"));
                         }
                     } else if ("twitter:title".equals(text)) {
-                        if(!result.containsKey("title")) {
+                        if (!result.containsKey("title")) {
                             result.put("title", tag.attr("content"));
                         }
                     } else if ("twitter:site".equals(text)) {
-                        if(!result.containsKey("site_name")) {
+                        if (!result.containsKey("site_name")) {
                             result.put("site_name", tag.attr("content"));
                         }
                     } else if ("twitter:url".equals(text)) {
-                        if(!result.containsKey("url")) {
+                        if (!result.containsKey("url")) {
                             result.put("url", tag.attr("content"));
                         }
                     }
                 }
 
-                if(!result.containsKey("site_name") && result.get("title") != null) {
+                if (!result.containsKey("site_name") && result.get("title") != null) {
                     result.put("site_name", result.get("title"));
                 }
 
-                if(!result.containsKey("url")) {
+                if (!result.containsKey("url")) {
                     result.put("url", url);
                 }
 
-                if(result.get("image") != null && result.get("image").startsWith("//")) {
+                if (result.get("image") != null && result.get("image").startsWith("//")) {
                     result.put("image", "http:" + result.get("image"));
                 }
 
@@ -143,7 +140,7 @@ public class WebUtils {
                 /**
                  * site_name, title, image, description, url
                  */
-                if(result.keySet().size() == 5) {
+                if (result.keySet().size() == 5) {
                     return new UrlPreviewInfo(
                             result.get("url"),
                             result.get("site_name"),
