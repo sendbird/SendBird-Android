@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "801366055214",
+    "project_id": "sample-android-localcaching",
+    "storage_bucket": "sample-android-localcaching.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801366055214:android:01f0aa01a923568ad982bf",
+        "android_client_info": {
+          "package_name": "com.sendbird.localcaching.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "801366055214-q6vsn8e9t6tvt7sp12lf7t1fq1eobe6s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDK5iwP46KWw580lY1on8P3ZNOKnfAXc8Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "801366055214-q6vsn8e9t6tvt7sp12lf7t1fq1eobe6s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_item_group_channels"
+            android:icon="@drawable/ic_group_channels"
+            android:title="Group Channels" />
+    </group>
+
+    <group android:id="@+id/nav_group_actions"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_item_disconnect"
+            android:icon="@drawable/ic_disconnect"
+            android:title="Disconnect" />
+    </group>
+</menu>

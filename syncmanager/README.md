@@ -24,7 +24,7 @@ This section provides the prerequisites for testing Sendbird SyncManager for And
 
 The minimum requirements for SyncManager for Android are:
 
-- Android 4.0+ (API level 14)
+- Android 4.1+ (API level 16)
 - Java 7+
 - [Chat SDK for Android](https://github.com/sendbird/SendBird-SDK-Android/tree/master/com/sendbird/sdk/sendbird-android-sdk) 3.0 96+
 

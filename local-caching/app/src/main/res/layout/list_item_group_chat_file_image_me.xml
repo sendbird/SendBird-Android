@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:paddingRight="8dp"
+    android:paddingLeft="8dp">
+
+    <include
+        android:id="@+id/layout_group_chat_info"
+        layout="@layout/partial_group_chat_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_group_chat_info">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_group_chat_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            app:cardBackgroundColor="@color/cardview_light_background"
+            app:cardUseCompatPadding="true"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardPreventCornerOverlap="false"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/image_group_chat_file_thumbnail"
+                android:layout_width="228dp"
+                android:layout_height="148dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/text_group_chat_time"
+            android:textSize="10dp"
+            android:text="21:27"
+            android:textColor="#8e8e8e"
+            android:layout_toLeftOf="@id/card_group_chat_message"
+            android:layout_alignBottom="@id/card_group_chat_message"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.sendbird.localcaching.sample.widget.MessageStatusView
+            android:id="@+id/message_status_group_chat"
+            android:layout_above="@id/text_group_chat_time"
+            android:layout_alignRight="@id/text_group_chat_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.sendbird.localcaching.sample">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-sdk tools:overrideLibrary="com.stfalcon.multiimageview"/> <!-- min 16 -->
+
+    <application
+        android:name="com.sendbird.localcaching.sample.main.BaseApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:usesCleartextTraffic="true"
+
+        tools:replace="android:allowBackup"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <activity android:name="com.sendbird.localcaching.sample.main.SplashActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.sendbird.localcaching.sample.main.LoginActivity"
+            android:label="@string/login_connect"
+            android:launchMode="singleTop">
+        </activity>
+        <activity android:name="com.sendbird.localcaching.sample.main.MainActivity"
+            android:launchMode="singleTask"
+            android:label="@string/select_channel_type"/>
+        <activity
+            android:name="com.sendbird.localcaching.sample.main.SettingsActivity"
+            android:label="@string/settings"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.sendbird.localcaching.sample.main.BlockedMembersListActivity"
+            android:label="@string/blocked_members_list"
+            android:launchMode="singleTop"/>
+
+        <activity android:name="com.sendbird.localcaching.sample.utils.PhotoViewerActivity" />
+        <activity
+            android:name="com.sendbird.localcaching.sample.utils.MediaPlayerActivity"
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.sendbird.localcaching.sample.groupchannel.InviteMemberActivity"
+            android:label="@string/invite_member"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.sendbird.localcaching.sample.groupchannel.MemberListActivity"
+            android:label="@string/member_list"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.sendbird.localcaching.sample.groupchannel.MemberInfoActivity"
+            android:label="@string/member_info"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.sendbird.localcaching.sample.groupchannel.CreateGroupChannelActivity"
+            android:label="@string/create_group_channel"
+            android:launchMode="singleTop"/>
+
+        <activity android:name="com.sendbird.localcaching.sample.groupchannel.GroupChannelActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop"/>
+
+        <service android:name="com.sendbird.localcaching.sample.fcm.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/img_notification" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.sendbird.localcaching.sample.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+</manifest>

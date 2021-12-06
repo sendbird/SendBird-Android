@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     buildToolsVersion '28.0.3'
     defaultConfig {
-        applicationId "com.sendbird.android.sample"
-        minSdkVersion 16
-        targetSdkVersion 28
+        applicationId "com.sendbird.localcaching.sample"
+        minSdkVersion 26
+        targetSdkVersion 30
         versionCode getVersionCode()
         versionName getVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -27,12 +27,13 @@ android {
 }
 
 repositories {
-    maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
+    maven { url "https://raw.githubusercontent.com/sendbird/SendBird-SDK-Android/master/" }
+    jcenter()
     google()
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar','*.aar'], dir: 'libs')
 
     // Required for local unit tests (JUnit 4 framework)
     testImplementation 'junit:junit:4.12'
@@ -40,12 +41,12 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    // Sendbird
+    // Sendbird SDK
     implementation 'com.sendbird.sdk:sendbird-android-sdk:3.1.0'
 
     // Android support libraries
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -59,5 +60,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.3.1'
     implementation 'org.jsoup:jsoup:1.11.2'
     implementation 'com.github.stfalcon:multiimageview:0.1'
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }
 apply plugin: 'com.google.gms.google-services'

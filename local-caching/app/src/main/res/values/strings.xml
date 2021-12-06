@@ -1,0 +1,100 @@
+<resources>
+    <string name="app_name">Local Caching Sample</string>
+
+    <!-- all -->
+    <string name="all_app_version">Sample UI v%1$s / SDK v%2$s</string>
+
+    <string name="all_create">Create</string>
+    <string name="all_invite">Invite</string>
+
+    <string name="all_group_channels">Group Channels</string>
+
+    <!-- main -->
+    <string name="main_drawer_open">Open navigation drawer</string>
+    <string name="main_drawer_close">Close navigation drawer</string>
+    <string name="select_channel_type">Select channel type</string>
+    <string name="settings">Settings</string>
+    <string name="blocked_members_list">Blocked members</string>
+
+    <!-- login -->
+    <string name="login_user_id">User ID</string>
+    <string name="login_user_nickname">Nickname</string>
+    <string name="login_connect">Connect</string>
+    <string name="login_disconnect">Disconnect</string>
+    <string name="login_failed">Login to Sendbird failed</string>
+
+    <!-- Group Channel List -->
+    <string name="typing_status">Someone is Typing</string>
+    <string name="group_channel_list_file_message_text">%1$s has uploaded a file.</string>
+    <string name="create_group_channel">Create Group Channel</string>
+    <string name="member_list">Members</string>
+    <string name="invite_member">Invite members</string>
+    <string name="member_info"></string>
+    <string name="leave_channel">Leave Channel</string>
+    <string name="request_leave_channel">Leave channel %s ?</string>
+    <string name="set_push_off">Turn push notification OFF</string>
+    <string name="set_push_on">Turn push notification ON</string>
+    <string name="text_push_on">Push notifications have been turned ON</string>
+    <string name="text_push_off">Push notifications have been turned OFF</string>
+    <string name="action_leave_channel">Leave</string>
+    <string name="channel_option">Channel options</string>
+
+    <!-- Group Chat -->
+    <string name="option_delete_message">Delete message</string>
+    <string name="option_edit_message">Edit message</string>
+    <string name="action_send_message">SEND</string>
+    <string name="action_update_message">SAVE</string>
+    <string name="get_channel_failed">failed to get channel.</string>
+    <string name="channel_deleted">Channel has been deleted.</string>
+    <string name="user_typing">%s is typing</string>
+    <string name="two_users_typing">%s and %s is typing</string>
+    <string name="users_typing"> Multiple users are typing</string>
+    <string name="request_external_storage">Storage access permissions are required to upload/download files.</string>
+    <string name="request_download_file">Download file?</string>
+    <string name="send_message_error">Send failed with error: %d : %s</string>
+    <string name="wrong_file_info">Extracting file information failed.</string>
+    <string name="wrong_file_path">File must be located in local storage.</string>
+    <string name="request_retry_send_message">Retry?</string>
+
+    <!-- Member List -->
+    <string name="no_channel">Channel doesn\'t exists.</string>
+
+    <!-- Menu actions -->
+    <string name="action_create_channel">Create channel</string>
+
+    <string name="accept_permission">Okay</string>
+    <string name="download">Download</string>
+    <string name="cancel">Cancel</string>
+    <string name="upload">Upload</string>
+    <string name="resend_message">Resend</string>
+    <string name="delete_message">Delete</string>
+
+    <!-- Message Status -->
+    <string name="message_sending">Sending</string>
+    <string name="message_failed">Failed</string>
+
+
+    <!-- Settings -->
+    <string name="action_edit_nickname">EDIT</string>
+    <string name="action_save_nickname">SAVE</string>
+    <string name="option_upload_photo">Upload a photo</string>
+    <string name="option_take_photo">Take a photo</string>
+    <string name="request_profile_image">Set profile image</string>
+    <string name="permission_denied">Permission denied.</string>
+    <string name="update_user_info_failed">Update user info failed.</string>
+    <string name="connect_failed">Failed to connect to server</string>
+
+    <!-- Dialog -->
+    <string name="option_retry">Retry</string>
+    <string name="option_retry_in_5second">Retry in 5 secs</string>
+    <string name="option_offline">Offline</string>
+    <string name="connection_error">Connection must be made</string>
+    <string name="confirm">Confirm</string>
+
+    <!-- Error -->
+    <string name="sendbird_error_with_code">Error: %d : %s</string>
+    <string name="sendbird_error">Error : %s</string>
+
+
+
+</resources>

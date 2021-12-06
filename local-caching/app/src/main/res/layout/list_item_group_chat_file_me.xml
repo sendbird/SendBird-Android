@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:layout_marginBottom="8dp">
+
+    <include
+        android:id="@+id/layout_group_chat_info"
+        layout="@layout/partial_group_chat_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_group_chat_info">
+        <LinearLayout
+            android:id="@+id/layout_group_chat_file_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/group_chat_file_background"
+            android:layout_alignParentTop="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="8dp">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_file_message" />
+
+            <TextView
+                android:id="@+id/text_group_chat_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="File Name.xls" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:background="#d8d8d8" />
+
+            <Button
+                android:id="@+id/button_group_chat_file_download"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginLeft="7dp"
+                android:layout_marginStart="7dp"
+                android:background="@drawable/ic_file_message_download" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_group_chat_time"
+            android:textSize="10dp"
+            android:text="21:27"
+            android:textColor="#8e8e8e"
+            android:layout_toLeftOf="@id/layout_group_chat_file_message"
+            android:layout_alignBottom="@id/layout_group_chat_file_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.sendbird.localcaching.sample.widget.MessageStatusView
+            android:id="@+id/message_status_group_chat"
+            android:layout_above="@id/text_group_chat_time"
+            android:layout_alignRight="@id/text_group_chat_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+</RelativeLayout>
