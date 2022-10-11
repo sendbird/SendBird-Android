@@ -14,6 +14,11 @@
 
 <br />
 
+## 🔒 Security tip
+When a new Sendbird application is created in the dashboard the default security settings are set permissive to simplify running samples and implementing your first code.
+
+Before launching make sure to review the security tab under ⚙️ Settings -> Security, and set Access token permission to Read Only or Disabled so that unauthenticated users can not login as someone else. And review the Access Control lists. Most apps will want to disable "Allow retrieving user list" as that could expose usage numbers and other information.
+
 ## Installation
 
 To use our Android samples, you should first install [Chat SDK for Android](https://github.com/sendbird/SendBird-SDK-Android/tree/master/com/sendbird/sdk/sendbird-android-sdk) 3.0.96 or higher on your system.
