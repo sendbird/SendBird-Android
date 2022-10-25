@@ -149,6 +149,12 @@ public class CreateGroupChannelActivity extends BaseActivity
      * the channel will not be shown in the user's channel list until at least one message
      * has been sent inside.
      *
+     * #################### SECURITY TIPS ####################
+     * Before launching, you should review "Allow creating group channels from SDK" under ⚙️ Sendbird Dashboard -> Settings -> Security.
+     * It's turned on at first to simplify running samples and implementing your first code.
+     * Most apps will want to disable "Allow creating group channels from SDK" as that could cause unwanted operations.
+     * #################### SECURITY TIPS ####################
+     *
      * @param userIds   The users to be members of the new channel.
      * @param distinct  Whether the channel is unique for the selected members.
      *                  If you attempt to create another Distinct channel with the same members,

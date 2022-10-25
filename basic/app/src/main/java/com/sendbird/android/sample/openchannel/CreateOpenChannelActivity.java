@@ -96,6 +96,13 @@ public class CreateOpenChannelActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * #################### SECURITY TIPS ####################
+     * Before launching, you should review "Allow creating open channels from SDK" under ⚙️ Sendbird Dashboard -> Settings -> Security.
+     * It's turned on at first to simplify running samples and implementing your first code.
+     * Most apps will want to disable "Allow creating open channels from SDK" as that could cause unwanted operations
+     * #################### SECURITY TIPS ####################
+     */
     private void createOpenChannel(String name) {
         OpenChannel.createChannelWithOperatorUserIds(name, null, null, null, new OpenChannel.OpenChannelCreateHandler() {
             @Override

@@ -91,6 +91,13 @@ public class SelectUserFragment extends Fragment{
     /**
      * Replaces current user list with new list.
      * Should be used only on initial load.
+     *
+     * #################### SECURITY TIPS ####################
+     * Before launching, you should review "Allow retrieving user list from SDK" under ⚙️ Sendbird Dashboard ->Settings -> Security.
+     * It's turned on at first to simplify running samples and implementing your first code.
+     * Most apps will want to disable "Allow retrieving user list from SDK" as that could possibly expose user information
+     * #################### SECURITY TIPS ####################
+     *
      */
     private void loadInitialUserList(int size) {
         mUserListQuery = SendBird.createApplicationUserListQuery();
