@@ -4,7 +4,7 @@ metadata:
   name: Sendbird Chat Sample Android
   description: Sendbird Chat Sample for Android v3
   annotations:
-    github.com/project-slug: sendbird/sendbird-chat-sample-android-v3
+    github.com/project-slug: sendbird/SendBird-Android
 spec:
   type: sample
   lifecycle: production
