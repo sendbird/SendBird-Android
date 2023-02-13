@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: Sendbird Chat Sample Android
+  description: Sendbird Chat Sample for Android v3
+  annotations:
+    github.com/project-slug: sendbird/sendbird-chat-sample--android
+spec:
+  type: sample
+  lifecycle: production
+  owner: dep-client-platform
+  system: sendbird-chat
