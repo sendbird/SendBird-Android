@@ -42,7 +42,7 @@ dependencies {
     })
 
     // SendBird
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.1.23'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.1.25'
 
     // SendBird SyncManager
     implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.31'
