@@ -23,11 +23,12 @@ import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnVideoSizeChangedListener;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+
 import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
@@ -36,60 +37,54 @@ import com.sendbird.android.sample.R;
 public class MediaPlayerActivity extends Activity implements
         OnBufferingUpdateListener, OnCompletionListener,
         OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
-    private MediaPlayer mMediaPlayer;
-    private SurfaceView mSurfaceView;
-    private SurfaceHolder mSurfaceHolder;
-    private String mUrl;
-    private String mName;
 
-    private ProgressBar mProgressBar;
-    private View mContainer;
+    private MediaPlayer mediaPlayer;
+    private SurfaceView surfaceView;
+    private SurfaceHolder surfaceHolder;
+    private String url;
 
-    private int mVideoWidth;
-    private int mVideoHeight;
+    private ProgressBar progressBar;
+    private View container;
 
-    private boolean mIsVideoReadyToBePlayed = false;
-    private boolean mIsVideoSizeKnown = false;
-    private boolean mIsContainerSizeKnown = false;
+    private int videoWidth;
+    private int videoHeight;
 
-    private boolean mIsPaused = false;
-    private int mCurrentPosition = -1;
+    private boolean isVideoReadyToBePlayed = false;
+    private boolean isVideoSizeKnown = false;
+    private boolean isContainerSizeKnown = false;
+
+    private boolean isPaused = false;
+    private int currentPosition = -1;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_media_player);
 
-        mSurfaceView = (SurfaceView) findViewById(R.id.surface);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        mSurfaceHolder = mSurfaceView.getHolder();
-        mSurfaceHolder.addCallback(this);
-        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        surfaceView = (SurfaceView) findViewById(R.id.surface);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.addCallback(this);
 
         Bundle extras = getIntent().getExtras();
-        mUrl = extras.getString("url");
-        mName = extras.getString("name");
+        url = extras.getString("url");
 
-        mProgressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         initToolbar();
     }
 
     private void initToolbar() {
-        mContainer = findViewById(R.id.layout_media_player);
+        container = findViewById(R.id.layout_media_player);
         setContainerLayoutListener(false);
     }
 
     private void setContainerLayoutListener(final boolean screenRotated) {
-        mContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        container.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT >= 16) {
-                    mContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    mContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
+                container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                mIsContainerSizeKnown = true;
+                isContainerSizeKnown = true;
                 if (screenRotated) {
                     setVideoSize();
                 } else {
@@ -100,18 +95,18 @@ public class MediaPlayerActivity extends Activity implements
     }
 
     private void playVideo() {
-        mProgressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         doCleanUp();
         try {
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setDataSource(mUrl);
-            mMediaPlayer.setDisplay(mSurfaceHolder);
-            mMediaPlayer.prepareAsync();
-            mMediaPlayer.setOnBufferingUpdateListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setOnVideoSizeChangedListener(this);
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.setDisplay(surfaceHolder);
+            mediaPlayer.prepareAsync();
+            mediaPlayer.setOnBufferingUpdateListener(this);
+            mediaPlayer.setOnCompletionListener(this);
+            mediaPlayer.setOnPreparedListener(this);
+            mediaPlayer.setOnVideoSizeChangedListener(this);
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,7 +120,7 @@ public class MediaPlayerActivity extends Activity implements
     }
 
     public void onPrepared(MediaPlayer mediaplayer) {
-        mIsVideoReadyToBePlayed = true;
+        isVideoReadyToBePlayed = true;
         tryToStartVideoPlayback();
     }
 
@@ -134,9 +129,9 @@ public class MediaPlayerActivity extends Activity implements
             return;
         }
 
-        mVideoWidth = width;
-        mVideoHeight = height;
-        mIsVideoSizeKnown = true;
+        videoWidth = width;
+        videoHeight = height;
+        isVideoSizeKnown = true;
         tryToStartVideoPlayback();
     }
 
@@ -158,10 +153,10 @@ public class MediaPlayerActivity extends Activity implements
     @Override
     protected void onPause() {
         super.onPause();
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
-            mCurrentPosition = mMediaPlayer.getCurrentPosition();
-            mIsPaused = true;
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            currentPosition = mediaPlayer.getCurrentPosition();
+            isPaused = true;
         }
     }
 
@@ -173,59 +168,59 @@ public class MediaPlayerActivity extends Activity implements
     }
 
     private void releaseMediaPlayer() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 
     private void doCleanUp() {
-        mVideoWidth = 0;
-        mVideoHeight = 0;
+        videoWidth = 0;
+        videoHeight = 0;
 
-        mIsVideoReadyToBePlayed = false;
-        mIsVideoSizeKnown = false;
+        isVideoReadyToBePlayed = false;
+        isVideoSizeKnown = false;
     }
 
     private void tryToStartVideoPlayback() {
-        if (mIsVideoReadyToBePlayed && mIsVideoSizeKnown && mIsContainerSizeKnown) {
+        if (isVideoReadyToBePlayed && isVideoSizeKnown && isContainerSizeKnown) {
             startVideoPlayback();
         }
     }
 
     private void startVideoPlayback() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-        if (!mMediaPlayer.isPlaying()) {
-            mSurfaceHolder.setFixedSize(mVideoWidth, mVideoHeight);
+        progressBar.setVisibility(View.INVISIBLE);
+        if (!mediaPlayer.isPlaying()) {
+            surfaceHolder.setFixedSize(videoWidth, videoHeight);
             setVideoSize();
 
-            if (mIsPaused) {
-                mMediaPlayer.seekTo(mCurrentPosition);
-                mIsPaused = false;
+            if (isPaused) {
+                mediaPlayer.seekTo(currentPosition);
+                isPaused = false;
             }
-            mMediaPlayer.start();
+            mediaPlayer.start();
         }
     }
 
     private void setVideoSize() {
         try {
-            int videoWidth = mMediaPlayer.getVideoWidth();
-            int videoHeight = mMediaPlayer.getVideoHeight();
+            int videoWidth = mediaPlayer.getVideoWidth();
+            int videoHeight = mediaPlayer.getVideoHeight();
             float videoProportion = (float) videoWidth / (float) videoHeight;
 
-            int videoWidthInContainer = mContainer.getWidth();
-            int videoHeightInContainer = mContainer.getHeight();
+            int videoWidthInContainer = container.getWidth();
+            int videoHeightInContainer = container.getHeight();
             float videoInContainerProportion = (float) videoWidthInContainer / (float) videoHeightInContainer;
 
-            android.view.ViewGroup.LayoutParams lp = mSurfaceView.getLayoutParams();
+            LayoutParams layoutParams = surfaceView.getLayoutParams();
             if (videoProportion > videoInContainerProportion) {
-                lp.width = videoWidthInContainer;
-                lp.height = (int) ((float) videoWidthInContainer / videoProportion);
+                layoutParams.width = videoWidthInContainer;
+                layoutParams.height = (int) ((float) videoWidthInContainer / videoProportion);
             } else {
-                lp.width = (int) (videoProportion * (float) videoHeightInContainer);
-                lp.height = videoHeightInContainer;
+                layoutParams.width = (int) (videoProportion * (float) videoHeightInContainer);
+                layoutParams.height = videoHeightInContainer;
             }
-            mSurfaceView.setLayoutParams(lp);
+            surfaceView.setLayoutParams(layoutParams);
         } catch (Exception e) {
             e.printStackTrace();
         }

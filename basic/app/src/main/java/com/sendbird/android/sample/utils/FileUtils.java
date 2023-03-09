@@ -105,11 +105,9 @@ public class FileUtils {
         DownloadManager.Request downloadRequest = new DownloadManager.Request(Uri.parse(url));
         downloadRequest.setTitle(fileName);
 
-        // in order for this if to run, you must use the android 3.2 to compile your app
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            downloadRequest.allowScanningByMediaScanner();
-            downloadRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        }
+        // in order for this to run you must use android 3.2 (or greater) to compile your app
+        downloadRequest.allowScanningByMediaScanner();
+        downloadRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
         downloadRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 

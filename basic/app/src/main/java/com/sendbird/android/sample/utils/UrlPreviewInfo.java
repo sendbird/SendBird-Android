@@ -4,59 +4,60 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class UrlPreviewInfo {
-    private final String mUrl;
-    private final String mSiteName;
-    private final String mTitle;
-    private final String mDescription;
-    private final String mImageUrl;
+
+    private final String url;
+    private final String siteName;
+    private final String title;
+    private final String description;
+    private final String imageUrl;
 
     public UrlPreviewInfo(String url, String siteName, String title, String description, String imageUrl) {
-        mUrl = url;
-        mSiteName = siteName;
-        mTitle = title;
-        mDescription = description;
-        mImageUrl = imageUrl;
+        this.url = url;
+        this.siteName = siteName;
+        this.title = title;
+        this.description = description;
+        this.imageUrl = imageUrl;
     }
 
     public UrlPreviewInfo(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
-        mUrl = jsonObject.getString("url");
-        mSiteName = jsonObject.getString("site_name");
-        mTitle = jsonObject.getString("title");
-        mDescription = jsonObject.getString("description");
-        mImageUrl = jsonObject.getString("image");
+        url = jsonObject.getString("url");
+        siteName = jsonObject.getString("site_name");
+        title = jsonObject.getString("title");
+        description = jsonObject.getString("description");
+        imageUrl = jsonObject.getString("image");
     }
 
     public String toJsonString() throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("url", mUrl);
-        jsonObject.put("site_name", mSiteName);
-        jsonObject.put("title", mTitle);
-        jsonObject.put("description", mDescription);
-        jsonObject.put("image", mImageUrl);
+        jsonObject.put("url", url);
+        jsonObject.put("site_name", siteName);
+        jsonObject.put("title", title);
+        jsonObject.put("description", description);
+        jsonObject.put("image", imageUrl);
 
         return jsonObject.toString();
     }
 
 
     public String getSiteName() {
-        return mSiteName;
+        return siteName;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public String getUrl() {
-        return mUrl;
+        return url;
     }
 
     public String getImageUrl() {
-        return mImageUrl;
+        return imageUrl;
     }
 }
 
